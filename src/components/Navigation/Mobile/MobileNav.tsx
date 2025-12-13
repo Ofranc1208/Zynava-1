@@ -13,20 +13,26 @@ export function MobileNav() {
   return (
     <div
       style={{
-        padding: '1rem 2rem',
+        padding: '0.45rem 1.75rem',
         borderBottom: '1px solid #e5e5e5',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
+        backgroundColor: 'white',
+        position: 'sticky',
+        top: 0,
+        zIndex: 1000
       }}
       className="mobile-nav"
     >
       <Link
         href="/"
         style={{
-          fontSize: '1.5rem',
+          fontSize: '1.25rem',
           fontWeight: 'bold',
           textDecoration: 'none',
+          color: '#1a1a1a',
+          letterSpacing: '0.05em'
         }}
       >
         ZYNAVA
@@ -36,9 +42,10 @@ export function MobileNav() {
         style={{
           background: 'none',
           border: 'none',
-          fontSize: '1.5rem',
+          fontSize: '1.05rem',
           cursor: 'pointer',
-          padding: '0.5rem',
+          padding: '0.35rem',
+          color: '#333'
         }}
         aria-label="Toggle menu"
       >
@@ -71,9 +78,11 @@ export function MobileNav() {
             <Link
               href="/"
               style={{
-                fontSize: '1.5rem',
+                fontSize: '1.25rem',
                 fontWeight: 'bold',
                 textDecoration: 'none',
+                color: '#1a1a1a',
+                letterSpacing: '0.05em'
               }}
             >
               ZYNAVA
@@ -83,9 +92,9 @@ export function MobileNav() {
               style={{
                 background: 'none',
                 border: 'none',
-                fontSize: '1.5rem',
+                fontSize: '1.05rem',
                 cursor: 'pointer',
-                padding: '0.5rem',
+                padding: '0.35rem',
               }}
               aria-label="Close menu"
             >
@@ -93,13 +102,13 @@ export function MobileNav() {
             </button>
           </div>
           <Link
-            href="/"
+            href="/main"
             onClick={toggleMenu}
             style={{
-              fontSize: '1.25rem',
+              fontSize: '0.9rem',
               textDecoration: 'none',
               color: '#333',
-              padding: '0.5rem 0',
+              padding: '0.35rem 0',
             }}
           >
             Home
@@ -108,10 +117,10 @@ export function MobileNav() {
             href="/about"
             onClick={toggleMenu}
             style={{
-              fontSize: '1.25rem',
+              fontSize: '0.9rem',
               textDecoration: 'none',
               color: '#333',
-              padding: '0.5rem 0',
+              padding: '0.35rem 0',
             }}
           >
             About
@@ -120,10 +129,10 @@ export function MobileNav() {
             href="/contact"
             onClick={toggleMenu}
             style={{
-              fontSize: '1.25rem',
+              fontSize: '0.9rem',
               textDecoration: 'none',
               color: '#333',
-              padding: '0.5rem 0',
+              padding: '0.35rem 0',
             }}
           >
             Contact
@@ -132,10 +141,10 @@ export function MobileNav() {
             href="/faq"
             onClick={toggleMenu}
             style={{
-              fontSize: '1.25rem',
+              fontSize: '0.9rem',
               textDecoration: 'none',
               color: '#333',
-              padding: '0.5rem 0',
+              padding: '0.35rem 0',
             }}
           >
             FAQ
@@ -144,10 +153,10 @@ export function MobileNav() {
             href="/products"
             onClick={toggleMenu}
             style={{
-              fontSize: '1.25rem',
+              fontSize: '0.9rem',
               textDecoration: 'none',
               color: '#333',
-              padding: '0.5rem 0',
+              padding: '0.35rem 0',
             }}
           >
             Shop
@@ -156,10 +165,10 @@ export function MobileNav() {
             href="/cart"
             onClick={toggleMenu}
             style={{
-              fontSize: '1.25rem',
+              fontSize: '0.9rem',
               textDecoration: 'none',
               color: '#333',
-              padding: '0.5rem 0',
+              padding: '0.35rem 0',
             }}
           >
             Cart

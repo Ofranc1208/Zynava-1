@@ -1,0 +1,436 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Poppins:wght@400;500;600;700;800;900&display=swap');
+
+/* Import modern fonts */
+/* Overlay animations and styles */
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.02);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% center;
+  }
+  100% {
+    background-position: 200% center;
+  }
+}
+
+@keyframes fantaShimmer {
+  0%, 100% {
+    background-position: 0% center;
+    filter: drop-shadow(0 0 8px rgba(255, 107, 53, 0.3)) brightness(1);
+  }
+  25% {
+    background-position: 50% center;
+    filter: drop-shadow(0 0 12px rgba(255, 140, 66, 0.5)) brightness(1.1);
+  }
+  50% {
+    background-position: 100% center;
+    filter: drop-shadow(0 0 16px rgba(255, 167, 38, 0.6)) brightness(1.2);
+  }
+  75% {
+    background-position: 150% center;
+    filter: drop-shadow(0 0 12px rgba(255, 140, 66, 0.5)) brightness(1.1);
+  }
+}
+
+@keyframes brightShimmer {
+  0%, 100% {
+    background-position: 0% center;
+    filter: drop-shadow(0 0 12px rgba(255, 235, 59, 0.8)) brightness(1.3);
+    text-shadow: 0 4px 8px rgba(255, 193, 7, 0.6);
+  }
+  25% {
+    background-position: 50% center;
+    filter: drop-shadow(0 0 16px rgba(255, 213, 79, 0.9)) brightness(1.4);
+    text-shadow: 0 5px 10px rgba(255, 193, 7, 0.7);
+  }
+  50% {
+    background-position: 100% center;
+    filter: drop-shadow(0 0 20px rgba(255, 241, 118, 1.0)) brightness(1.5);
+    text-shadow: 0 6px 12px rgba(255, 193, 7, 0.8);
+  }
+  75% {
+    background-position: 150% center;
+    filter: drop-shadow(0 0 16px rgba(255, 213, 79, 0.9)) brightness(1.4);
+    text-shadow: 0 5px 10px rgba(255, 193, 7, 0.7);
+  }
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-3px);
+  }
+}
+
+@keyframes wiggle {
+  0%, 100% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(-2deg);
+  }
+  75% {
+    transform: rotate(2deg);
+  }
+}
+
+@keyframes colorShift {
+  0%, 100% {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  }
+  33% {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  }
+  66% {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+  }
+}
+
+@keyframes glow {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(99, 102, 241, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(99, 102, 241, 0.6);
+  }
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.75);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  padding: 1rem;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.modal {
+  position: relative;
+  width: 100%;
+  max-width: 380px;
+  min-height: 420px;
+  max-height: 420px;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 25px 60px -12px rgba(0, 0, 0, 0.6);
+  animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.backgroundImage {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: url('/assets/images/Discount.JPG');
+  background-size: cover;
+  background-position: center;
+  filter: brightness(0.8) saturate(1.1);
+  opacity: 0.9;
+}
+
+.gradientOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    135deg, 
+    rgba(0, 0, 0, 0.3) 0%, 
+    rgba(0, 0, 0, 0.5) 100%
+  );
+}
+
+.closeButton {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  width: 38px;
+  height: 38px;
+  cursor: pointer;
+  color: white;
+  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  transition: all 0.2s ease;
+}
+
+.closeButton:hover {
+  background: rgba(255, 255, 255, 0.25);
+  transform: scale(1.1);
+}
+
+.content {
+  position: relative;
+  z-index: 5;
+  padding: 2rem 2rem 2.5rem;
+  text-align: center;
+  color: white;
+  font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.logoCard {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 12px;
+  padding: 0.8rem 1.2rem;
+  margin-bottom: 1.2rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.logo {
+  font-family: 'Inter', sans-serif;
+  font-size: 1.5rem;
+  font-weight: 900;
+  letter-spacing: 0.25em;
+  margin: 0;
+  text-transform: uppercase;
+  background: linear-gradient(135deg, #ff6b35 0%, #ff8c42 25%, #ffa726 50%, #ff9800 75%, #f57c00 100%);
+  background-size: 300% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: brightShimmer 4s ease-in-out infinite;
+  text-shadow: 0 4px 8px rgba(255, 152, 0, 0.6);
+  filter: drop-shadow(0 0 12px rgba(255, 152, 0, 0.8)) brightness(1.3);
+}
+
+.title {
+  font-family: 'Poppins', sans-serif;
+  font-size: 1.26rem;
+  font-weight: 900;
+  line-height: 1.1;
+  margin-bottom: 0.8rem;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8), 0 0 8px rgba(255, 215, 0, 0.3);
+  letter-spacing: 0.1em;
+  color: #ffd700;
+  white-space: nowrap;
+}
+
+.subtitle {
+  font-family: 'Poppins', sans-serif;
+  font-size: 1.26rem;
+  font-weight: 700;
+  color: #ffffff;
+  margin-bottom: 2rem;
+  letter-spacing: 0.02em;
+  line-height: 1.3;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+}
+
+.yesButton {
+  font-family: 'Poppins', sans-serif;
+  width: 100%;
+  padding: 1rem 2rem;
+  font-size: 1.1rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  margin-bottom: 1.2rem;
+  letter-spacing: 0.03em;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+  text-transform: uppercase;
+  animation: wiggle 3s ease-in-out infinite;
+}
+
+.yesButton:hover {
+  transform: translateY(-3px) scale(1.03);
+  box-shadow: 0 10px 30px rgba(16, 185, 129, 0.6);
+  background: linear-gradient(135deg, #059669 0%, #047857 100%);
+}
+
+.yesButton:active {
+  transform: translateY(0) scale(0.98);
+}
+
+.noButton {
+  font-family: 'Inter', sans-serif;
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 1.05rem;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 1rem 1.5rem;
+  transition: all 0.2s ease;
+  position: relative;
+  border-radius: 8px;
+}
+
+.noButton::after {
+  content: '';
+  position: absolute;
+  bottom: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.6);
+  transition: width 0.2s ease;
+}
+
+.noButton:hover {
+  color: white;
+}
+
+.noButton:hover::after {
+  width: 80%;
+}
+
+/* Coupon revealed state */
+.revealTitle {
+  font-family: 'Poppins', sans-serif;
+  font-size: clamp(1.4rem, 4.5vw, 1.9rem);
+  font-weight: 900;
+  line-height: 1.2;
+  margin-bottom: 1rem;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8), 0 0 8px rgba(255, 215, 0, 0.3);
+  color: #ffd700;
+}
+
+.discountText {
+  font-family: 'Poppins', sans-serif;
+  font-size: 1.26rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  color: #ffffff;
+  letter-spacing: 0.02em;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+}
+
+.couponBox {
+  background: white;
+  border-radius: 12px;
+  padding: 1.25rem;
+  margin-bottom: 1rem;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  border: 2px solid #ffd700;
+}
+
+.couponCode {
+  font-size: 1.75rem;
+  font-weight: 900;
+  color: #1a1a1a;
+  letter-spacing: 0.15em;
+  font-family: 'Courier New', monospace;
+}
+
+.copyButton {
+  font-family: 'Poppins', sans-serif;
+  width: 100%;
+  padding: 1rem 2rem;
+  font-size: 1rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, #ff6b35 0%, #ff8c42 100%);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  margin-bottom: 1rem;
+  letter-spacing: 0.03em;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 4px 15px rgba(255, 107, 53, 0.4);
+  text-transform: uppercase;
+}
+
+.copyButton:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 6px 20px rgba(255, 107, 53, 0.6);
+  background: linear-gradient(135deg, #ff8c42 0%, #ffa726 100%);
+}
+
+.copyButtonCopied {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
+}
+
+.continueButton {
+  font-family: 'Inter', sans-serif;
+  background: none;
+  border: none;
+  color: #ffffff;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 0.5rem;
+  transition: color 0.2s ease;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.6);
+}
+
+.continueButton:hover {
+  color: white;
+}
+
+/* Entrance animations for content */
+.animateIn {
+  animation: slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animateDelay1 {
+  animation-delay: 0.1s;
+  opacity: 0;
+}
+
+.animateDelay2 {
+  animation-delay: 0.2s;
+  opacity: 0;
+}
+
+.animateDelay3 {
+  animation-delay: 0.3s;
+  opacity: 0;
+}
+

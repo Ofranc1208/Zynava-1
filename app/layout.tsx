@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { DualNavbar } from '@/src/components/Navigation/DualNavbar'
 import { Footer } from './components/Footer'
+import { PromoOverlay } from '@/src/components/PromoOverlay'
 import './globals.css'
 
 export const metadata: Metadata = {
@@ -19,6 +20,10 @@ export default function RootLayout({
         <DualNavbar />
         {children}
         <Footer />
+        <PromoOverlay 
+          couponCode="WELCOME21" 
+          discountText="Save 21% + Free Shipping"
+        />
       </body>
     </html>
   )

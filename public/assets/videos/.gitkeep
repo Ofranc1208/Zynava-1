@@ -1,0 +1,10 @@
+# Video Assets Folder
+# 
+# Place your video files here.
+# 
+# Current video expected:
+# - hero-background.mp4 (for the home page hero section)
+#
+# Video files in this folder will be accessible at:
+# /assets/videos/[filename]
+
