@@ -7,6 +7,11 @@ import './globals.css'
 export const metadata: Metadata = {
   title: 'ZYNAVA - Premium Supplement Brand',
   description: 'Premium wellness supplements',
+  icons: {
+    icon: '/assets/images/icons8-heart-health-50.png',
+    shortcut: '/assets/images/icons8-heart-health-50.png',
+    apple: '/assets/images/icons8-heart-health-50.png',
+  },
 }
 
 export default function RootLayout({
@@ -20,10 +25,11 @@ export default function RootLayout({
         <DualNavbar />
         {children}
         <Footer />
-        <PromoOverlay 
+        {/* TESTING MODE: PromoOverlay temporarily disabled - see PromoOverlay/TESTING_MODE.md */}
+        {/* <PromoOverlay 
           couponCode="WELCOME21" 
           discountText="Save 21% + Free Shipping"
-        />
+        /> */}
       </body>
     </html>
   )

@@ -1,0 +1,167 @@
+/* Quiz Button Styles - 2025 Best Practices */
+/* Inter: Industry standard for chat interfaces */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+
+.quizButton {
+  width: 100%;
+  padding: 14px 16px;
+  background: #ffffff;
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 90px;
+  position: relative;
+}
+
+.quizButton::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255, 107, 53, 0.05) 0%, rgba(255, 107, 53, 0.02) 100%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.quizButton:hover:not(.disabled)::before {
+  opacity: 1;
+}
+
+.quizButton:hover:not(.disabled) {
+  border-color: #ff6b35;
+  background: #fff5f0;
+  transform: translateY(-3px);
+  box-shadow: 0 4px 12px rgba(255, 107, 53, 0.15);
+}
+
+.quizButton.selected {
+  border-color: #ff6b35;
+  border-width: 2.5px;
+  background: #fff5f0;
+  box-shadow: 0 3px 12px rgba(255, 107, 53, 0.2);
+  transform: translateY(-2px);
+}
+
+.quizButton.selected::before {
+  opacity: 1;
+}
+
+.quizButton.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.icon {
+  font-size: 2rem;
+  line-height: 1;
+  display: block;
+  flex-shrink: 0;
+  margin-bottom: 0;
+}
+
+.buttonContent {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  align-items: center;
+  text-align: center;
+  width: 100%;
+}
+
+.label {
+  font-size: 0.88rem;
+  font-weight: 500;
+  color: #2d3748;
+  text-align: center;
+  line-height: 1.3;
+  word-break: break-word;
+  width: 100%;
+}
+
+.description {
+  font-size: 0.72rem;
+  font-weight: 400;
+  color: #718096;
+  text-align: left;
+  line-height: 1.3;
+}
+
+.checkbox {
+  display: none; /* Remove all radio/checkbox circles */
+}
+
+/* Responsive - Tablet and Below */
+@media (max-width: 768px) {
+  .quizButton {
+    padding: 12px 14px;
+    min-height: 85px;
+    gap: 7px;
+  }
+  
+  .icon {
+    font-size: 1.8rem;
+  }
+  
+  .label {
+    font-size: 0.85rem;
+  }
+  
+  .description {
+    font-size: 0.7rem;
+  }
+}
+
+/* Responsive - Mobile Phones (iPhone 16 Pro, iPhone 14/15, etc.) */
+@media (max-width: 480px) {
+  .quizButton {
+    padding: 10px 12px;
+    min-height: 80px;
+    gap: 6px;
+    /* Ensure touch targets are adequate */
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: rgba(255, 107, 53, 0.1);
+  }
+  
+  .icon {
+    font-size: 1.6rem;
+  }
+  
+  .label {
+    font-size: 0.82rem;
+    line-height: 1.3;
+  }
+  
+  .description {
+    font-size: 0.68rem;
+    line-height: 1.25;
+  }
+}
+
+/* Responsive - Small iPhones (SE, 13 mini, etc.) */
+@media (max-width: 390px) {
+  .quizButton {
+    padding: 10px 10px;
+    min-height: 75px;
+    gap: 6px;
+  }
+  
+  .icon {
+    font-size: 1.5rem;
+  }
+  
+  .label {
+    font-size: 0.8rem;
+  }
+  
+  .description {
+    font-size: 0.66rem;
+  }
+}
+

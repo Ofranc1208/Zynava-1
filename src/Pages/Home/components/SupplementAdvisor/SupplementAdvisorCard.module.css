@@ -1,21 +1,55 @@
-/* Chat Card Container */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+/* Chat Card Container - 2025 Best Practices */
+/* Inter: Industry standard for chat interfaces - optimized for readability */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
 
 .chatCard {
   background: #ffffff;
   border: 1px solid #e5e5e5;
   border-radius: 16px;
   margin: -0.5rem auto 0.5rem auto;
-  max-width: 380px;
-  padding: 20px;
+  max-width: 420px;
+  padding: 24px;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
-  font-family: 'Inter', sans-serif;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  display: flex;
+  flex-direction: column;
+  height: 260px;
+  min-height: 260px;
 }
 
-.chatContent {
+.chatMessages {
   display: flex;
   flex-direction: column;
   gap: 14px;
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-right: 4px;
+  margin-bottom: 14px;
+}
+
+/* Custom scrollbar styling - subtle */
+.chatMessages::-webkit-scrollbar {
+  width: 4px;
+}
+
+.chatMessages::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.chatMessages::-webkit-scrollbar-thumb {
+  background: rgba(255, 107, 53, 0.2);
+  border-radius: 10px;
+}
+
+.chatMessages::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 107, 53, 0.4);
+}
+
+.chatActions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: auto;
 }
 
 .typingBubble {
@@ -58,11 +92,12 @@
   border-radius: 16px 16px 16px 4px;
   padding: 14px 18px;
   font-size: 1.03rem;
-  font-weight: 500;
-  color: #333;
-  line-height: 1.5;
+  font-weight: 400; /* Regular weight for better readability */
+  color: #2d3748; /* Slightly darker for better contrast */
+  line-height: 1.6; /* Improved line spacing */
   align-self: flex-start;
   animation: slideIn 0.4s ease;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 }
 
 .messageBubble.animated {
@@ -70,9 +105,9 @@
 }
 
 .messageBubble strong {
-  font-weight: 800;
-  color: #111;
-  letter-spacing: 0.02em;
+  font-weight: 600; /* Semi-bold instead of 800 - cleaner, more readable */
+  color: #1a202c; /* Darker for emphasis but not too heavy */
+  letter-spacing: -0.01em; /* Tighter spacing for better readability */
 }
 
 .chatButton {
@@ -85,13 +120,14 @@
   padding: 12px 20px;
   border-radius: 16px 16px 4px 16px;
   font-size: 0.95rem;
-  font-weight: 600;
+  font-weight: 500; /* Medium weight - balanced and readable */
   cursor: pointer;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   align-self: flex-end;
   transition: all 0.3s ease;
   animation: slideIn 0.3s ease, pulseOrange 2s ease-in-out infinite;
   box-shadow: 0 4px 12px rgba(255, 107, 53, 0.4);
+  letter-spacing: -0.01em; /* Tighter for better readability */
 }
 
 .chatButton:hover {
@@ -204,10 +240,12 @@
   .chatCard {
     margin: -0.25rem 1rem 0.5rem 1rem;
     max-width: none;
-    padding: 18px;
+    padding: 20px;
+    height: 240px;
+    min-height: 240px;
   }
   
-  .chatContent {
+  .chatMessages {
     gap: 12px;
   }
   
@@ -225,11 +263,13 @@
 @media (max-width: 480px) {
   .chatCard {
     margin: -0.25rem 0.5rem 0.5rem 0.5rem;
-    padding: 16px;
+    padding: 18px;
     border-radius: 12px;
+    height: 220px;
+    min-height: 220px;
   }
   
-  .chatContent {
+  .chatMessages {
     gap: 10px;
   }
   

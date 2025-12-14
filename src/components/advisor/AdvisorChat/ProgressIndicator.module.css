@@ -1,0 +1,78 @@
+.progressContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 16px;
+  padding: 0;
+  align-items: center;
+}
+
+.progressInfo {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  justify-content: center;
+}
+
+.stepText {
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: #4a5568;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+.percentageText {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #ff6b35;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+.progressBar {
+  width: 60%;
+  height: 6px;
+  background: #e2e8f0;
+  border-radius: 10px;
+  overflow: hidden;
+  position: relative;
+}
+
+.progressFill {
+  height: 100%;
+  background: linear-gradient(90deg, #ff6b35 0%, #ff8555 100%);
+  border-radius: 10px;
+  transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 0 8px rgba(255, 107, 53, 0.4);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .progressBar {
+    width: 70%;
+  }
+}
+
+@media (max-width: 480px) {
+  .progressContainer {
+    gap: 6px;
+    margin-bottom: 14px;
+  }
+  
+  .progressInfo {
+    gap: 8px;
+  }
+  
+  .stepText {
+    font-size: 0.78rem;
+  }
+  
+  .percentageText {
+    font-size: 0.78rem;
+  }
+  
+  .progressBar {
+    width: 80%;
+    height: 5px;
+  }
+}
+
