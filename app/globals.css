@@ -23,22 +23,6 @@ a {
   text-decoration: none;
 }
 
-/* Responsive Navigation */
-.desktop-nav {
-  display: none;
-}
-
-.mobile-nav {
-  display: flex;
-}
-
-@media (min-width: 768px) {
-  .desktop-nav {
-    display: flex;
-  }
-
-  .mobile-nav {
-    display: none;
-  }
-}
+/* Note: Responsive navigation is handled by JavaScript in DualNavbar.tsx */
+/* CSS-based display rules removed to prevent conflicts with JS-based rendering */
 

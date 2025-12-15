@@ -1,4 +1,4 @@
-import { AboutPage } from '@/src/Pages/About/AboutPage'
+import { AboutPage } from '@/src/views/About/AboutPage'
 
 export default function Page() {
   return <AboutPage />

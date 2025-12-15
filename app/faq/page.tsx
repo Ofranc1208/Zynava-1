@@ -1,4 +1,4 @@
-import { FaqPage } from '@/src/Pages/FAQ/FaqPage'
+import { FaqPage } from '@/src/views/FAQ/FaqPage'
 
 export default function Page() {
   return <FaqPage />

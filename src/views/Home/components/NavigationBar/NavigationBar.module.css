@@ -1,0 +1,155 @@
+/* NavigationBar CSS Module - Clean Button Design */
+
+.navigationBar {
+  width: 100%;
+  background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+  border-bottom: 2px solid #e5e5e5;
+  padding: 0.75rem 0;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0 0.5rem;
+  flex-wrap: nowrap;
+  width: 100%;
+}
+
+.navLink {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem 1.25rem;
+  text-decoration: none;
+  color: #1a1a1a;
+  font-size: clamp(0.85rem, 1.8vw, 1rem);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  background: #ffffff;
+  border: 1.5px solid #e5e5e5;
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+  cursor: pointer;
+  flex: 1 1 auto;
+  text-align: center;
+  white-space: nowrap;
+}
+
+/* Top Sellers - Blue */
+.navLink:nth-child(1) {
+  border-color: #3b82f6;
+}
+
+.navLink:nth-child(1):hover {
+  background: #eff6ff;
+  border-color: #3b82f6;
+  color: #1e40af;
+  box-shadow: 0 6px 16px rgba(59, 130, 246, 0.25);
+  transform: translateY(-2px);
+}
+
+.navLink:nth-child(1):active {
+  transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.2);
+}
+
+/* Deals - Green */
+.navLink:nth-child(2) {
+  border-color: #10b981;
+}
+
+.navLink:nth-child(2):hover {
+  background: #ecfdf5;
+  border-color: #10b981;
+  color: #065f46;
+  box-shadow: 0 6px 16px rgba(16, 185, 129, 0.25);
+  transform: translateY(-2px);
+}
+
+.navLink:nth-child(2):active {
+  transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.2);
+}
+
+/* Categories - Orange */
+.navLink:nth-child(3) {
+  border-color: #f59e0b;
+}
+
+.navLink:nth-child(3):hover {
+  background: #fffbeb;
+  border-color: #f59e0b;
+  color: #92400e;
+  box-shadow: 0 6px 16px rgba(245, 158, 11, 0.25);
+  transform: translateY(-2px);
+}
+
+.navLink:nth-child(3):active {
+  transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(245, 158, 11, 0.2);
+}
+
+/* Focus states for accessibility */
+.navLink:focus {
+  outline: 3px solid #ff6b35;
+  outline-offset: 3px;
+}
+
+/* Mobile responsive adjustments */
+@media (max-width: 768px) {
+  .container {
+    gap: 0.5rem;
+    padding: 0 0.5rem;
+    justify-content: center;
+  }
+  
+  .navLink {
+    padding: 0.7rem 0.75rem;
+    font-size: clamp(0.72rem, 2.5vw, 0.88rem);
+    flex: 1 1 auto;
+    letter-spacing: 0.03em;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    gap: 0.35rem;
+    padding: 0 0.25rem;
+    justify-content: center;
+  }
+  
+  .navLink {
+    padding: 0.65rem 0.5rem;
+    font-size: clamp(0.65rem, 2.6vw, 0.78rem);
+    flex: 1 1 auto;
+    letter-spacing: 0.02em;
+    border-radius: 10px;
+  }
+}
+
+/* Extra small devices (360px and below) */
+@media (max-width: 360px) {
+  .container {
+    gap: 0.25rem;
+    padding: 0 0.15rem;
+    justify-content: center;
+  }
+  
+  .navLink {
+    padding: 0.6rem 0.35rem;
+    font-size: clamp(0.58rem, 2.4vw, 0.68rem);
+    flex: 1 1 auto;
+    letter-spacing: 0.01em;
+    border-radius: 8px;
+  }
+}

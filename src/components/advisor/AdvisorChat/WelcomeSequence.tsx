@@ -101,8 +101,7 @@ export default function WelcomeSequence({ onGetStarted, hideButton = false }: We
         <ChatBubble
           message={
             <>
-              <strong>No personal info</strong> or <strong>sign up</strong>. Let's match supplements that align
-              with your <strong>health goal</strong> and <strong>budget</strong>.
+              <strong>No personal info or sign up.</strong> Let's match supplements that align with your <strong>health goal</strong> and <strong>budget</strong>.
             </>
           }
           sender="advisor"
