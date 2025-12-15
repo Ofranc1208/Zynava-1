@@ -12,9 +12,23 @@ export default function SupplementAdvisorCard() {
   // 0 = typing, 1 = greeting, 2 = typing, 3 = first message, 4 = typing, 5 = second message, 6 = show button
 
   // Check if promo overlay has been dismissed OR if it's disabled
+  // Browser-compatible version with fallback
   useEffect(() => {
+    // Helper function to safely access sessionStorage
+    const getSessionStorage = (key: string): string | null => {
+      try {
+        if (typeof window !== 'undefined' && window.sessionStorage) {
+          return window.sessionStorage.getItem(key)
+        }
+      } catch (e) {
+        // sessionStorage might be disabled or unavailable
+        console.warn('sessionStorage not available:', e)
+      }
+      return null
+    }
+
     const checkPromoStatus = () => {
-      const promoSeen = sessionStorage.getItem('zynava_promo_seen')
+      const promoSeen = getSessionStorage('zynava_promo_seen')
       if (promoSeen === 'true') {
         setCanStart(true)
         return true
@@ -25,26 +39,43 @@ export default function SupplementAdvisorCard() {
     // Check immediately
     if (checkPromoStatus()) return
 
+    // Fallback: If sessionStorage is not available or promo check fails,
+    // start the animation after a short delay (browser compatibility)
+    const fallbackTimer = setTimeout(() => {
+      // If we still haven't started, start anyway (browser compatibility fallback)
+      setCanStart(true)
+    }, 200)
+
     // Check if promo is disabled (after 100ms to let page load)
     const initialCheck = setTimeout(() => {
-      // If sessionStorage is still not set after 100ms, assume promo is disabled
-      const promoSeen = sessionStorage.getItem('zynava_promo_seen')
+      const promoSeen = getSessionStorage('zynava_promo_seen')
       if (!promoSeen) {
         // Promo is likely disabled - start immediately
+        clearTimeout(fallbackTimer)
         setCanStart(true)
         return
       }
     }, 100)
 
     // Poll every 500ms if promo not yet dismissed (for when promo is enabled)
+    // But limit to 5 seconds max to prevent infinite polling
+    let pollCount = 0
+    const maxPolls = 10 // 10 * 500ms = 5 seconds max
     const interval = setInterval(() => {
-      if (checkPromoStatus()) {
+      pollCount++
+      if (checkPromoStatus() || pollCount >= maxPolls) {
         clearInterval(interval)
+        clearTimeout(fallbackTimer)
+        // If we've polled max times and still no promo seen, start anyway
+        if (pollCount >= maxPolls) {
+          setCanStart(true)
+        }
       }
     }, 500)
 
     return () => {
       clearTimeout(initialCheck)
+      clearTimeout(fallbackTimer)
       clearInterval(interval)
     }
   }, [])
@@ -67,9 +98,32 @@ export default function SupplementAdvisorCard() {
   }, [canStart])
 
   // Auto-scroll to bottom when new messages appear
+  // Browser-compatible version with fallback
   useEffect(() => {
     if (step > 0 && messagesEndRef.current) {
-      messagesEndRef.current.scrollIntoView({ behavior: 'smooth', block: 'end' })
+      // Use requestAnimationFrame for better browser compatibility
+      requestAnimationFrame(() => {
+        if (messagesEndRef.current) {
+          try {
+            // Try smooth scroll first (modern browsers)
+            messagesEndRef.current.scrollIntoView({ 
+              behavior: 'smooth', 
+              block: 'end' 
+            })
+          } catch (e) {
+            // Fallback for browsers that don't support smooth scroll
+            try {
+              messagesEndRef.current.scrollIntoView(false) // block: 'end'
+            } catch (e2) {
+              // Last resort: direct scroll
+              if (messagesEndRef.current.parentElement) {
+                messagesEndRef.current.parentElement.scrollTop = 
+                  messagesEndRef.current.parentElement.scrollHeight
+              }
+            }
+          }
+        }
+      })
     }
   }, [step])
 
@@ -81,9 +135,22 @@ export default function SupplementAdvisorCard() {
     setIsModalOpen(false)
   }
 
-  // Don't render anything until promo is dismissed
+  // Show loading state instead of null for better browser compatibility
+  // This ensures the component always renders, preventing hydration issues
   if (!canStart) {
-    return null
+    return (
+      <div className={styles.chatCard}>
+        <div className={styles.chatMessages}>
+          <div className={styles.typingBubble}>
+            <div className={styles.dots}>
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    )
   }
 
   return (

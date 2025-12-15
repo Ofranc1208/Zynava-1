@@ -5,13 +5,15 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.4);
+  background: rgba(0, 0, 0, 0.5); /* Slightly darker fallback for browsers without backdrop-filter */
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 1000;
   padding: 15vh 1rem 15vh 1rem;
   animation: fadeIn 0.2s ease;
+  /* backdrop-filter with fallback for browser compatibility */
+  -webkit-backdrop-filter: blur(2px);
   backdrop-filter: blur(2px);
 }
 
