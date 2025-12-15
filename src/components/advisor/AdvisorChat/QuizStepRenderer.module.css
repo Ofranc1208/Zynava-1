@@ -3,27 +3,22 @@
 .quizStepContainer {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 12px; /* Reduced from 14px (-15%) */
   
   /* FIXED HEIGHT CARD - matches first step with 8 options (4 rows) */
   /* This ensures screen focus doesn't change when navigating between steps */
   background: #ffffff;
   border-radius: 16px;
-  padding: 20px;
+  padding: 17px; /* Reduced from 20px (-15%) */
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
   border: 1px solid #e5e7eb;
   
-  /* Fixed height calculation:
-   * - Padding: 40px (20px top + 20px bottom)
-   * - Back button (when present): ~44px
-   * - Question text: ~28px
-   * - Progress indicator: ~44px
-   * - Options grid (4 rows): 390px (4 × 90px + 3 × 10px gaps)
-   * - Gaps between sections: 56px (14px × 4)
-   * Total: ~602px (accounts for back button on steps 2+)
+  /* Fixed height calculation (reduced by 15%):
+   * - Previous: 602px
+   * - Reduced: 602 × 0.85 = 511px
    */
-  min-height: 602px;
-  height: 602px;
+  min-height: 511px;
+  height: 511px;
   
   /* Allow scrolling only if content somehow exceeds (shouldn't happen) */
   overflow-y: auto;
@@ -84,7 +79,7 @@
 /* Question text - CENTER ALIGNED - 30% LARGER & PROMINENT */
 .questionText {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  font-size: 1.6rem;
+  font-size: 1.36rem; /* Reduced from 1.6rem (-15%) */
   font-weight: 700;
   color: #1f2937;
   line-height: 1.3;
@@ -117,11 +112,11 @@
 .quizOptions {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 10px;
+  gap: 8.5px; /* Increased from 8px (+6%) for cleaner spacing */
   flex: 1;
   align-content: start;
-  /* Fixed height for options grid - matches 4 rows (8 items from first step) */
-  min-height: 390px; /* Back to original height */
+  /* Fixed height for options grid - reduced by 15% */
+  min-height: 331px; /* Reduced from 390px (390 × 0.85 = 331px) */
 }
 
 .nextButton {
@@ -129,14 +124,14 @@
   background: #ff6b35;
   color: white;
   border: none;
-  padding: 12px 24px;
+  padding: 10px 20px; /* Reduced from 12px 24px (-15%) */
   border-radius: 12px;
-  font-size: 0.95rem;
+  font-size: 0.81rem; /* Reduced from 0.95rem (-15%) */
   font-weight: 500;
   cursor: pointer;
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   transition: all 0.2s ease;
-  margin-top: 8px;
+  margin-top: 6px; /* Reduced from 8px */
   letter-spacing: -0.01em;
   flex-shrink: 0;
 }
@@ -154,11 +149,11 @@
 /* Responsive - Tablet and Below */
 @media (max-width: 768px) {
   .quizStepContainer {
-    gap: 12px;
-    padding: 16px;
-    /* Adjusted fixed height for tablet */
-    min-height: 570px;
-    height: 570px;
+    gap: 10px; /* Reduced from 12px */
+    padding: 14px; /* Reduced from 16px */
+    /* Adjusted fixed height for tablet - reduced by 15% */
+    min-height: 484px; /* Reduced from 570px (570 × 0.85 = 484px) */
+    height: 484px;
   }
   
   .backLink {
@@ -166,30 +161,30 @@
   }
   
   .questionText {
-    font-size: 0.95rem;
+    font-size: 0.81rem; /* Reduced from 0.95rem (-15%) */
   }
   
   .quizOptions {
-    gap: 8px;
-    /* Adjusted for smaller buttons on tablet */
-    min-height: 370px; /* 4 rows × 85px + 3 gaps × 8px */
+    gap: 7.5px; /* Increased from 7px (+7%) for cleaner spacing */
+    /* Adjusted for smaller buttons on tablet - reduced by 15% */
+    min-height: 314px; /* Reduced from 370px (370 × 0.85 = 314px) */
   }
   
   .nextButton {
-    padding: 12px 22px;
-    font-size: 0.95rem;
+    padding: 10px 18px; /* Reduced from 12px 22px */
+    font-size: 0.81rem; /* Reduced from 0.95rem */
   }
 }
 
 /* Responsive - Mobile Phones (iPhone 16 Pro, iPhone 14/15, etc.) */
 @media (max-width: 480px) {
   .quizStepContainer {
-    gap: 10px;
-    padding: 14px;
+    gap: 8px; /* Reduced from 10px */
+    padding: 12px; /* Reduced from 14px */
     border-radius: 12px;
-    /* Adjusted fixed height for mobile */
-    min-height: 520px;
-    height: 520px;
+    /* Adjusted fixed height for mobile - reduced by 15% */
+    min-height: 442px; /* Reduced from 520px (520 × 0.85 = 442px) */
+    height: 442px;
   }
   
   .backLink {
@@ -205,20 +200,20 @@
   }
   
   .questionText {
-    font-size: 1.2rem;
+    font-size: 1.02rem; /* Reduced from 1.2rem (-15%) */
     font-weight: 700;
   }
   
   .quizOptions {
-    gap: 7px;
+    gap: 6.5px; /* Increased from 6px (+8%) for cleaner spacing */
     grid-template-columns: repeat(2, 1fr);
-    /* Adjusted for mobile buttons */
-    min-height: 340px; /* 4 rows × 80px + 3 gaps × 7px */
+    /* Adjusted for mobile buttons - reduced by 15% */
+    min-height: 289px; /* Reduced from 340px (340 × 0.85 = 289px) */
   }
   
   .nextButton {
-    padding: 14px 24px;
-    font-size: 1rem;
+    padding: 12px 20px; /* Reduced from 14px 24px */
+    font-size: 0.85rem; /* Reduced from 1rem (-15%) */
     width: 100%;
     align-self: stretch;
     min-height: 44px;
@@ -230,10 +225,10 @@
 /* Responsive - Small iPhones (SE, 13 mini, etc.) */
 @media (max-width: 390px) {
   .quizStepContainer {
-    padding: 12px;
-    /* Adjusted fixed height for small phones */
-    min-height: 490px;
-    height: 490px;
+    padding: 10px; /* Reduced from 12px */
+    /* Adjusted fixed height for small phones - reduced by 15% */
+    min-height: 416px; /* Reduced from 490px (490 × 0.85 = 416px) */
+    height: 416px;
   }
   
   .backLink {
@@ -246,19 +241,19 @@
   }
   
   .questionText {
-    font-size: 1.1rem;
+    font-size: 0.94rem; /* Reduced from 1.1rem (-15%) */
     font-weight: 700;
   }
   
   .quizOptions {
-    gap: 6px;
-    /* Adjusted for small phone buttons */
-    min-height: 318px; /* 4 rows × 75px + 3 gaps × 6px */
+    gap: 5.3px; /* Increased from 5px (+6%) for cleaner spacing */
+    /* Adjusted for small phone buttons - reduced by 15% */
+    min-height: 270px; /* Reduced from 318px (318 × 0.85 = 270px) */
   }
   
   .nextButton {
-    padding: 12px 20px;
-    font-size: 0.95rem;
+    padding: 10px 16px; /* Reduced from 12px 20px */
+    font-size: 0.81rem; /* Reduced from 0.95rem */
   }
 }
 

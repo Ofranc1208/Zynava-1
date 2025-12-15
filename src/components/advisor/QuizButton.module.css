@@ -3,7 +3,7 @@
 
 .quizButton {
   width: 100%;
-  padding: 16px 12px;
+  padding: 12px 10px; /* Reduced from 16px 12px (-25%) */
   background: #ffffff;
   border: 2px solid #e2e8f0;
   border-radius: 12px;
@@ -15,8 +15,8 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 6px;
-  min-height: 90px;
+  gap: 5px; /* Reduced from 6px */
+  min-height: 70px; /* Reduced from 90px (-22%) */
   position: relative;
 }
 
@@ -58,21 +58,21 @@
 }
 
 .icon {
-  font-size: 1.8rem;
+  font-size: 1.5rem; /* Reduced from 1.8rem */
   line-height: 1;
   display: block;
   flex-shrink: 0;
-  margin: 0 auto 2px auto; /* Center horizontally with auto margins */
+  margin: 0 auto 1px auto; /* Center horizontally with auto margins */
   text-align: center;
   width: 100%; /* Ensure full width for centering */
 }
 
 .label {
-  font-size: 0.9rem;
+  font-size: 0.8rem; /* Reduced from 0.9rem */
   font-weight: 600;
   color: #2d3748;
   text-align: center;
-  line-height: 1.4;
+  line-height: 1.3;
   word-break: break-word;
   width: 100%;
 }
@@ -84,55 +84,55 @@
 /* Responsive - Tablet and Below */
 @media (max-width: 768px) {
   .quizButton {
-    padding: 12px 14px;
-    min-height: 85px;
-    gap: 7px;
+    padding: 10px 10px; /* Reduced from 12px 14px */
+    min-height: 65px; /* Reduced from 85px (-24%) */
+    gap: 5px; /* Reduced from 7px */
   }
   
   .icon {
-    font-size: 1.6rem;
+    font-size: 1.4rem; /* Reduced from 1.6rem */
   }
   
   .label {
-    font-size: 0.88rem;
+    font-size: 0.78rem; /* Reduced from 0.88rem */
   }
 }
 
 /* Responsive - Mobile Phones (iPhone 16 Pro, iPhone 14/15, etc.) */
 @media (max-width: 480px) {
   .quizButton {
-    padding: 10px 12px;
-    min-height: 80px;
-    gap: 6px;
+    padding: 8px 10px; /* Reduced from 10px 12px */
+    min-height: 65px; /* Reduced from 80px (-19%) */
+    gap: 4px; /* Reduced from 6px */
     /* Ensure touch targets are adequate */
     touch-action: manipulation;
     -webkit-tap-highlight-color: rgba(255, 107, 53, 0.1);
   }
   
   .icon {
-    font-size: 1.5rem;
+    font-size: 1.3rem; /* Reduced from 1.5rem */
   }
   
   .label {
-    font-size: 0.85rem;
-    line-height: 1.3;
+    font-size: 0.75rem; /* Reduced from 0.85rem */
+    line-height: 1.2;
   }
 }
 
 /* Responsive - Small iPhones (SE, 13 mini, etc.) */
 @media (max-width: 390px) {
   .quizButton {
-    padding: 10px 10px;
-    min-height: 75px;
-    gap: 6px;
+    padding: 8px 9px; /* Reduced from 10px 10px */
+    min-height: 60px; /* Reduced from 75px (-20%) */
+    gap: 4px; /* Reduced from 6px */
   }
   
   .icon {
-    font-size: 1.4rem;
+    font-size: 1.2rem; /* Reduced from 1.4rem */
   }
   
   .label {
-    font-size: 0.82rem;
+    font-size: 0.72rem; /* Reduced from 0.82rem */
   }
 }
 
