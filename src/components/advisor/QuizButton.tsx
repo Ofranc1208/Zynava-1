@@ -24,15 +24,22 @@ export default function QuizButton({
   disabled = false,
   multiSelect = false,
 }: QuizButtonProps) {
-  const handleClick = () => {
+  const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     if (!disabled) {
       onClick(value)
       // Blur immediately after click to remove focus state
       // This prevents buttons from appearing selected due to browser focus outline
+      e.currentTarget.blur()
       if (document.activeElement instanceof HTMLElement) {
         document.activeElement.blur()
       }
     }
+  }
+
+  // Handle touch end to immediately remove any hover/focus states
+  const handleTouchEnd = (e: React.TouchEvent<HTMLButtonElement>) => {
+    // Blur the button immediately after touch to prevent sticky hover states
+    e.currentTarget.blur()
   }
 
   // Extract emoji from label if it starts with one
@@ -60,6 +67,7 @@ export default function QuizButton({
       type="button"
       className={`${styles.quizButton} ${isSelected ? styles.selected : ''} ${disabled ? styles.disabled : ''}`}
       onClick={handleClick}
+      onTouchEnd={handleTouchEnd}
       disabled={disabled}
       aria-pressed={isSelected}
       tabIndex={0}

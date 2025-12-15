@@ -52,6 +52,44 @@
   opacity: 1;
 }
 
+/* IMPORTANT: Reset focus states to prevent false "selected" appearance */
+/* Focus should NOT look like selected - only show outline for accessibility */
+.quizButton:focus {
+  outline: none; /* Remove default outline */
+}
+
+.quizButton:focus:not(.selected) {
+  /* Non-selected buttons should reset to default appearance on focus */
+  border-color: #e2e8f0;
+  background: #ffffff;
+  transform: none;
+  box-shadow: none;
+}
+
+.quizButton:focus:not(.selected)::before {
+  opacity: 0;
+}
+
+/* Remove sticky hover states on touch devices */
+@media (hover: none) {
+  .quizButton:hover:not(.disabled):not(.selected) {
+    border-color: #e2e8f0;
+    background: #ffffff;
+    transform: none;
+    box-shadow: none;
+  }
+  
+  .quizButton:hover:not(.disabled):not(.selected)::before {
+    opacity: 0;
+  }
+}
+
+/* Active state for immediate touch feedback only */
+.quizButton:active:not(.disabled) {
+  transform: translateY(1px);
+  transition: transform 0.1s ease;
+}
+
 .quizButton.disabled {
   opacity: 0.5;
   cursor: not-allowed;
