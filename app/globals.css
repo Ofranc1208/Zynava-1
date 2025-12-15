@@ -8,6 +8,8 @@ html,
 body {
   max-width: 100vw;
   overflow-x: hidden;
+  /* iOS Safari: Prevent bounce scrolling behind modals */
+  overscroll-behavior: contain;
 }
 
 body {
@@ -16,6 +18,8 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  /* iOS Safari: Improve rendering performance */
+  -webkit-overflow-scrolling: touch;
 }
 
 a {
