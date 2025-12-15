@@ -1,0 +1,174 @@
+/*
+ * ============================================================================
+ * LCP NAVIGATION BUTTON STYLES - SHARED COMPONENT
+ * ============================================================================
+ * 
+ * Circular arrow buttons for back/next navigation in LCP calculator.
+ * Provides consistent, symmetrical styling across all steps.
+ */
+
+/* Base navigation button styles */
+.navButton {
+  /* Size and shape */
+  width: 3rem;
+  height: 3rem;
+  border-radius: 50%;
+  
+  /* Layout */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  /* Border and outline */
+  border: none;
+  outline: none;
+  
+  /* Typography */
+  font-size: 1.2rem;
+  font-weight: 600;
+  
+  /* Interaction */
+  cursor: pointer;
+  user-select: none;
+  
+  /* Transitions */
+  transition: all 0.15s ease;
+  
+  /* Position */
+  position: relative;
+  overflow: hidden;
+}
+
+/* Enabled state - Green gradient */
+.navButtonEnabled {
+  background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);
+}
+
+/* Enabled hover state */
+.navButtonEnabled:hover {
+  background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(34, 197, 94, 0.4);
+}
+
+/* Enabled active state */
+.navButtonEnabled:active {
+  transform: translateY(0);
+  box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);
+}
+
+/* Disabled state - Gray */
+.navButtonDisabled {
+  background: linear-gradient(135deg, #d1d5db 0%, #9ca3af 100%);
+  color: #ffffff;
+  cursor: not-allowed;
+  opacity: 0.6;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Disabled state - no interaction effects */
+.navButtonDisabled:hover {
+  transform: none;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Arrow symbol styling */
+.arrow {
+  font-size: 1.2rem;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Focus visible for accessibility */
+.navButton:focus-visible {
+  outline: 2px solid #22c55e;
+  outline-offset: 3px;
+}
+
+.navButtonDisabled:focus-visible {
+  outline-color: #9ca3af;
+}
+
+/* ============================================================================
+ * RESPONSIVE DESIGN
+ * ============================================================================
+ */
+
+@media (max-width: 768px) {
+  .navButton {
+    width: 2.8rem;
+    height: 2.8rem;
+    font-size: 1.1rem;
+  }
+
+  .arrow {
+    font-size: 1.1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .navButton {
+    width: 2.5rem;
+    height: 2.5rem;
+    font-size: 1rem;
+  }
+
+  .arrow {
+    font-size: 1rem;
+  }
+}
+
+/* ============================================================================
+ * ACCESSIBILITY
+ * ============================================================================
+ */
+
+/* High contrast mode */
+@media (prefers-contrast: high) {
+  .navButtonEnabled {
+    border: 2px solid #ffffff;
+  }
+
+  .navButtonDisabled {
+    border: 2px solid #6b7280;
+  }
+
+  .navButton:focus-visible {
+    outline-width: 3px;
+  }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .navButton {
+    transition: none;
+  }
+
+  .navButtonEnabled:hover {
+    transform: none;
+  }
+}
+
+/* ============================================================================
+ * PRINT STYLES
+ * ============================================================================
+ */
+
+@media print {
+  .navButton {
+    border: 2px solid #000;
+  }
+
+  .navButtonEnabled {
+    background: #22c55e;
+  }
+
+  .navButtonDisabled {
+    background: #d1d5db;
+  }
+}
+

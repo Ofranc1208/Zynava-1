@@ -13,15 +13,12 @@ export function MobileNav() {
   return (
     <div
       style={{
-        padding: '0.45rem 1.75rem',
-        borderBottom: '1px solid #e5e5e5',
+        width: '100%',
+        height: '100%',
+        padding: '0 1.75rem',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
-        backgroundColor: 'white',
-        position: 'sticky',
-        top: 0,
-        zIndex: 1000
       }}
       className="mobile-nav"
     >

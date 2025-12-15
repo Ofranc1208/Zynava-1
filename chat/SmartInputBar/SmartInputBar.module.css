@@ -1,0 +1,535 @@
+/*
+ * SmartInputBar.module.css - 2025 Edition
+ * =====================================
+ * Modern chat input bar following 2025 UX best practices:
+ * - Minimal, clean design with subtle shadows
+ * - Adaptive height with multiline support
+ * - Smooth transitions and animations
+ * - Enhanced accessibility and touch targets
+ * - Dark mode and theme awareness
+ */
+
+/*
+ * Direct CSS values for Next.js CSS Modules compatibility
+ * Using direct values instead of CSS custom properties to avoid :root selector issues
+ */
+
+/* Main container - minimal and clean */
+.inputContainer {
+  display: flex;
+  align-items: flex-end;
+  background: #ffffff;
+  border-top: 1px solid #e5e7eb;
+  padding: 12px 16px;
+  gap: 8px;
+  width: 100%;
+  box-sizing: border-box;
+  position: sticky;
+  bottom: 0;
+  z-index: 1000;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* Mobile optimizations */
+.mobileContainer {
+  padding: 16px;
+  padding-bottom: calc(16px + env(safe-area-inset-bottom));
+  gap: 12px;
+  box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.08);
+}
+
+/* Desktop refinements */
+.desktopContainer {
+  padding: 12px 20px;
+  gap: 10px;
+  max-width: 100%;
+}
+
+/* Keyboard visible state - enhanced positioning */
+.keyboardVisible {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  transform: translateY(0);
+  animation: slideUpSmooth 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes slideUpSmooth {
+  from {
+    transform: translateY(100%);
+    opacity: 0.8;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Focused state - subtle enhancement */
+.focused {
+  border-top-color: #10b981;
+  box-shadow: 0 -2px 12px rgba(16, 185, 129, 0.08);
+}
+
+/* Input wrapper - contains the textarea */
+.inputWrapper {
+  flex: 1;
+  position: relative;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+}
+
+/* Textarea - adaptive height with clean styling */
+.inputField {
+  width: 100%;
+  border: none;
+  outline: none;
+  background: transparent;
+  color: #1f2937;
+  font-family: inherit;
+  font-size: 16px;
+  line-height: 1.5;
+  padding: 12px 16px;
+  resize: none;
+  overflow-y: auto;
+  min-height: 44px;
+  max-height: 132px; /* ~3 lines */
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE/Edge */
+}
+
+/* Hide scrollbar for webkit browsers */
+.inputField::-webkit-scrollbar {
+  display: none;
+}
+
+/* Mobile input adjustments */
+.mobileInput {
+  font-size: 16px; /* Prevents zoom on iOS */
+  padding: 14px 16px;
+  min-height: 44px; /* iOS touch target minimum */
+}
+
+/* Desktop input refinements */
+.desktopInput {
+  font-size: 14px;
+  padding: 12px 16px;
+  min-height: 40px;
+}
+
+/* Placeholder styling */
+.inputField::placeholder {
+  color: #9ca3af;
+  opacity: 1;
+}
+
+/* Focus state for input wrapper */
+.inputWrapper:focus-within {
+  border-color: #10b981;
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+}
+
+/* Actions container - holds buttons */
+.actionsContainer {
+  display: flex;
+  align-items: flex-end;
+  gap: 6px;
+}
+
+/* Attachment button - minimal design */
+.attachButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border: none;
+  background: #f3f4f6;
+  color: #6b7280;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  flex-shrink: 0;
+}
+
+.attachButton:hover:not(:disabled) {
+  background: #e5e7eb;
+  transform: translateY(-1px);
+}
+
+.attachButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Send button - modern circular design */
+.sendButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  flex-shrink: 0;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Send button states */
+.sendButtonActive {
+  background: #10b981;
+  color: white;
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.25);
+}
+
+.sendButtonActive:hover:not(:disabled) {
+  background: #059669;
+  transform: translateY(-1px) scale(1.05);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.35);
+}
+
+.sendButtonInactive {
+  background: #f3f4f6;
+  color: #9ca3af;
+}
+
+.sendButtonInactive:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* Mobile button adjustments */
+@media (max-width: 768px) {
+  .attachButton,
+  .sendButton {
+    width: 44px;
+    height: 44px;
+  }
+}
+
+/* Loading spinner */
+.loadingSpinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top: 2px solid white;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Loading state */
+.loading {
+  opacity: 0.8;
+  pointer-events: none;
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .inputContainer {
+    background: #1f2937;
+    border-top-color: #374151;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  }
+
+  .inputWrapper {
+    background: #1f2937;
+    border-color: #374151;
+  }
+
+  .inputWrapper:focus-within {
+    border-color: #10b981;
+  }
+
+  .inputField {
+    color: #f9fafb;
+  }
+
+  .inputField::placeholder {
+    color: #9ca3af;
+  }
+
+  .attachButton {
+    background: #374151;
+  }
+
+  .attachButton:hover:not(:disabled) {
+    background: #4b5563;
+  }
+
+  .sendButtonInactive {
+    background: #374151;
+  }
+}
+
+/* High contrast mode */
+@media (prefers-contrast: high) {
+  .inputWrapper {
+    border-width: 2px;
+  }
+
+  .inputWrapper:focus-within {
+    border-color: #000;
+    box-shadow: 0 0 0 4px rgba(0, 0, 0, 0.2);
+  }
+
+  .sendButtonActive {
+    border: 2px solid transparent;
+  }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .inputContainer,
+  .inputWrapper,
+  .attachButton,
+  .sendButton {
+    transition: none;
+  }
+
+  .sendButton:hover {
+    transform: none;
+  }
+
+  .keyboardVisible {
+    animation: none;
+  }
+}
+
+/* Focus visible for accessibility */
+.attachButton:focus-visible,
+.sendButton:focus-visible {
+  outline: 2px solid #10b981;
+  outline-offset: 2px;
+}
+
+/* File preview styles */
+.filePreviewsContainer {
+  background: #ffffff;
+  border-bottom: 1px solid #e5e7eb;
+  padding: 8px 16px;
+  gap: 8px;
+  display: flex;
+  flex-direction: column;
+}
+
+.filePreview {
+  background: #f3f4f6;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 12px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.filePreviewError {
+  background: #fef2f2;
+  border-color: #fecaca;
+}
+
+.filePreviewContent {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.filePreviewIcon {
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.filePreviewInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.filePreviewName {
+  font-size: 14px;
+  font-weight: 500;
+  color: #1f2937;
+  margin-bottom: 2px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.filePreviewSize {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.filePreviewProgress {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+.progressBar {
+  width: 60px;
+  height: 4px;
+  background: #e5e7eb;
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  background: #10b981;
+  transition: width 0.2s ease;
+}
+
+.progressText {
+  font-size: 12px;
+  font-weight: 500;
+  color: #10b981;
+  min-width: 32px;
+  text-align: right;
+}
+
+.filePreviewErrorText {
+  font-size: 12px;
+  color: #dc2626;
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+.filePreviewRemove {
+  background: none;
+  border: none;
+  color: #6b7280;
+  cursor: pointer;
+  font-size: 16px;
+  padding: 4px;
+  border-radius: 4px;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.filePreviewRemove:hover:not(:disabled) {
+  background: #e5e7eb;
+  color: #374151;
+}
+
+.filePreviewRemove:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Dark mode support for file previews */
+@media (prefers-color-scheme: dark) {
+  .filePreviewsContainer {
+    background: #1f2937;
+    border-bottom-color: #374151;
+  }
+
+  .filePreview {
+    background: #374151;
+    border-color: #4b5563;
+  }
+
+  .filePreviewError {
+    background: #7f1d1d;
+    border-color: #991b1b;
+  }
+
+  .filePreviewName {
+    color: #f9fafb;
+  }
+
+  .filePreviewSize {
+    color: #9ca3af;
+  }
+
+  .progressBar {
+    background: #4b5563;
+  }
+
+  .filePreviewRemove {
+    color: #9ca3af;
+  }
+
+  .filePreviewRemove:hover:not(:disabled) {
+    background: #4b5563;
+    color: #f3f4f6;
+  }
+}
+
+/* Enhanced responsive design */
+@media (max-width: 480px) {
+  .mobileContainer {
+    padding: 12px;
+    gap: 8px;
+  }
+
+  .filePreviewsContainer {
+    padding: 8px 12px;
+  }
+
+  .filePreview {
+    padding: 10px;
+    gap: 8px;
+  }
+
+  .filePreviewContent {
+    gap: 8px;
+  }
+
+  .progressBar {
+    width: 50px;
+  }
+
+  .inputField {
+    font-size: 16px;
+    padding: 12px 14px;
+  }
+}
+
+@media (min-width: 769px) {
+  .desktopContainer {
+    padding: 16px 24px;
+  }
+
+  .attachButton:hover,
+  .sendButtonActive:hover {
+    transform: translateY(-2px) scale(1.05);
+  }
+}
+
+/* Smooth height transitions for textarea */
+.inputField {
+  transition: height 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Button press animation */
+.sendButton:active {
+  transform: scale(0.95);
+}
+
+.attachButton:active {
+  transform: scale(0.95);
+}

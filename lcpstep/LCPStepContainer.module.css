@@ -1,0 +1,229 @@
+/*
+ * ============================================================================
+ * LCP STEP CONTAINER STYLES - SHARED COMPONENT
+ * ============================================================================
+ *
+ * Centralized container styling for LCP calculator steps.
+ * Replaces 113 lines of inline styles in LCPStepContainer.tsx.
+ */
+
+/* Main container - 2025 best practices: larger, better spacing */
+.container {
+  max-width: 480px;
+  margin: 2.25rem auto 3rem auto !important;
+  background: #fff;
+  border-radius: 20px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08), 0 2px 8px rgba(0, 0, 0, 0.04);
+  padding: 0.25rem 1.5rem 1rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  min-height: 450px;
+  position: relative;
+  z-index: 10;
+}
+
+/* Header section - ultra compact appearance */
+.header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-top: 0;
+  padding-bottom: 0.1rem;
+  border-bottom: 1px solid #e5e7eb;
+  margin-top: 0;
+  margin-bottom: 0.2rem;
+}
+
+/* Back link */
+.backLink {
+  color: #666;
+  text-decoration: none;
+  font-size: 0.75rem;
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+
+.backLink:hover {
+  color: #333;
+}
+
+/* Step indicator */
+.stepIndicator {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #666;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+
+/* Title - 25% bigger for better readability, +20% for date selection clarity */
+.title {
+  font-size: 1.35rem;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 0.5rem;
+  letter-spacing: -0.02em;
+  color: #22b455;
+  line-height: 1.3;
+}
+
+/* Loading state */
+.loading {
+  min-height: 200px;
+  align-items: center;
+  justify-content: center;
+  color: #666;
+  font-size: 0.9rem;
+}
+
+/* ============================================================================
+ * RESPONSIVE DESIGN
+ * ============================================================================
+ * Ensure container works well on all screen sizes
+ */
+
+@media (max-width: 768px) {
+  .container {
+    max-width: 95%;
+    margin: 1.875rem auto 2.5rem auto !important;
+    padding: 0.4rem 1.5rem 1.25rem 1.5rem;
+    min-height: 450px;
+  }
+
+  .header {
+    padding-top: 0;
+    padding-bottom: 0.2rem;
+    margin-top: 0;
+    margin-bottom: 0.3rem;
+  }
+
+  .stepIndicator {
+    gap: 6px;
+    font-size: 0.6rem;
+  }
+
+  .title {
+    font-size: 1.2rem;
+    margin-bottom: 0.6rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    max-width: 100%;
+    margin: 1.5rem 0.5rem 2rem 0.5rem !important;
+    padding: 0.3rem 1.25rem 1rem 1.25rem;
+    min-height: 400px;
+  }
+
+  .header {
+    padding-top: 0;
+    padding-bottom: 0.15rem;
+    margin-top: 0;
+    margin-bottom: 0.25rem;
+  }
+
+  .backLink {
+    font-size: 0.7rem;
+  }
+
+  .stepIndicator {
+    gap: 4px;
+    font-size: 0.6rem;
+  }
+
+  .title {
+    font-size: 1.08rem;
+    margin-bottom: 0.5rem;
+  }
+}
+
+/* ============================================================================
+ * ACCESSIBILITY ENHANCEMENTS
+ * ============================================================================
+ * High contrast mode and reduced motion support
+ */
+
+@media (prefers-contrast: high) {
+  .container {
+    border: 2px solid #333;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  }
+
+  .header {
+    border-bottom-width: 2px;
+  }
+
+  .backLink:hover {
+    text-decoration: underline;
+  }
+
+  .stepIndicator {
+    font-weight: bold;
+  }
+
+  .title {
+    font-weight: 800;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .backLink {
+    transition: none;
+  }
+}
+
+/* ============================================================================
+ * PRINT STYLES
+ * ============================================================================
+ * Ensure container is visible in print
+ */
+
+@media print {
+  .container {
+    border: 2px solid #000;
+    box-shadow: none;
+    background: #fff;
+  }
+
+  .header {
+    border-bottom: 2px solid #000;
+  }
+
+  .backLink {
+    color: #000;
+    font-weight: bold;
+  }
+
+  .stepIndicator {
+    color: #000;
+    font-weight: bold;
+  }
+
+  .title {
+    color: #000;
+    font-weight: bold;
+  }
+}
+
+/* ============================================================================
+ * FOCUS STATES
+ * ============================================================================
+ * Ensure proper focus management
+ */
+
+.backLink:focus-visible {
+  outline: 2px solid #22c55e;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+@media (prefers-contrast: high) {
+  .backLink:focus-visible {
+    outline-width: 3px;
+  }
+}

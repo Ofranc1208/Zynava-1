@@ -10,6 +10,7 @@
 import ChatBubble from '../ChatBubble'
 import type { AdvisorInput } from '../types'
 import { QUIZ_STEPS } from './quizData'
+import { getConcernLabel } from './goalSpecificConcerns'
 
 interface UserSelectionSummaryProps {
   currentStep: string
@@ -61,11 +62,11 @@ export default function UserSelectionSummary({ currentStep, input }: UserSelecti
     )
   }
   
-  // Concerns selection
+  // Concerns selection - using dynamic mapping
   if (currentStep === 'concerns' && input.concerns.length > 0) {
     const concernLabels = input.concerns
       .filter(c => c !== 'none')
-      .map(c => steps.concerns.options?.find(o => o.value === c)?.label)
+      .map(c => getConcernLabel(c, input.goals[0]))
       .filter(Boolean)
       .join(', ') || 'None'
     
@@ -78,13 +79,16 @@ export default function UserSelectionSummary({ currentStep, input }: UserSelecti
     )
   }
   
-  // Budget selection - updated to match current types
-  if (currentStep === 'budget' && input.budgetTier) {
-    const option = steps.budget.options?.find(o => o.value === input.budgetTier)
+  // Shopping preferences selection - multi-select (up to 3)
+  if (currentStep === 'budget' && input.shoppingPreferences.length > 0) {
+    const prefLabels = input.shoppingPreferences
+      .map(p => steps.budget.options?.find(o => o.value === p)?.label)
+      .filter(Boolean)
+      .join(', ')
     
     return (
       <ChatBubble
-        message={`Budget: ${option?.label || input.budgetTier}`}
+        message={`Preferences: ${prefLabels}`}
         sender="user"
         timestamp={new Date()}
       />

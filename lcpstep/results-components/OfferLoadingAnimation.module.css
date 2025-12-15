@@ -1,0 +1,351 @@
+/* ============================================================================
+ * OFFER LOADING ANIMATION STYLES
+ * ============================================================================
+ * Professional loading sequence before revealing the offer
+ */
+
+.container {
+  padding: 2rem 1rem;
+  max-width: 520px;
+  margin: 0 auto;
+  min-height: 500px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.4s ease-out;
+}
+
+.card {
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(0, 0, 0, 0.08);
+  padding: 3rem 2rem;
+  width: 100%;
+  text-align: center;
+}
+
+/* ============================================================================
+ * SIMPLE TITLE DISPLAY
+ * ============================================================================
+ */
+
+.titleContainer {
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.calculatingTitle {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #22c55e;
+  margin: 0;
+  letter-spacing: -0.02em;
+}
+
+/* ============================================================================
+ * STEP TEXT ANIMATIONS
+ * ============================================================================
+ */
+
+.textContainer {
+  margin-bottom: 2rem;
+  min-height: 120px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.stepText {
+  font-size: 0.95rem;
+  color: #9ca3af;
+  margin: 0;
+  opacity: 0.3;
+  transition: all 0.4s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-weight: 500;
+}
+
+.stepText.active {
+  color: #22c55e;
+  opacity: 1;
+  font-weight: 600;
+  transform: scale(1.05);
+  animation: pulse 1s ease-in-out infinite;
+}
+
+.stepText.completed {
+  color: #6b7280;
+  opacity: 0.6;
+}
+
+.checkmark {
+  color: #22c55e;
+  font-weight: 700;
+  font-size: 1.1rem;
+  animation: checkmarkPop 0.3s ease-out;
+}
+
+/* ============================================================================
+ * PROGRESS BAR
+ * ============================================================================
+ */
+
+.progressContainer {
+  margin-bottom: 1.5rem;
+}
+
+.progressBar {
+  width: 100%;
+  height: 8px;
+  background: #e5e7eb;
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 0.5rem;
+}
+
+.progressFill {
+  height: 100%;
+  background: linear-gradient(90deg, #22c55e 0%, #16a34a 100%);
+  border-radius: 10px;
+  transition: width 0.4s ease-out;
+  box-shadow: 0 0 10px rgba(34, 197, 94, 0.5);
+  position: relative;
+  overflow: hidden;
+}
+
+.progressFill::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.5) 50%,
+    transparent 100%
+  );
+  animation: shimmerProgress 1s infinite;
+}
+
+.progressText {
+  font-size: 0.875rem;
+  color: #6b7280;
+  font-weight: 600;
+  margin: 0;
+}
+
+/* ============================================================================
+ * PULSING DOTS
+ * ============================================================================
+ */
+
+.dotsContainer {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  background: #22c55e;
+  border-radius: 50%;
+  animation: dotPulse 1.4s ease-in-out infinite;
+}
+
+/* ============================================================================
+ * ANIMATIONS & KEYFRAMES
+ * ============================================================================
+ */
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+@keyframes checkmarkPop {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes shimmerProgress {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(200%);
+  }
+}
+
+@keyframes dotPulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.5);
+    opacity: 0.5;
+  }
+}
+
+@keyframes ringPulse {
+  0% {
+    transform: translate(-50%, -50%) scale(0.8);
+    opacity: 0.8;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1.5);
+    opacity: 0;
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes drawLine {
+  0%, 100% {
+    stroke-dashoffset: 0;
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+@keyframes drawS {
+  0% {
+    stroke-dashoffset: 100;
+  }
+  50%, 100% {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes sparkle {
+  0%, 100% {
+    opacity: 0;
+    transform: scale(0);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+
+/* ============================================================================
+ * RESPONSIVE DESIGN
+ * ============================================================================
+ */
+
+@media (max-width: 768px) {
+  .container {
+    padding: 1.5rem 0.75rem;
+    min-height: 450px;
+  }
+
+  .card {
+    padding: 2.5rem 1.5rem;
+  }
+
+  .stepText {
+    font-size: 0.875rem;
+  }
+
+  .iconContainer svg {
+    width: 56px;
+    height: 56px;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 1rem 0.5rem;
+    min-height: 400px;
+  }
+
+  .card {
+    padding: 2rem 1.25rem;
+  }
+
+  .stepText {
+    font-size: 0.8rem;
+  }
+
+  .iconContainer svg {
+    width: 48px;
+    height: 48px;
+  }
+
+  .textContainer {
+    min-height: 100px;
+    gap: 0.5rem;
+  }
+}
+
+/* ============================================================================
+ * ACCESSIBILITY
+ * ============================================================================
+ */
+
+@media (prefers-reduced-motion: reduce) {
+  .stepText.active {
+    animation: none;
+  }
+
+  .dot {
+    animation: none;
+  }
+
+  .progressFill::after {
+    animation: none;
+  }
+
+  .checkmark {
+    animation: none;
+  }
+}
+

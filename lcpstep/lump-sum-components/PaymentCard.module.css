@@ -1,0 +1,30 @@
+/* PaymentCard - Individual payment card styles */
+
+.card {
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 12px;
+  padding: 0.75rem;
+  margin-bottom: 0.5rem;
+}
+
+.title {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #495057;
+  margin-bottom: 0.5rem;
+  text-align: center;
+  margin-top: 0;
+}
+
+/* Responsive adjustments */
+@media (max-width: 640px) {
+  .card {
+    padding: 0.6rem;
+    margin-bottom: 0.4rem;
+  }
+
+  .title {
+    font-size: 0.75rem;
+  }
+}

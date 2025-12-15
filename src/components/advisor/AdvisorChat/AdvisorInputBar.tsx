@@ -71,6 +71,8 @@ export default function AdvisorInputBar({
       {/* Text input */}
       <div className={styles.inputWrapper}>
         <textarea
+          id="advisor-message-input"
+          name="message"
           ref={textareaRef}
           value={input}
           onChange={(e) => setInput(e.target.value)}
@@ -81,6 +83,7 @@ export default function AdvisorInputBar({
           rows={1}
           maxLength={1000}
           aria-label="Message input"
+          autoComplete="off"
         />
       </div>
 

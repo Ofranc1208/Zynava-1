@@ -1,0 +1,1 @@
+export type ChatChoice = 'calculate' | 'specialist' | 'process'; 

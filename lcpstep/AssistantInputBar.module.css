@@ -1,0 +1,131 @@
+/* Assistant Input Bar Styles - Modern & Compact Design */
+
+.inputBarContainer {
+  padding: 12px 16px;
+  border-top: 1px solid #e5e7eb;
+  background-color: #ffffff;
+  flex-shrink: 0;
+}
+
+.inputWrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 8px 12px;
+  transition: all 0.2s ease;
+}
+
+.inputWrapper:focus-within {
+  background-color: #ffffff;
+  border-color: #10b981;
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+}
+
+.inputField {
+  flex: 1;
+  border: none;
+  background: transparent;
+  font-size: 14px;
+  line-height: 1.5;
+  color: #1f2937;
+  outline: none;
+  padding: 0;
+  min-height: 20px;
+}
+
+.inputField::placeholder {
+  color: #9ca3af;
+}
+
+.inputField:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.sendButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 8px;
+  background-color: #e5e7eb;
+  color: #9ca3af;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+  padding: 0;
+}
+
+.sendButton:hover:not(:disabled) {
+  background-color: #d1d5db;
+  transform: scale(1.05);
+}
+
+.sendButtonActive {
+  background-color: #10b981;
+  color: #ffffff;
+}
+
+.sendButtonActive:hover:not(:disabled) {
+  background-color: #059669;
+}
+
+.sendButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.sendButton svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* Responsive Design */
+@media (max-width: 640px) {
+  .inputBarContainer {
+    padding: 10px 12px;
+  }
+
+  .inputWrapper {
+    padding: 6px 10px;
+  }
+
+  .inputField {
+    font-size: 13px;
+  }
+
+  .sendButton {
+    width: 30px;
+    height: 30px;
+  }
+
+  .sendButton svg {
+    width: 16px;
+    height: 16px;
+  }
+}
+
+/* Accessibility */
+.sendButton:focus-visible {
+  outline: 2px solid #10b981;
+  outline-offset: 2px;
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .inputWrapper,
+  .sendButton {
+    transition: none;
+  }
+
+  .sendButton:hover:not(:disabled) {
+    transform: none;
+  }
+}
+

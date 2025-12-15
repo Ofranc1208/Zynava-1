@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useRef, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import styles from './AdvisorChat.module.css'
 import ChatBubble from './ChatBubble'
 import TypingIndicator from './AdvisorChat/TypingIndicator'
@@ -8,6 +9,8 @@ import WelcomeSequence from './AdvisorChat/WelcomeSequence'
 import QuizStepRenderer from './AdvisorChat/QuizStepRenderer'
 import UserSelectionSummary from './AdvisorChat/UserSelectionSummary'
 import AdvisorInputBar from './AdvisorChat/AdvisorInputBar'
+import ProcessingAnimation from './AdvisorChat/ProcessingAnimation'
+import ReviewStep from './AdvisorChat/ReviewStep'
 import { useAdvisorQuiz } from './AdvisorQuizController'
 import { QUIZ_STEPS } from './AdvisorChat/quizData'
 import type { AdvisorInput } from './types'
@@ -20,19 +23,69 @@ export default function AdvisorChat({ onClose }: AdvisorChatProps) {
   const [showQuiz, setShowQuiz] = useState(false)
   const [welcomeComplete, setWelcomeComplete] = useState(false)
   const [isTyping, setIsTyping] = useState(false)
+  const [isNavigatingBack, setIsNavigatingBack] = useState(false)
+  const [showReview, setShowReview] = useState(false)
+  const [isProcessing, setIsProcessing] = useState(false)
   const messagesContainerRef = useRef<HTMLDivElement>(null)
   const autoScrollTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+  const previousStepRef = useRef<string>('welcome')
 
   const handleComplete = async (input: AdvisorInput) => {
-    setIsTyping(true)
-    // TODO: Call API to get recommendations
     console.log('Quiz completed with input:', input)
+    // Show review step first
+    setShowReview(true)
+  }
+
+  const handleReviewNext = () => {
+    // User confirmed, show processing animation
+    setShowReview(false)
+    setIsProcessing(true)
+  }
+
+  const handleReviewBack = () => {
+    // Go back to budget step
+    setShowReview(false)
+    handlePrevious()
+  }
+
+  const handleReviewEdit = (stepId: string) => {
+    // Navigate to specific step for editing
+    setShowReview(false)
+    goToStep(stepId)
+  }
+
+  const router = useRouter()
+
+  const handleProcessingComplete = () => {
+    // Processing animation complete, but don't show results in chat
+    // Results will be shown on separate page
+  }
+
+  const handleViewResults = () => {
+    // Navigate to results page with quiz data as URL params
+    const params = new URLSearchParams()
     
-    // Simulate processing
-    setTimeout(() => {
-      setIsTyping(false)
-      // TODO: Show results
-    }, 2000)
+    // Add all quiz selections to URL params
+    if (input.goals.length > 0) {
+      params.set('goals', input.goals.join(','))
+    }
+    if (input.demographic) {
+      params.set('demographic', input.demographic)
+    }
+    if (input.activityLevel) {
+      params.set('activity', input.activityLevel)
+    }
+    if (input.diet) {
+      params.set('diet', input.diet)
+    }
+    if (input.concerns.length > 0) {
+      params.set('concerns', input.concerns.join(','))
+    }
+    if (input.shoppingPreferences.length > 0) {
+      params.set('preferences', input.shoppingPreferences.join(','))
+    }
+    
+    router.push(`/advisor/results?${params.toString()}`)
   }
 
   const {
@@ -40,11 +93,14 @@ export default function AdvisorChat({ onClose }: AdvisorChatProps) {
     steps,
     input,
     handleGoalSelect,
+    handleDemographicSelect,
     handleLifestyleSelect,
     handleDietSelect,
     handleConcernSelect,
     handleBudgetSelect,
     handleNext,
+    handlePrevious,
+    goToStep,
     canProceed,
     resetQuiz,
   } = useAdvisorQuiz(handleComplete)
@@ -103,9 +159,31 @@ export default function AdvisorChat({ onClose }: AdvisorChatProps) {
     }
   }, [currentStep, showQuiz, isTyping, input, welcomeComplete])
 
-  // Auto-advance to next question when selection is made (except concerns which is optional)
+  // Track navigation direction to prevent auto-advance when going back
   useEffect(() => {
-    if (!showQuiz || currentStep === 'concerns') return
+    const stepOrder = ['welcome', 'goals', 'demographics', 'lifestyle', 'diet', 'concerns', 'budget']
+    const currentIndex = stepOrder.indexOf(currentStep)
+    const previousIndex = stepOrder.indexOf(previousStepRef.current)
+    
+    // Only track direction if we have a valid previous step (not initial render)
+    if (previousStepRef.current !== 'welcome' || currentStep !== 'welcome') {
+      if (currentIndex < previousIndex && currentIndex >= 0) {
+        // Navigating backwards
+        setIsNavigatingBack(true)
+      } else if (currentIndex > previousIndex && currentIndex >= 0) {
+        // Navigating forwards - clear the flag
+        setIsNavigatingBack(false)
+      }
+    }
+    
+    previousStepRef.current = currentStep
+  }, [currentStep])
+
+  // Auto-advance to next question when selection is made
+  // BUT NOT when navigating backwards - user should be able to stay on the step they went back to
+  // ALSO NOT for budget step - requires manual "Proceed" button
+  useEffect(() => {
+    if (!showQuiz || isNavigatingBack || currentStep === 'budget') return
     
     if (canProceed()) {
       // Auto-advance after a short delay for better UX
@@ -115,7 +193,17 @@ export default function AdvisorChat({ onClose }: AdvisorChatProps) {
       
       return () => clearTimeout(timer)
     }
-  }, [showQuiz, currentStep, input, canProceed, handleNext])
+  }, [showQuiz, currentStep, input, canProceed, handleNext, isNavigatingBack])
+
+  // Clear isNavigatingBack when user makes a selection change after going back
+  // This allows auto-advance to work again when user actively engages with the step
+  useEffect(() => {
+    if (isNavigatingBack) {
+      // User changed their selection on a step they navigated back to
+      // Clear the flag to allow auto-advance to work again
+      setIsNavigatingBack(false)
+    }
+  }, [input]) // Watch for input changes
 
   const handleGetStarted = () => {
     setWelcomeComplete(true) // Mark welcome as complete
@@ -128,7 +216,14 @@ export default function AdvisorChat({ onClose }: AdvisorChatProps) {
     setShowQuiz(false)
     setWelcomeComplete(false) // Reset welcome state
     setIsTyping(false)
+    setIsNavigatingBack(false)
+    previousStepRef.current = 'welcome'
     resetQuiz()
+  }
+
+  const handleBackClick = () => {
+    setIsNavigatingBack(true)
+    handlePrevious()
   }
 
   const currentStepData = steps[currentStep]
@@ -177,19 +272,40 @@ export default function AdvisorChat({ onClose }: AdvisorChatProps) {
 
           {/* Quiz steps - show below welcome messages */}
           {/* Question is now inside the fixed QuizStepRenderer card */}
-          {showQuiz && currentStepData && currentStepData.type !== 'welcome' && (
+          {showQuiz && !showReview && !isProcessing && currentStepData && currentStepData.type !== 'welcome' && (
             <QuizStepRenderer
               step={currentStepData}
               input={input}
               onGoalSelect={handleGoalSelect}
+              onDemographicSelect={handleDemographicSelect}
               onLifestyleSelect={handleLifestyleSelect}
               onDietSelect={handleDietSelect}
               onConcernSelect={handleConcernSelect}
               onBudgetSelect={handleBudgetSelect}
               canProceed={canProceed()}
               onNext={handleNext}
+              onPrevious={handleBackClick}
             />
           )}
+
+          {/* Review Step - shown after all questions are answered */}
+          {showReview && (
+            <ReviewStep
+              input={input}
+              onNext={handleReviewNext}
+              onPrevious={handleReviewBack}
+              onEdit={handleReviewEdit}
+            />
+          )}
+
+          {/* Processing Animation - shown after review confirmation */}
+          {isProcessing && (
+            <ProcessingAnimation 
+              onComplete={handleProcessingComplete} 
+              onViewResults={handleViewResults}
+            />
+          )}
+
 
           {/* User selection summary - DISABLED per user request */}
           {/* {showQuiz && (

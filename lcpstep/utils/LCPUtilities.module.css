@@ -1,0 +1,82 @@
+/* ========================================
+   LCP UTILITIES
+   True utility classes used across LCP components
+   ======================================== */
+
+/* ERROR HANDLING */
+.error, .errorText {
+  color: #ef4444;
+  font-size: 0.93rem;
+  margin-top: 0.18rem;
+  text-align: left;
+}
+
+/* SUCCESS TEXT */
+.successText {
+  color: #22c55e;
+  font-size: 0.8rem;
+  margin-top: 0.18rem;
+  text-align: center;
+  font-weight: 500;
+}
+
+/* INPUT WRAPPER */
+.inputWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  width: 100%;
+}
+
+/* TOOLTIP ICON */
+.tooltipIcon {
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  background: #22c55e;
+  color: white;
+  border-radius: 50%;
+  text-align: center;
+  line-height: 18px;
+  font-size: 12px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  user-select: none;
+  flex-shrink: 0;
+}
+
+.tooltipIcon:hover {
+  background: #16a34a;
+  transform: scale(1.1);
+}
+
+/* Responsive adjustments */
+@media (max-width: 640px) {
+  .error, .errorText {
+    font-size: 0.85rem;
+  }
+
+  .successText {
+    font-size: 0.75rem;
+  }
+
+  .tooltipIcon {
+    width: 16px;
+    height: 16px;
+    line-height: 16px;
+    font-size: 11px;
+  }
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .tooltipIcon {
+    transition: none;
+    transform: none;
+  }
+  
+  .tooltipIcon:hover {
+    transform: none;
+  }
+}

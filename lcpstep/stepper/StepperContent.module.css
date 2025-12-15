@@ -1,0 +1,22 @@
+/* ============================================================================
+ * STEPPER CONTENT WRAPPER STYLES - LCP Calculator
+ * ============================================================================
+ * Provides consistent layout wrapper for calculator content
+ */
+
+.contentWrapper {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 0.5rem;
+  animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+

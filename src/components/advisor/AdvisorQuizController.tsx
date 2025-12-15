@@ -4,41 +4,20 @@ import { useState, useCallback } from 'react'
 import { QUIZ_STEPS, STEP_ORDER } from './AdvisorChat/quizData'
 import type { 
   AdvisorInput, 
-  AdvisorStep, 
-  AdvisorMessage,
   GoalId,
-  AgeRange,
+  DemographicId,
   ActivityLevel,
   DietType,
   ConcernId,
-  BudgetTier
+  ShoppingPreference
 } from './types'
-
-interface AdvisorQuizControllerProps {
-  onComplete: (input: AdvisorInput) => void
-}
 
 export function useAdvisorQuiz(onComplete: (input: AdvisorInput) => void) {
   const [currentStep, setCurrentStep] = useState<string>('welcome')
   const [input, setInput] = useState<AdvisorInput>({
     goals: [],
     concerns: [],
-  })
-  const [messages, setMessages] = useState<AdvisorMessage[]>(() => {
-    // Initialize with welcome message
-    const welcomeStep = {
-      id: 'welcome',
-      type: 'welcome' as const,
-      message: "Hi! I'm your Zynava Supplement Advisor. I'll help you find the right supplements based on your goals. Let's get started!",
-      isComplete: false,
-    }
-    return [{
-      id: 'welcome-1',
-      type: 'quiz-step',
-      sender: 'advisor',
-      step: welcomeStep,
-      timestamp: new Date(),
-    }]
+    shoppingPreferences: [],
   })
 
   const steps = QUIZ_STEPS
@@ -50,10 +29,36 @@ export function useAdvisorQuiz(onComplete: (input: AdvisorInput) => void) {
     })
   }, [])
 
+  const handleDemographicSelect = useCallback((value: string) => {
+    const validDemographics: DemographicId[] = [
+      'male-18-35',
+      'male-36-50',
+      'male-51-65',
+      'male-65-plus',
+      'female-18-35',
+      'female-36-50',
+      'female-51-65',
+      'female-65-plus'
+    ]
+    if (validDemographics.includes(value as DemographicId)) {
+      setInput(prev => ({ ...prev, demographic: value as DemographicId }))
+    }
+  }, [])
+
   const handleLifestyleSelect = useCallback((value: string) => {
     setInput(prev => {
       // Store the exact selected value
-      if (['very-active', 'moderately-active', 'lightly-active', 'sedentary'].includes(value)) {
+      const validActivityLevels: ActivityLevel[] = [
+        'power-lifter',
+        'endurance-athlete',
+        'regular-gym-goer',
+        'active-lifestyle',
+        'light-exercise',
+        'desk-worker',
+        'low-activity',
+        'recovery-injury'
+      ]
+      if (validActivityLevels.includes(value as ActivityLevel)) {
         return { ...prev, activityLevel: value as ActivityLevel }
       }
       return prev
@@ -63,7 +68,17 @@ export function useAdvisorQuiz(onComplete: (input: AdvisorInput) => void) {
   const handleDietSelect = useCallback((value: string) => {
     setInput(prev => {
       // Store the exact selected value
-      if (['no-preference', 'vegan', 'gluten-free'].includes(value)) {
+      const validDietTypes: DietType[] = [
+        'no-preference',
+        'vegan',
+        'vegetarian',
+        'gluten-free',
+        'sugar-free',
+        'kosher',
+        'halal',
+        'non-gmo-organic'
+      ]
+      if (validDietTypes.includes(value as DietType)) {
         return { ...prev, diet: value as DietType }
       }
       return prev
@@ -84,8 +99,29 @@ export function useAdvisorQuiz(onComplete: (input: AdvisorInput) => void) {
   }, [])
 
   const handleBudgetSelect = useCallback((value: string) => {
-    if (['budget-conscious', 'moderate-spending', 'premium-quality'].includes(value)) {
-      setInput(prev => ({ ...prev, budgetTier: value as BudgetTier }))
+    const validPreferences: ShoppingPreference[] = [
+      'budget-friendly',
+      'premium-quality',
+      'free-shipping',
+      'new-arrivals',
+      'on-sale',
+      'bundle-deals',
+      'subscribe-save'
+    ]
+    if (validPreferences.includes(value as ShoppingPreference)) {
+      setInput(prev => {
+        const currentPrefs = prev.shoppingPreferences
+        // Toggle selection - if already selected, remove it
+        if (currentPrefs.includes(value as ShoppingPreference)) {
+          return { ...prev, shoppingPreferences: currentPrefs.filter(p => p !== value) }
+        }
+        // Max 3 selections - if already at 3, don't add more
+        if (currentPrefs.length >= 3) {
+          return prev
+        }
+        // Add new selection
+        return { ...prev, shoppingPreferences: [...currentPrefs, value as ShoppingPreference] }
+      })
     }
   }, [])
 
@@ -101,18 +137,35 @@ export function useAdvisorQuiz(onComplete: (input: AdvisorInput) => void) {
     }
   }, [currentStep, input, onComplete])
 
+  const handlePrevious = useCallback(() => {
+    const currentIndex = STEP_ORDER.indexOf(currentStep as typeof STEP_ORDER[number])
+    
+    if (currentIndex > 0) {
+      const previousStep = STEP_ORDER[currentIndex - 1]
+      setCurrentStep(previousStep)
+    }
+  }, [currentStep])
+
+  const goToStep = useCallback((stepId: string) => {
+    if (STEP_ORDER.includes(stepId as typeof STEP_ORDER[number])) {
+      setCurrentStep(stepId)
+    }
+  }, [])
+
   const canProceed = useCallback(() => {
     switch (currentStep) {
       case 'goals':
         return input.goals.length === 1 // Require exactly one primary goal
+      case 'demographics':
+        return !!input.demographic // Require demographic selection
       case 'lifestyle':
         return !!input.activityLevel
       case 'diet':
         return !!input.diet
       case 'concerns':
-        return true // Optional step
+        return input.concerns.length > 0 // Only auto-advance if selection made
       case 'budget':
-        return !!input.budgetTier
+        return false // Don't auto-advance, require manual "Proceed" button
       default:
         return false
     }
@@ -123,6 +176,7 @@ export function useAdvisorQuiz(onComplete: (input: AdvisorInput) => void) {
     setInput({
       goals: [],
       concerns: [],
+      shoppingPreferences: [],
     })
   }, [])
 
@@ -130,13 +184,15 @@ export function useAdvisorQuiz(onComplete: (input: AdvisorInput) => void) {
     currentStep,
     steps,
     input,
-    messages,
     handleGoalSelect,
+    handleDemographicSelect,
     handleLifestyleSelect,
     handleDietSelect,
     handleConcernSelect,
     handleBudgetSelect,
     handleNext,
+    handlePrevious,
+    goToStep,
     canProceed,
     resetQuiz,
   }

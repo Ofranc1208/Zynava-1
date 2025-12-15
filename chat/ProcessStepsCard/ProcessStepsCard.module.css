@@ -1,0 +1,101 @@
+/* Process Steps Card Component - Compact Clean Style */
+
+.processContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  padding: 16px;
+  background: #ffffff;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.processHeader {
+  text-align: center;
+  margin-bottom: 4px;
+}
+
+.processTitle {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0 0 4px 0;
+}
+
+.processSubtitle {
+  font-size: 0.85rem;
+  color: #64748b;
+  margin: 0;
+  font-weight: 400;
+}
+
+.stepsGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+}
+
+.stepCard {
+  padding: 12px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  border-left: 3px solid #22c55e;
+}
+
+.stepTitle {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #1e293b;
+  line-height: 1.4;
+  margin: 0 0 4px 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.stepNumber {
+  color: #22c55e;
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
+.stepDescription {
+  font-size: 0.8rem;
+  color: #64748b;
+  line-height: 1.4;
+  margin: 0;
+  font-weight: 400;
+}
+
+/* Mobile responsive design */
+@media (max-width: 480px) {
+  .processContainer {
+    padding: 14px;
+    gap: 10px;
+  }
+
+  .processTitle {
+    font-size: 1.1rem;
+  }
+
+  .processSubtitle {
+    font-size: 0.8rem;
+  }
+
+  .stepCard {
+    padding: 10px;
+  }
+
+  .stepTitle {
+    font-size: 0.9rem;
+  }
+
+  .stepDescription {
+    font-size: 0.75rem;
+  }
+}
+

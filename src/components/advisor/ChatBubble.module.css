@@ -1,6 +1,7 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+
 /* Chat Bubble Styles - 2025 Best Practices */
 /* Inter is the industry standard for chat interfaces (Discord, Slack, Linear) */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
 
 .bubble {
   display: flex;

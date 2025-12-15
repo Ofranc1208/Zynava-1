@@ -1,0 +1,213 @@
+/*
+ * ChatBubble.module.css - Chat Message Bubble Styles
+ * =================================================
+ * Responsive chat bubble component with proper CSS architecture
+ * Converted from inline styles to CSS modules for maintainability
+ *
+ * Note: CSS Modules don't support :root selectors, so design tokens
+ * are implemented as CSS custom properties on component classes
+ */
+
+/* Base chat bubble styles */
+.chatBubble {
+  max-width: 80%;
+  min-width: 60px;
+  padding: 14px 16px;
+  margin-bottom: 0;
+  font-size: 0.98rem;
+  line-height: 1.65; /* Increased from 1.5 for better readability and spacing */
+  border-radius: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  text-align: left;
+  word-break: break-word;
+  animation: chatBubbleFadeIn 0.5s ease-in-out;
+  position: relative;
+}
+
+/* User message styles (right-aligned) */
+.chatBubble--user {
+  background: #22b455;
+  color: #fff;
+  align-self: flex-end;
+  border: 1px solid #22b455;
+  margin-left: auto;
+}
+
+/* Bot message styles (left-aligned) */
+.chatBubble--bot {
+  background: #f1f3f4;
+  color: #222;
+  align-self: flex-start;
+  border: 1px solid #ececec;
+}
+
+/* System message styles (left-aligned, prominent) */
+.chatBubble--system {
+  background: #e6f4ea;
+  color: #1976d2;
+  font-weight: 600;
+  align-self: flex-start;
+  border: 1px solid #b6f2d2;
+}
+
+/* Animation keyframes */
+@keyframes chatBubbleFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive Design Breakpoints */
+@media (max-width: 768px) {
+  /* Mobile adjustments */
+  .chatBubble {
+    max-width: 90%;
+    min-width: 50px;
+    font-size: 0.95rem;
+    padding: 8px 12px;
+  }
+
+  /* Adjust margins for mobile */
+  .chatBubble--user {
+    margin-right: 8px;
+  }
+
+  .chatBubble--bot,
+  .chatBubble--system {
+    margin-left: 8px;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1023px) {
+  /* Tablet adjustments */
+  .chatBubble {
+    max-width: 85%;
+    font-size: 0.97rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  /* Desktop - no changes needed, uses base styles */
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .chatBubble {
+    border-width: 2px;
+  }
+
+  .chatBubble--user {
+    border-color: #000;
+  }
+
+  .chatBubble--bot {
+    border-color: #666;
+  }
+
+  .chatBubble--system {
+    border-color: #1976d2;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .chatBubble {
+    animation: none;
+    transition: none;
+  }
+}
+
+/* Focus states for accessibility */
+.chatBubble:focus {
+  outline: 2px solid #007acc;
+  outline-offset: 2px;
+}
+
+/* File message styles - Upload confirmation with thumbnail preview */
+.fileMessage {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 12px;
+  background: rgba(34, 197, 94, 0.05);
+  border-radius: 12px;
+  border: 1px solid rgba(34, 197, 94, 0.2);
+  max-width: 300px;
+}
+
+.filePreviewContainer {
+  width: 100%;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.documentThumbnail {
+  width: 100%;
+  display: block;
+}
+
+.fileIcon {
+  font-size: 28px;
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+.fileInfo {
+  flex: 1;
+  min-width: 0;
+  padding: 0 4px;
+}
+
+.fileName {
+  font-size: 13px;
+  font-weight: 500;
+  margin-bottom: 4px;
+  color: inherit;
+  line-height: 1.4;
+  word-break: break-word;
+}
+
+.fileName strong {
+  color: #16a34a;
+  font-weight: 600;
+  display: block;
+  margin-bottom: 2px;
+}
+
+.fileMeta {
+  font-size: 11px;
+  opacity: 0.9;
+  color: #16a34a;
+  font-weight: 500;
+}
+
+/* Dark mode support for file messages */
+@media (prefers-color-scheme: dark) {
+  .fileDownload {
+    background: rgba(0, 0, 0, 0.1);
+    border-color: rgba(0, 0, 0, 0.2);
+  }
+
+  .fileDownload:hover {
+    background: rgba(0, 0, 0, 0.2);
+  }
+}
+
+/* Print styles */
+@media print {
+  .chatBubble {
+    background: transparent !important;
+    color: #000 !important;
+    border: 1px solid #ccc !important;
+    box-shadow: none !important;
+    animation: none !important;
+  }
+}

@@ -1,0 +1,167 @@
+/* Quote Button Component - Clean, Professional Design */
+
+.quoteContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  padding: 16px;
+  background: #ffffff;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.quoteOptions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+}
+
+.quoteOption {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 18px;
+  background: #ffffff;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  text-align: left;
+  width: 100%;
+  position: relative;
+}
+
+.quoteOption:hover {
+  background: #f9fafb;
+  border-color: #22c55e;
+  transform: translateX(2px);
+  box-shadow: 0 2px 8px rgba(34, 197, 94, 0.12);
+}
+
+.quoteOption:active {
+  transform: translateX(0);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.optionIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
+  background: #f3f4f6;
+  border: 1px solid #e5e7eb;
+  flex-shrink: 0;
+  transition: all 0.2s ease;
+}
+
+.quoteOption:hover .optionIcon {
+  background: #dcfce7;
+  border-color: #22c55e;
+}
+
+.iconEmoji {
+  font-size: 1.25rem;
+  line-height: 1;
+}
+
+.optionContent {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  flex: 1;
+  min-width: 0;
+}
+
+.optionTitle {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #111827;
+  line-height: 1.3;
+  margin: 0;
+}
+
+.optionDescription {
+  font-size: 0.8125rem;
+  color: #6b7280;
+  line-height: 1.4;
+  margin: 0;
+  font-weight: 400;
+}
+
+.optionArrow {
+  font-size: 1.1rem;
+  color: #9ca3af;
+  font-weight: 400;
+  flex-shrink: 0;
+  transition: all 0.2s ease;
+}
+
+.quoteOption:hover .optionArrow {
+  color: #22c55e;
+  transform: translateX(2px);
+}
+
+/* Mobile responsive design */
+@media (max-width: 480px) {
+  .quoteContainer {
+    padding: 14px;
+    gap: 10px;
+  }
+
+  .quoteOption {
+    padding: 14px 16px;
+    gap: 12px;
+  }
+
+  .optionIcon {
+    width: 40px;
+    height: 40px;
+  }
+
+  .iconEmoji {
+    font-size: 1.15rem;
+  }
+
+  .optionTitle {
+    font-size: 0.9rem;
+  }
+
+  .optionDescription {
+    font-size: 0.75rem;
+  }
+
+  .optionArrow {
+    font-size: 1rem;
+  }
+}
+
+/* Accessibility - High contrast mode */
+@media (prefers-contrast: high) {
+  .quoteOption {
+    border-width: 2px;
+  }
+  
+  .quoteOption:hover {
+    border-width: 2px;
+  }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .quoteOption {
+    transition: none;
+  }
+  
+  .quoteOption:hover {
+    transform: none;
+  }
+  
+  .optionArrow {
+    transition: none;
+  }
+}

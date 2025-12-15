@@ -1,0 +1,254 @@
+/*
+ * ============================================================================
+ * LCP BUTTON STYLES - SHARED COMPONENT
+ * ============================================================================
+ *
+ * Centralized button styling for LCP calculator steps.
+ * Replaces ~400 lines of duplicated inline styles.
+ */
+
+/* Base button styles - applied to all variants */
+.baseButton {
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  font-weight: 500;
+  transition: all 0.15s ease;
+  outline: none;
+  border-radius: 20px;
+  user-select: none;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Remove default button styling */
+.baseButton:focus {
+  outline: none;
+}
+
+/* Focus visible for accessibility */
+.baseButton:focus-visible {
+  outline: 2px solid #22c55e;
+  outline-offset: 2px;
+}
+
+/* Disabled state for all variants */
+.baseButton:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* ============================================================================
+ * OPTION BUTTON VARIANT
+ * ============================================================================
+ * Used for selection buttons (payment modes, ages, genders, etc.)
+ */
+
+.optionButton {
+  /* Default state (unselected) - 20% smaller with bigger text */
+  border: 2px solid #e5e7eb;
+  background: #ffffff;
+  color: #374151;
+  padding: 0.6rem 1.2rem; /* 20% smaller padding */
+  font-size: 1rem; /* Bigger text */
+  min-width: 110px; /* 20% smaller */
+  max-width: 160px; /* Allow longer text like "Lump Sum" to fit on one line */
+  min-height: 38px; /* 20% smaller */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600; /* Slightly bolder for better readability */
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  flex: 0 0 auto; /* Prevent flex from stretching buttons */
+}
+
+/* Selected state - enhanced visual feedback */
+.optionButtonSelected {
+  background: #dcfce7;
+  border: 2px solid #22c55e;
+  color: #15803d;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(34, 197, 94, 0.2);
+  transform: translateY(-1px);
+}
+
+/* Hover effects */
+.optionButton:not(:disabled):hover {
+  background: #f3f4f6;
+  border-color: #9ca3af;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.optionButtonSelected:not(:disabled):hover {
+  background: #dcfce7;
+  border-color: #16a34a;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(34, 197, 94, 0.2);
+}
+
+/* Active state */
+.optionButton:not(:disabled):active {
+  transform: translateY(0);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.optionButtonSelected:not(:disabled):active {
+  transform: translateY(0);
+  box-shadow: 0 1px 2px rgba(34, 197, 94, 0.2);
+}
+
+/* ============================================================================
+ * NEXT BUTTON VARIANT
+ * ============================================================================
+ * Circular arrow button for progressing to next step
+ */
+
+.nextButton {
+  /* Default state */
+  background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+  color: #fff;
+  width: 3rem;
+  height: 3rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  font-weight: 600;
+  box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);
+}
+
+/* Hover state */
+.nextButton:not(:disabled):hover {
+  background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(34, 197, 94, 0.4);
+}
+
+/* Active state */
+.nextButton:not(:disabled):active {
+  transform: translateY(0);
+  box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);
+}
+
+/* Disabled state */
+.nextButtonDisabled {
+  background: #bbf7d0;
+  color: #fff;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Arrow styling */
+.arrow {
+  font-size: 1.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+/* ============================================================================
+ * RESPONSIVE DESIGN
+ * ============================================================================
+ * Ensure buttons work well on all screen sizes
+ */
+
+@media (max-width: 768px) {
+  .optionButton {
+    min-width: 95px; /* Slightly smaller for mobile */
+    max-width: 150px; /* Adjusted for mobile screens to fit "Lump Sum" */
+    padding: 0.5rem 1rem; /* Adjusted for better mobile touch */
+    font-size: 0.9rem; /* Slightly smaller but still readable */
+  }
+
+  .nextButton {
+    width: 2.8rem;
+    height: 2.8rem;
+    font-size: 1.3rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .optionButton {
+    min-width: 85px; /* Even smaller for very small screens */
+    max-width: 140px; /* Compact for small screens but fits "Lump Sum" */
+    padding: 0.45rem 0.9rem; /* Compact padding for mobile */
+    font-size: 0.85rem; /* Readable but compact */
+  }
+
+  .nextButton {
+    width: 2.5rem;
+    height: 2.5rem;
+    font-size: 1.1rem;
+  }
+}
+
+/* ============================================================================
+ * ACCESSIBILITY ENHANCEMENTS
+ * ============================================================================
+ * High contrast mode support
+ */
+
+@media (prefers-contrast: high) {
+  .optionButton {
+    border-width: 2px;
+  }
+
+  .optionButtonSelected {
+    border-width: 3px;
+  }
+
+  .nextButton {
+    border: 2px solid #fff;
+  }
+
+  .baseButton:focus-visible {
+    outline-width: 3px;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .baseButton {
+    transition: none;
+  }
+
+  .optionButton:not(:disabled):hover {
+    transform: none;
+    box-shadow: none;
+  }
+
+  .nextButton:not(:disabled):hover {
+    transform: none;
+    box-shadow: none;
+  }
+}
+
+/* ============================================================================
+ * PRINT STYLES
+ * ============================================================================
+ * Ensure buttons are visible in print
+ */
+
+@media print {
+  .optionButton {
+    border: 2px solid #000;
+    background: #fff;
+    color: #000;
+  }
+
+  .optionButtonSelected {
+    background: #e0fce2;
+    border-color: #22c55e;
+  }
+
+  .nextButton {
+    border: 2px solid #000;
+    background: #22c55e;
+    color: #fff;
+  }
+}

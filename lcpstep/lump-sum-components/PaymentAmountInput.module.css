@@ -1,0 +1,63 @@
+/* PaymentAmountInput - Custom amount input with $ prefix */
+
+.inputContainer {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.dollarSign {
+  position: absolute;
+  left: 0.75rem;
+  color: #6b7280;
+  font-size: 0.78rem;
+  font-weight: 500;
+  z-index: 1;
+}
+
+.input {
+  border: 1.5px solid #d1d5db;
+  background: #f9fafb;
+  color: #222;
+  border-radius: 8px;
+  padding: 0.45rem 0.75rem 0.45rem 1.5rem;
+  font-size: 0.78rem;
+  min-height: 2.1rem;
+  width: 100%;
+  transition: border 0.15s ease;
+  box-shadow: none;
+}
+
+.input:focus {
+  outline: none;
+}
+
+.input.error {
+  border-color: #ef4444;
+  box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.1);
+}
+
+.errorMessage {
+  color: #ef4444;
+  font-size: 0.7rem;
+  margin-top: 0.2rem;
+  display: block;
+}
+
+/* Responsive adjustments */
+@media (max-width: 640px) {
+  .input {
+    font-size: 0.75rem;
+    padding: 0.4rem 0.7rem 0.4rem 1.4rem;
+    min-height: 2rem;
+  }
+
+  .dollarSign {
+    left: 0.7rem;
+    font-size: 0.75rem;
+  }
+
+  .errorMessage {
+    font-size: 0.65rem;
+  }
+}

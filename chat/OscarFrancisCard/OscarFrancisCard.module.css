@@ -1,0 +1,238 @@
+/* Oscar Francis Card Styles */
+.oscarCard {
+  position: relative;
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  border: 2px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 24px;
+  margin: 16px 0;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.oscarCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+/* Heart Animation Container */
+.heartContainer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  z-index: 1;
+  overflow: hidden;
+}
+
+.heart {
+  position: absolute;
+  font-size: 24px;
+  animation: floatUp 3s ease-out forwards;
+  opacity: 0;
+}
+
+.heart:nth-child(1) {
+  left: 10%;
+  animation-delay: 0s;
+}
+
+.heart:nth-child(2) {
+  left: 25%;
+  animation-delay: 0.5s;
+}
+
+.heart:nth-child(3) {
+  left: 50%;
+  animation-delay: 1s;
+}
+
+.heart:nth-child(4) {
+  left: 75%;
+  animation-delay: 1.5s;
+}
+
+.heart:nth-child(5) {
+  left: 90%;
+  animation-delay: 2s;
+}
+
+@keyframes floatUp {
+  0% {
+    opacity: 0;
+    transform: translateY(100px) scale(0.5);
+  }
+  20% {
+    opacity: 1;
+    transform: translateY(80px) scale(0.8);
+  }
+  80% {
+    opacity: 1;
+    transform: translateY(-20px) scale(1.2);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-100px) scale(1.5);
+  }
+}
+
+/* Content Styles */
+.content {
+  position: relative;
+  z-index: 2;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.avatar {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 8px rgba(16, 185, 129, 0.3);
+}
+
+.avatarText {
+  color: white;
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.titleSection {
+  flex: 1;
+}
+
+.name {
+  font-size: 24px;
+  font-weight: 700;
+  color: #111827;
+  margin: 0 0 4px 0;
+  line-height: 1.2;
+}
+
+.role {
+  font-size: 16px;
+  color: #6b7280;
+  margin: 0;
+  font-weight: 500;
+}
+
+.description {
+  margin-bottom: 20px;
+}
+
+.mainText {
+  font-size: 16px;
+  line-height: 1.6;
+  color: #374151;
+  margin: 0 0 16px 0;
+  font-weight: 500;
+}
+
+.missionPoints {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.missionPoint {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 8px 0;
+}
+
+.icon {
+  font-size: 20px;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.missionPoint span:last-child {
+  font-size: 14px;
+  line-height: 1.5;
+  color: #4b5563;
+  font-weight: 400;
+}
+
+.footer {
+  border-top: 1px solid #e5e7eb;
+  padding-top: 16px;
+}
+
+.quote {
+  font-style: italic;
+  font-size: 14px;
+  color: #6b7280;
+  text-align: center;
+  line-height: 1.5;
+  position: relative;
+}
+
+.quote::before {
+  content: '"';
+  font-size: 24px;
+  color: #10b981;
+  position: absolute;
+  left: -8px;
+  top: -4px;
+}
+
+.quote::after {
+  content: '"';
+  font-size: 24px;
+  color: #10b981;
+  position: absolute;
+  right: -8px;
+  bottom: -8px;
+}
+
+/* Responsive Design */
+@media (max-width: 640px) {
+  .oscarCard {
+    padding: 20px;
+    margin: 12px 0;
+  }
+  
+  .header {
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  
+  .avatar {
+    width: 50px;
+    height: 50px;
+  }
+  
+  .avatarText {
+    font-size: 20px;
+  }
+  
+  .name {
+    font-size: 20px;
+  }
+  
+  .role {
+    font-size: 14px;
+  }
+  
+  .mainText {
+    font-size: 15px;
+  }
+  
+  .missionPoint span:last-child {
+    font-size: 13px;
+  }
+}

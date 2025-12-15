@@ -1,0 +1,44 @@
+.segmentedControl {
+  display: flex;
+  position: relative;
+  background: #f3f4f6;
+  border-radius: 999px;
+  overflow: hidden;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+  width: 100%;
+  margin: 0 auto;
+  height: 2.4rem;
+}
+.option, .selected {
+  flex: 1 1 0;
+  border: none;
+  background: transparent;
+  color: #222;
+  font-size: 0.95rem;
+  font-weight: 500;
+  padding: 0.5rem 0.2rem;
+  text-align: center;
+  cursor: pointer;
+  z-index: 2;
+  transition: color 0.18s;
+  outline: none;
+  border-radius: 999px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.selected {
+  color: #fff;
+  font-weight: 600;
+  background: transparent;
+}
+.slider {
+  position: absolute;
+  top: 3px;
+  bottom: 3px;
+  border-radius: 999px;
+  background: #22c55e;
+  z-index: 1;
+  transition: left 0.25s cubic-bezier(0.4,0,0.2,1), width 0.25s cubic-bezier(0.4,0,0.2,1);
+  box-shadow: 0 1px 4px rgba(34,197,94,0.08);
+} 

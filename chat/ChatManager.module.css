@@ -1,0 +1,212 @@
+/*
+ * ChatManager.module.css - Chat Manager Styles
+ * =============================================
+ * Extracted from ChatManager.tsx for better maintainability and performance
+ */
+
+/* Main container wrapper */
+.chatManagerWrapper {
+  position: relative;
+  width: 100%;
+}
+
+/* Modal overlay - backdrop */
+.chatModalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.chatModalOverlay.open {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+/* Modal container */
+.chatModalContainer {
+  background: #ffffff;
+  border-radius: 20px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  width: 90%;
+  max-width: 500px;
+  height: 85vh;
+  max-height: 85vh;
+  transform: scale(0.9) translateY(20px);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.chatModalOverlay.open .chatModalContainer {
+  transform: scale(1) translateY(0);
+}
+
+/* Error state styling */
+.chatErrorContainer {
+  padding: 2rem;
+  text-align: center;
+  color: #ef4444;
+  background: #fef2f2;
+  border-radius: 12px;
+  border: 1px solid #fecaca;
+  margin: 1rem 0;
+}
+
+.chatErrorTitle {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.125rem;
+  font-weight: 600;
+}
+
+.chatErrorMessage {
+  margin: 0 0 1rem 0;
+  font-size: 0.875rem;
+}
+
+.chatErrorButton {
+  margin-top: 1rem;
+  padding: 0.5rem 1rem;
+  background: #059669;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.875rem;
+  transition: background-color 0.2s ease;
+}
+
+.chatErrorButton:hover {
+  background: #047857;
+}
+
+/* Loading state styling */
+.chatLoadingContainer {
+  padding: 2rem;
+  text-align: center;
+  color: #6b7280;
+}
+
+.chatLoadingSpinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid #e5e7eb;
+  border-top: 3px solid #059669;
+  border-radius: 50%;
+  animation: chatSpin 1s linear infinite;
+  margin: 0 auto 1rem;
+}
+
+.chatLoadingText {
+  margin: 0;
+  font-size: 0.875rem;
+}
+
+/* Loading spinner animation */
+@keyframes chatSpin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Responsive design breakpoints */
+@media (max-width: 640px) {
+  .chatModalContainer {
+    width: 95%;
+    height: 90vh;
+    max-height: 90vh;
+  }
+
+  .chatErrorContainer {
+    padding: 1.5rem;
+    margin: 0.5rem;
+  }
+
+  .chatLoadingContainer {
+    padding: 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .chatModalContainer {
+    width: 100%;
+    height: 100vh;
+    max-height: 100vh;
+    border-radius: 0;
+  }
+
+  .chatErrorContainer {
+    padding: 1rem;
+  }
+
+  .chatLoadingContainer {
+    padding: 1rem;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .chatModalOverlay {
+    background: rgba(0, 0, 0, 0.8);
+  }
+
+  .chatModalContainer {
+    border: 2px solid #000;
+  }
+
+  .chatErrorContainer {
+    border-width: 2px;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .chatModalOverlay,
+  .chatModalContainer,
+  .chatErrorButton,
+  .chatLoadingSpinner {
+    transition: none;
+    animation: none;
+  }
+
+  .chatModalContainer {
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* Focus states for accessibility */
+.chatErrorButton:focus {
+  outline: 2px solid #059669;
+  outline-offset: 2px;
+}
+
+/* Dark mode support (for future theming) */
+@media (prefers-color-scheme: dark) {
+  .chatModalContainer {
+    background: #1f2937;
+    color: #f9fafb;
+  }
+
+  .chatErrorContainer {
+    background: #7f1d1d;
+    color: #fca5a5;
+    border-color: #991b1b;
+  }
+
+  .chatLoadingContainer {
+    color: #d1d5db;
+  }
+}

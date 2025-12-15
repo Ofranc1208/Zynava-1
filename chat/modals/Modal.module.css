@@ -1,0 +1,98 @@
+/* Modal Styles */
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  padding: 1rem;
+}
+
+.modalContent {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 1.5rem;
+  max-width: 500px;
+  width: 100%;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+  position: relative;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.closeButton {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: #6b7280;
+  transition: color 0.2s ease;
+}
+
+.closeButton:hover {
+  color: #374151;
+}
+
+.modalTitle {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin-bottom: 1rem;
+  margin-top: 0;
+  padding-right: 2rem;
+}
+
+.modalBody {
+  font-size: 0.875rem;
+  color: #374151;
+  line-height: 1.6;
+}
+
+.modalBody p {
+  margin-bottom: 0.75rem;
+}
+
+.modalSection {
+  margin-bottom: 0.75rem;
+}
+
+.modalList {
+  padding-left: 1.5rem;
+  margin-top: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.modalList li {
+  margin-bottom: 0.25rem;
+}
+
+.modalClosing {
+  margin: 0;
+}
+
+/* Responsive design */
+@media (max-width: 640px) {
+  .modalContent {
+    margin: 1rem;
+    padding: 1rem;
+    border-radius: 12px;
+  }
+  
+  .modalTitle {
+    font-size: 1.125rem;
+    padding-right: 1.5rem;
+  }
+  
+  .closeButton {
+    top: 0.75rem;
+    right: 0.75rem;
+  }
+}

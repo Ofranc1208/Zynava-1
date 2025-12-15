@@ -1,0 +1,39 @@
+/* NumberOfPaymentsInput - Guidance tooltip styles */
+
+.guidanceTooltip {
+  margin-top: 0.3rem;
+  text-align: center;
+  padding: 0.5rem;
+  background: #f0f9ff;
+  border: 1px solid #0ea5e9;
+  border-radius: 6px;
+  animation: fadeIn 0.3s ease-in;
+}
+
+.guidanceText {
+  font-size: 0.7rem;
+  color: #6b7280;
+  font-style: italic;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 640px) {
+  .guidanceTooltip {
+    padding: 0.4rem;
+  }
+  
+  .guidanceText {
+    font-size: 0.65rem;
+  }
+}

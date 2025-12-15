@@ -1,6 +1,7 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+
 /* Advisor Chat Container - 2025 Best Practices */
 /* Inter: Industry standard for chat interfaces - clean, readable, modern */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
 
 .chatContainer {
   display: flex;
@@ -27,6 +28,32 @@
   flex-direction: column;
   gap: 4px;
   flex: 1; /* Take available space */
+  align-items: flex-start;
+}
+
+.headerIconWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 2px;
+}
+
+.headerIcon {
+  font-size: 2rem;
+  display: inline-flex;
+  align-items: center;
+  line-height: 1;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
 }
 
 .headerButtons {
@@ -82,6 +109,9 @@
   font-weight: 600; /* Semi-bold instead of 700 - cleaner look */
   margin: 0;
   letter-spacing: -0.01em; /* Slightly tighter for better readability */
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .headerSubtitle {
@@ -112,6 +142,27 @@
 .bottomSpacer {
   height: 20px;
   flex-shrink: 0;
+}
+
+/* Results placeholder - will be replaced with actual results component */
+.resultsPlaceholder {
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(0, 0, 0, 0.08);
+  padding: 3rem 2rem;
+  text-align: center;
+  margin: 1rem 0;
+}
+
+.resultsPlaceholder h3 {
+  color: #ff6b35;
+  font-size: 1.5rem;
+  margin: 0 0 1rem 0;
+}
+
+.resultsPlaceholder p {
+  color: #6b7280;
+  margin: 0;
 }
 
 /* Custom scrollbar */
@@ -161,6 +212,10 @@
 @media (max-width: 480px) {
   .chatHeader {
     padding: 10px 14px 8px 14px;
+  }
+  
+  .headerIcon {
+    font-size: 1.5rem;
   }
   
   .headerTitle {
@@ -213,6 +268,10 @@
 @media (max-height: 700px) {
   .chatHeader {
     padding: 8px 16px 6px 16px;
+  }
+  
+  .headerIcon {
+    font-size: 1.3rem;
   }
   
   .headerTitle {

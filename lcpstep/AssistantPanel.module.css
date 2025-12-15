@@ -1,0 +1,228 @@
+/*
+ * AssistantPanel.module.css - LCP Calculator Assistant Panel Styles
+ * ================================================================
+ * Modal panel for the LCP calculator assistant with responsive design
+ * Converted from inline styles to CSS modules for consistency
+ */
+
+/* Backdrop - covers entire viewport */
+.backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  z-index: 999;
+  backdrop-filter: blur(2px);
+  cursor: pointer;
+}
+
+/* Main panel container */
+.panel {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 500px;
+  max-width: 90%;
+  height: 90vh;
+  max-height: 750px;
+  background-color: #ffffff;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  border-radius: 16px;
+  animation: slideIn 0.3s ease-out;
+  overflow: hidden;
+}
+
+/* Header container */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 16px;
+  border-bottom: 1px solid #e0e0e0;
+  background-color: #09b44d;
+  flex-shrink: 0;
+  border-radius: 16px 16px 0 0;
+}
+
+/* Header title */
+.title {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+/* Header buttons container */
+.headerButtons {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Reset button - base styles */
+.resetButton {
+  background: none;
+  border: none;
+  font-size: 18px;
+  color: #ffffff;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+  background-color: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+}
+
+/* Reset button - hover state */
+.resetButton:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Close button - base styles */
+.closeButton {
+  background: none;
+  border: none;
+  font-size: 24px;
+  color: #ffffff;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+  background-color: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+}
+
+/* Close button - hover state */
+.closeButton:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Message display area */
+.messagesContainer {
+  flex: 1;
+  padding: 24px 20px 20px 20px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  min-height: 0;
+  scroll-behavior: smooth;
+  background-color: #f9fafb;
+}
+
+/* Custom scrollbar for messages container */
+.messagesContainer::-webkit-scrollbar {
+  width: 6px;
+}
+
+.messagesContainer::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border-radius: 3px;
+}
+
+.messagesContainer::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 3px;
+}
+
+.messagesContainer::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Loading state container */
+.loadingContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100px;
+  color: #666;
+  font-size: 14px;
+}
+
+/* Messages wrapper */
+.messagesWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Responsive Design - Mobile */
+@media (max-width: 768px) {
+  .panel {
+    width: 95% !important;
+    height: 95vh !important;
+    max-height: 650px !important;
+  }
+
+  .header {
+    padding: 8px 12px !important;
+  }
+
+  .title {
+    font-size: 15px !important;
+  }
+
+  .messagesContainer {
+    padding: 20px 16px 16px 16px !important;
+  }
+}
+
+/* Animation keyframes */
+@keyframes slideIn {
+  from {
+    transform: translate(-50%, -50%) scale(0.9);
+    opacity: 0;
+  }
+  to {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+  }
+}
+
+/* Focus states for accessibility */
+.closeButton:focus-visible {
+  outline: 2px solid #ffffff;
+  outline-offset: 2px;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .header {
+    border-bottom-width: 2px;
+  }
+
+  .closeButton {
+    border: 1px solid transparent;
+  }
+
+  .closeButton:focus-visible {
+    border-color: #ffffff;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .panel {
+    animation: none;
+  }
+
+  .messagesContainer {
+    scroll-behavior: auto;
+  }
+
+  .closeButton {
+    transition: none;
+  }
+}

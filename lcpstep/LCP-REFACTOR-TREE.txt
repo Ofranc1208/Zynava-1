@@ -1,0 +1,1822 @@
+================================================================================
+  LCP CALCULATOR - COMPREHENSIVE REFACTORING PLAN
+  "Gold Standard" Implementation Strategy
+================================================================================
+
+EXECUTIVE SUMMARY
+--------------------------------------------------------------------------------
+Current State:
+  - 11 component files with ~820 lines of duplicated inline styles (90% duplication)
+  - LCPStepper.tsx: 293 lines with repetitive handler pattern (orchestrator candidate)
+  - CSS modules exist but unused (LCPShared.module.css has perfect classes)
+  - Inconsistent patterns across components
+  - Difficult to maintain and debug
+
+Target State:
+  - Centralized shared components (LCPButton, LCPSection, etc.)
+  - All components using CSS modules (zero inline styles)
+  - Orchestrator pattern for LCPStepper (62% code reduction)
+  - Consistent, maintainable, debuggable architecture
+  - "Gold Standard" that other calculators can follow
+
+Estimated Impact:
+  - Code reduction: ~1000 lines eliminated
+  - Maintainability: 10x improvement
+  - Bundle size: Significant reduction
+  - Performance: Improved (no style recreation on renders)
+  - Developer experience: Much easier to work with
+
+
+================================================================================
+PHASE 1: FOUNDATION - CREATE SHARED COMPONENTS
+================================================================================
+Objective: Eliminate 90% of inline style duplication by creating reusable
+          shared components that all LCP steps can use.
+
+Prerequisites: None - This is the starting phase
+Expected Time: 2-3 hours
+Impact: HIGH - Eliminates ~820 lines of duplication
+
+
+( ) STEP 1.1: Create LCPButton Component
+    ────────────────────────────────────────────────────────────────────────
+    File: src/components/calculator/lcpstep/shared/LCPButton.tsx
+    File: src/components/calculator/lcpstep/shared/LCPButton.module.css
+    
+    Purpose: Centralize all button logic and styles used across LCP steps
+    
+    Requirements:
+    - Support "option" button variant (for selection buttons)
+    - Support "next" button variant (circular arrow button)
+    - Handle selected/unselected states
+    - Handle disabled states
+    - Include all hover/focus interactions
+    - Use CSS modules (no inline styles)
+    
+    Component Interface:
+    ```typescript
+    interface LCPButtonProps {
+      variant: 'option' | 'next';
+      selected?: boolean;
+      disabled?: boolean;
+      onClick?: () => void;
+      type?: 'button' | 'submit';
+      children?: React.ReactNode;
+      'aria-label'?: string;
+    }
+    ```
+    
+    CSS Classes Needed:
+    - .optionButton
+    - .optionButtonSelected
+    - .nextButton
+    - .nextButtonDisabled
+    
+    Files That Will Use This:
+    - LCPSettlementPaymentsOverview.tsx
+    - LCPPhysicalProfileOverview.tsx
+    - LCPHealthOverview.tsx
+    - LCPDatesSelection.tsx
+    - LCPLumpSumAmountOverview.tsx
+    
+    Expected Outcome:
+    - Eliminates ~400 lines of duplicated button styles
+    - Single source of truth for button behavior
+    - Easy to update button styles across all steps
+    
+    Testing Checklist:
+    [ ] Option buttons render correctly
+    [ ] Selected state works
+    [ ] Disabled state works
+    [ ] Hover effects work
+    [ ] Next button variant works
+    [ ] Accessible (keyboard navigation, aria labels)
+
+
+( ) STEP 1.2: Create LCPSection Component
+    ────────────────────────────────────────────────────────────────────────
+    File: src/components/calculator/lcpstep/shared/LCPSection.tsx
+    File: src/components/calculator/lcpstep/shared/LCPSection.module.css
+    
+    Purpose: Centralize section layout pattern (label + button group)
+    
+    Requirements:
+    - Support label with optional tooltip
+    - Support button group layout
+    - Handle gap/spacing consistently
+    - Use CSS modules
+    
+    Component Interface:
+    ```typescript
+    interface LCPSectionProps {
+      label: string;
+      tooltip?: string;
+      children: React.ReactNode;
+      className?: string;
+    }
+    ```
+    
+    CSS Classes Needed:
+    - .section
+    - .label
+    - .tooltipIcon
+    - .tooltip
+    - .buttonGroup
+    
+    Files That Will Use This:
+    - All step components (wraps question sections)
+    
+    Expected Outcome:
+    - Eliminates ~200 lines of duplicated section markup
+    - Consistent spacing/layout across all steps
+    - Easy to add tooltips to any section
+    
+    Testing Checklist:
+    [ ] Section renders with label
+    [ ] Tooltip shows/hides correctly
+    [ ] Button group layout works
+    [ ] Responsive on mobile
+
+
+( ) STEP 1.3: Create LCPFormInput Component
+    ────────────────────────────────────────────────────────────────────────
+    File: src/components/calculator/lcpstep/shared/LCPFormInput.tsx
+    File: src/components/calculator/lcpstep/shared/LCPFormInput.module.css
+    
+    Purpose: Centralize text/date input styling and validation display
+    
+    Requirements:
+    - Support text and date input types
+    - Handle validation state (error, valid, neutral)
+    - Show error messages
+    - Use CSS modules
+    
+    Component Interface:
+    ```typescript
+    interface LCPFormInputProps {
+      type: 'text' | 'date';
+      value: string;
+      onChange: (value: string) => void;
+      placeholder?: string;
+      error?: string;
+      isValid?: boolean;
+    }
+    ```
+    
+    CSS Classes Needed:
+    - .input
+    - .inputError
+    - .inputValid
+    - .errorMessage
+    
+    Files That Will Use This:
+    - LCPDatesSelection.tsx
+    - LCPLumpSumAmountOverview.tsx
+    
+    Expected Outcome:
+    - Consistent input styling
+    - Unified validation display
+    - ~100 lines of duplication eliminated
+    
+    Testing Checklist:
+    [ ] Text input works
+    [ ] Date input works
+    [ ] Error state displays correctly
+    [ ] Valid state displays correctly
+    [ ] Validation messages show
+
+
+( ) STEP 1.4: Update LCPShared.module.css
+    ────────────────────────────────────────────────────────────────────────
+    File: src/components/calculator/lcpstep/LCPShared.module.css
+    
+    Purpose: Consolidate all shared styles, ensure all variants are covered
+    
+    Requirements:
+    - Review existing styles (currently has good base)
+    - Add any missing button variants
+    - Add any missing section variants
+    - Add utility classes (spacing, colors, etc.)
+    - Ensure consistency with design system
+    
+    New Classes to Add:
+    - .inputWrapper (for form input containers)
+    - .errorText (for validation errors)
+    - .successText (for validation success)
+    - .tooltip (for tooltip styling)
+    - .tooltipIcon (for ? icon)
+    
+    Expected Outcome:
+    - Complete CSS module with all needed styles
+    - No need for inline styles anywhere
+    - Design system alignment
+    
+    Testing Checklist:
+    [ ] All classes render correctly
+    [ ] Colors match design system
+    [ ] Responsive styles work
+    [ ] Accessibility (contrast ratios, focus states)
+
+
+( ) STEP 1.5: Create Shared Components Index
+    ────────────────────────────────────────────────────────────────────────
+    File: src/components/calculator/lcpstep/shared/index.ts
+    
+    Purpose: Central export point for all shared components
+    
+    Content:
+    ```typescript
+    export { default as LCPButton } from './LCPButton';
+    export { default as LCPSection } from './LCPSection';
+    export { default as LCPFormInput } from './LCPFormInput';
+    export type { LCPButtonProps } from './LCPButton';
+    export type { LCPSectionProps } from './LCPSection';
+    export type { LCPFormInputProps } from './LCPFormInput';
+    ```
+    
+    Expected Outcome:
+    - Clean imports: import { LCPButton, LCPSection } from './shared';
+    - Better organization
+    
+    Testing Checklist:
+    [ ] All exports work
+    [ ] No circular dependencies
+    [ ] TypeScript types export correctly
+
+
+────────────────────────────────────────────────────────────────────────────
+PHASE 1 CHECKPOINT
+────────────────────────────────────────────────────────────────────────────
+Before proceeding to Phase 2, verify:
+[ ] All shared components created and tested
+[ ] CSS modules properly configured
+[ ] No inline styles in shared components
+[ ] All components render correctly in isolation
+[ ] TypeScript types are correct
+[ ] No linter errors
+
+Status: ( ) PHASE 1 COMPLETE ✓
+
+
+================================================================================
+PHASE 2: MIGRATION - CONVERT STEP COMPONENTS TO USE SHARED COMPONENTS
+================================================================================
+Objective: Replace all inline styles in step components with shared components
+          and CSS modules. Zero inline styles by end of this phase.
+
+Prerequisites: Phase 1 complete
+Expected Time: 3-4 hours
+Impact: HIGH - Eliminates remaining duplication, improves maintainability
+
+
+( ) STEP 2.1: Refactor LCPSettlementPaymentsOverview.tsx
+    ────────────────────────────────────────────────────────────────────────
+    File: src/components/calculator/lcpstep/LCPSettlementPaymentsOverview.tsx
+    
+    Current State: 244 lines, ~190 lines are inline styles (78% duplication)
+    Target State: ~80 lines, zero inline styles
+    
+    Changes Required:
+    1. Import shared components:
+       ```typescript
+       import { LCPButton, LCPSection } from './shared';
+       import styles from './LCPShared.module.css';
+       ```
+    
+    2. Replace frequency button section (lines 43-105):
+       Before:
+       ```tsx
+       <div style={{...}}>
+         <label style={{...}}>How often...</label>
+         <div style={{...}}>
+           {FREQUENCIES.map((freq) => (
+             <button style={paymentMode === freq ? {...} : {...}}>
+       ```
+       
+       After:
+       ```tsx
+       <LCPSection label="How often do you receive your payments?">
+         {FREQUENCIES.map((freq) => (
+           <LCPButton
+             variant="option"
+             selected={paymentMode === freq}
+             onClick={() => setPaymentMode(freq)}
+           >
+             {freq}
+           </LCPButton>
+         ))}
+       </LCPSection>
+       ```
+    
+    3. Replace annual increase section (lines 106-167)
+       Same pattern as above
+    
+    4. Replace next button (lines 168-238):
+       Before: 80 lines of inline styles
+       After:
+       ```tsx
+       <div className={styles.actionRow}>
+         <LCPButton
+           variant="next"
+           type="submit"
+           disabled={!isValid}
+           aria-label="Next"
+         >
+           →
+         </LCPButton>
+       </div>
+       ```
+    
+    Expected Outcome:
+    - File reduced from 244 → ~80 lines (67% reduction)
+    - Zero inline styles
+    - Much easier to read and maintain
+    
+    Testing Checklist:
+    [ ] Frequency selection works
+    [ ] Annual increase selection works
+    [ ] Next button works
+    [ ] Form validation works
+    [ ] No visual regressions
+    [ ] No functionality regressions
+
+
+( ) STEP 2.2: Refactor LCPPhysicalProfileOverview.tsx
+    ────────────────────────────────────────────────────────────────────────
+    File: src/components/calculator/lcpstep/LCPPhysicalProfileOverview.tsx
+    
+    Current State: 397 lines, ~350 lines are inline styles (88% duplication!)
+    Target State: ~100 lines, zero inline styles
+    
+    Changes Required:
+    1. Import shared components
+    
+    2. Replace Age section (lines 61-123):
+       ```tsx
+       <LCPSection label="Age">
+         {AGES.map((age) => (
+           <LCPButton
+             variant="option"
+             selected={ageRange === age}
+             onClick={() => setAgeRange(age)}
+           >
+             {age}
+           </LCPButton>
+         ))}
+       </LCPSection>
+       ```
+    
+    3. Replace Gender section (lines 124-186)
+       Same pattern
+    
+    4. Replace Body Frame section (lines 187-249)
+       Same pattern
+    
+    5. Replace Weight section (lines 250-312)
+       Same pattern
+    
+    6. Replace next button (lines 313-383)
+       Use LCPButton variant="next"
+    
+    7. Replace error message (lines 384-391)
+       ```tsx
+       {touched && !isValid && (
+         <p className={styles.error}>Please answer all questions.</p>
+       )}
+       ```
+    
+    Expected Outcome:
+    - File reduced from 397 → ~100 lines (75% reduction!)
+    - Zero inline styles
+    - Easiest to read of all components
+    
+    Testing Checklist:
+    [ ] Age selection works
+    [ ] Gender selection works
+    [ ] Body frame selection works
+    [ ] Weight selection works
+    [ ] Form validation works
+    [ ] Error message displays
+    [ ] Next button works
+    [ ] No visual/functional regressions
+
+
+( ) STEP 2.3: Refactor LCPHealthOverview.tsx
+    ────────────────────────────────────────────────────────────────────────
+    File: src/components/calculator/lcpstep/LCPHealthOverview.tsx
+    
+    Current State: 320 lines, ~280 lines are inline styles (87% duplication)
+    Target State: ~90 lines, zero inline styles
+    
+    Changes Required:
+    1. Import shared components
+    
+    2. Replace Smoke section (lines 47-109):
+       ```tsx
+       <LCPSection label="Do You Smoke?">
+         {SMOKE_OPTIONS.map((opt) => (
+           <LCPButton
+             variant="option"
+             selected={smoke === opt}
+             onClick={() => setSmoke(opt)}
+           >
+             {opt}
+           </LCPButton>
+         ))}
+       </LCPSection>
+       ```
+    
+    3. Replace Health Profile section (lines 110-172)
+       Same pattern
+    
+    4. Replace Cardiac Health section (lines 173-235)
+       Same pattern
+    
+    5. Replace next button (lines 236-306)
+       Use LCPButton variant="next"
+    
+    6. Replace error message (lines 307-314)
+       Use styles.error class
+    
+    Expected Outcome:
+    - File reduced from 320 → ~90 lines (72% reduction)
+    - Zero inline styles
+    - Consistent with other step components
+    
+    Testing Checklist:
+    [ ] Smoke selection works
+    [ ] Health profile selection works
+    [ ] Cardiac health selection works
+    [ ] Form validation works
+    [ ] Error message displays
+    [ ] Next button works
+    [ ] No visual/functional regressions
+
+
+( ) STEP 2.4: Refactor LCPDatesSelection.tsx
+    ────────────────────────────────────────────────────────────────────────
+    File: src/components/calculator/lcpstep/LCPDatesSelection.tsx
+    
+    Current State: 441 lines with inline styles + validation logic
+    Target State: ~150 lines, zero inline styles, clean validation
+    
+    Changes Required:
+    1. Import shared components
+    
+    2. Replace amount input (lines 102-162):
+       ```tsx
+       <LCPSection label="What's the amount of payments you're going to exchange for a lump sum?">
+         <LCPFormInput
+           type="text"
+           value={amount}
+           onChange={setAmount}
+           placeholder="Enter amount (min $100)"
+           error={validationErrors.amount}
+           isValid={amount && validatePaymentAmount(amount).isValid}
+         />
+       </LCPSection>
+       ```
+    
+    3. Replace start date section (lines 163-258):
+       ```tsx
+       <LCPSection 
+         label="Start Date" 
+         tooltip="First payment date you want to trade for a lump sum."
+       >
+         <LCPFormInput
+           type="date"
+           value={startDate}
+           onChange={setStartDate}
+           error={validationErrors.dates}
+         />
+       </LCPSection>
+       ```
+    
+    4. Replace end date section (lines 259-354):
+       Same pattern with different tooltip
+    
+    5. Replace next button (lines 356-426)
+       Use LCPButton variant="next"
+    
+    6. Replace error message (lines 427-435)
+       Use styles.error class
+    
+    7. Extract tooltip logic to LCPSection component
+       (Tooltips are already handled in LCPSection from Step 1.2)
+    
+    Expected Outcome:
+    - File reduced from 441 → ~150 lines (66% reduction)
+    - Zero inline styles
+    - Cleaner validation logic
+    - Tooltips work consistently
+    
+    Testing Checklist:
+    [ ] Amount input works
+    [ ] Amount validation works
+    [ ] Start date input works
+    [ ] End date input works
+    [ ] Date validation works
+    [ ] Tooltips show/hide correctly
+    [ ] Form submission works
+    [ ] No visual/functional regressions
+
+
+( ) STEP 2.5: Refactor LCPStepContainer.tsx
+    ────────────────────────────────────────────────────────────────────────
+    File: src/components/calculator/lcpstep/LCPStepContainer.tsx
+    File: src/components/calculator/lcpstep/LCPStepContainer.module.css (NEW)
+    
+    Current State: 113 lines, 100% inline styles
+    Target State: ~45 lines, zero inline styles
+    
+    Changes Required:
+    1. Create LCPStepContainer.module.css:
+       ```css
+       .container {
+         max-width: 400px;
+         margin: 0 auto;
+         background: #fff;
+         border-radius: 16px;
+         box-shadow: 0 2px 16px rgba(0,0,0,0.07);
+         padding: 0.5rem 0.75rem;
+         display: flex;
+         flex-direction: column;
+         gap: 0.5rem;
+       }
+       
+       .header {
+         display: flex;
+         justify-content: space-between;
+         align-items: center;
+         padding-bottom: 0.5rem;
+         border-bottom: 1px solid #f0f0f0;
+         margin-bottom: 0.5rem;
+       }
+       
+       .backLink {
+         color: #666;
+         text-decoration: none;
+         font-size: 0.9rem;
+         font-weight: 500;
+         transition: color 0.2s ease;
+       }
+       
+       .backLink:hover {
+         color: #333;
+       }
+       
+       .stepIndicator {
+         display: flex;
+         align-items: center;
+         gap: 12px;
+         color: #666;
+         font-size: 0.85rem;
+         font-weight: 600;
+         letter-spacing: 0.01em;
+       }
+       
+       .title {
+         font-size: 1rem;
+         font-weight: 700;
+         text-align: center;
+         margin-bottom: 0.2rem;
+         letter-spacing: -0.01em;
+         color: #22b455;
+       }
+       
+       .loading {
+         min-height: 200px;
+         display: flex;
+         align-items: center;
+         justify-content: center;
+         color: #666;
+         font-size: 0.9rem;
+       }
+       ```
+    
+    2. Update component to use CSS module:
+       ```tsx
+       import styles from './LCPStepContainer.module.css';
+       
+       return (
+         <div className={styles.container}>
+           <header className={styles.header}>
+             <Link href={backUrl} className={styles.backLink}>
+               ‹ Back to Chat
+             </Link>
+             <div className={styles.stepIndicator}>
+               Step {currentStep} of {totalSteps}
+             </div>
+           </header>
+           <h2 className={styles.title}>{title}</h2>
+           {children}
+         </div>
+       );
+       ```
+    
+    Expected Outcome:
+    - File reduced from 113 → ~45 lines (60% reduction)
+    - Zero inline styles
+    - Easier to customize and maintain
+    - Consistent with other components
+    
+    Testing Checklist:
+    [ ] Container renders correctly
+    [ ] Back link works
+    [ ] Step indicator displays
+    [ ] Title displays
+    [ ] Children render correctly
+    [ ] Loading state works
+    [ ] Suspense fallback works
+    [ ] No visual regressions
+
+
+( ) STEP 2.6: Refactor LCPLumpSumAmountOverview.tsx
+    ────────────────────────────────────────────────────────────────────────
+    File: src/components/calculator/lcpstep/LCPLumpSumAmountOverview.tsx
+    
+    Note: Need to read this file first to assess current state
+    
+    Changes Required:
+    1. Import shared components
+    2. Replace any inline styles with LCPFormInput
+    3. Use LCPButton for next button
+    4. Use LCPSection for layout
+    
+    Expected Outcome:
+    - Zero inline styles
+    - Consistent with other components
+    
+    Testing Checklist:
+    [ ] Lump sum input works
+    [ ] Multiple payments work
+    [ ] Add/remove payment works
+    [ ] Date validation works
+    [ ] Form submission works
+    [ ] No visual/functional regressions
+
+
+────────────────────────────────────────────────────────────────────────────
+PHASE 2 CHECKPOINT
+────────────────────────────────────────────────────────────────────────────
+Before proceeding to Phase 3, verify:
+[ ] All step components refactored
+[ ] Zero inline styles in any component
+[ ] All components use shared components
+[ ] All CSS in CSS modules
+[ ] No visual regressions
+[ ] No functionality regressions
+[ ] All tests pass (run LCPDatesSelection.test.tsx)
+[ ] No linter errors
+[ ] No TypeScript errors
+
+Test Each Step Component:
+[ ] LCPSettlementPaymentsOverview - full user flow works
+[ ] LCPPhysicalProfileOverview - full user flow works
+[ ] LCPHealthOverview - full user flow works
+[ ] LCPDatesSelection - full user flow works
+[ ] LCPLumpSumAmountOverview - full user flow works
+
+Status: (✓) PHASE 2 COMPLETE ✓
+
+
+================================================================================
+PHASE 3: ORCHESTRATOR - REFACTOR LCPStepper.tsx
+================================================================================
+Objective: Implement orchestrator pattern to eliminate repetitive handler
+          code and reduce complexity by 62%.
+
+Prerequisites: Phase 2 complete (step components working)
+Expected Time: 2-3 hours
+Impact: MEDIUM - Improves maintainability, reduces code, easier to extend
+
+
+( ) STEP 3.1: Create LCPFlowOrchestrator.ts
+    ────────────────────────────────────────────────────────────────────────
+    File: src/components/calculator/lcpstep/LCPFlowOrchestrator.ts
+    
+    Purpose: Declarative step configuration and automatic handler generation
+    
+    Requirements:
+    1. Define step configuration interface:
+       ```typescript
+       interface StepConfig {
+         stepId: LCPStep;
+         stepNumber: number;
+         component: React.ComponentType<any>;
+         getInitialData: (formData: LCPFormData) => any;
+         transformData: (stepOutput: any, formData: LCPFormData) => Partial<LCPFormData>;
+         getNextStep: (formData: LCPFormData, stepOutput?: any) => LCPStep;
+         isDataStep: boolean;
+       }
+       ```
+    
+    2. Create step configuration for all 8 steps:
+       - lcp_payment: Settlement payments overview
+       - lcp_profile: Physical profile overview
+       - lcp_health: Health overview
+       - lcp_details: Dates selection (Monthly/Annual path)
+       - lcp_lump_sum: Lump sum amounts (Lump Sum path)
+       - lcp_lifestyle: Lifestyle (combined with profile)
+       - lcp_review: Review and calculate
+       - lcp_results: Results display
+    
+    3. Implement handler factory:
+       ```typescript
+       export const createStepHandler = (
+         stepConfig: StepConfig,
+         formData: LCPFormData,
+         updateFormData: (data: Partial<LCPFormData>) => void,
+         goToNextStep: (step: LCPStep) => void,
+         setAssistantStep: (step: LCPStep) => void
+       ) => {
+         return (stepOutput: any) => {
+           const dataUpdates = stepConfig.transformData(stepOutput, formData);
+           updateFormData(dataUpdates);
+           const nextStep = stepConfig.getNextStep({ ...formData, ...dataUpdates }, stepOutput);
+           setAssistantStep(nextStep);
+           goToNextStep(nextStep);
+         };
+       };
+       ```
+    
+    4. Implement helper utilities:
+       - getStepProps: Assembles props for step components
+       - getStepNumber: Maps step ID to step number
+    
+    Expected Outcome:
+    - Complete orchestrator configuration
+    - All step transitions defined declaratively
+    - Handler generation automated
+    - ~350 lines of well-documented code
+    
+    Testing Checklist:
+    [ ] Step configuration is complete
+    [ ] All step IDs mapped
+    [ ] Handler factory works
+    [ ] Conditional routing works (Lump Sum vs Monthly)
+    [ ] No TypeScript errors
+    [ ] Well-documented
+
+
+( ) STEP 3.2: Refactor LCPStepper.tsx to Use Orchestrator
+    ────────────────────────────────────────────────────────────────────────
+    File: src/components/calculator/lcpstep/LCPStepper.tsx
+    
+    Current State: 293 lines with 7 repetitive handlers + large switch
+    Target State: ~110 lines with orchestrator (62% reduction)
+    
+    Changes Required:
+    1. Import orchestrator:
+       ```typescript
+       import { 
+         createLCPFlowConfig, 
+         createStepHandler, 
+         getStepProps,
+         getStepNumber as getOrchestratorStepNumber 
+       } from './LCPFlowOrchestrator';
+       ```
+    
+    2. Remove all individual handlers (lines 68-158):
+       - handleSettlementOverviewComplete
+       - handlePhysicalProfileComplete
+       - handleHealthOverviewComplete
+       - handleLCPLumpSumComplete
+       - handleDatesSelectionComplete
+       - handleEditStep
+       DELETE ALL OF THESE (90 lines removed)
+    
+    3. Remove step mapping function (lines 51-62)
+       DELETE THIS (12 lines removed)
+    
+    4. Remove entire switch statement (lines 167-281)
+       DELETE ALL CASES (114 lines removed)
+    
+    5. Add orchestrator configuration:
+       ```typescript
+       const flowConfig = useMemo(() => createLCPFlowConfig({
+         LCPSettlementPaymentsOverview,
+         LCPPhysicalProfileOverview,
+         LCPHealthOverview,
+         LCPDatesSelection,
+         LCPLumpSumAmountOverview,
+         LCPaymentReviewStep,
+         LCPaymentResultsPage
+       }), []);
+       ```
+    
+    6. Add dynamic handler factory:
+       ```typescript
+       const createHandler = useCallback((stepId: LCPStep) => {
+         const stepConfig = flowConfig.steps[stepId];
+         if (!stepConfig) return () => {};
+         
+         return createStepHandler(
+           stepConfig,
+           formData,
+           updateFormData,
+           goToNextStep,
+           setAssistantStep
+         );
+       }, [formData, updateFormData, goToNextStep, setAssistantStep, flowConfig]);
+       ```
+    
+    7. Replace switch with map-based rendering:
+       ```typescript
+       const renderCurrentStep = () => {
+         if (!currentStep) return null;
+         
+         const stepConfig = flowConfig.steps[currentStep];
+         if (!stepConfig) return null;
+         
+         const StepComponent = stepConfig.component;
+         const currentStepNumber = getOrchestratorStepNumber(currentStep, flowConfig);
+         
+         // Handle special cases (review, results)
+         if (currentStep === 'lcp_review') {
+           return (
+             <StepComponent
+               {...getStepProps(stepConfig, formData, createHandler(currentStep))}
+               onEdit={handleEditStep}
+               onCalculate={handleReviewComplete}
+               result={lcpResult || undefined}
+               error={lcpError?.message || undefined}
+             />
+           );
+         }
+         
+         if (currentStep === 'lcp_results') {
+           return lcpResult ? (
+             <StepComponent
+               result={lcpResult}
+               onBack={handleBackToReview}
+               currentStep={currentStepNumber}
+               totalSteps={flowConfig.totalDataSteps}
+             />
+           ) : null;
+         }
+         
+         // Standard step rendering
+         return (
+           <StepComponent
+             {...getStepProps(stepConfig, formData, createHandler(currentStep))}
+           />
+         );
+       };
+       ```
+    
+    8. Keep only special handlers:
+       - handleReviewComplete (needs calculation logic)
+       - handleEditStep (simple navigation)
+    
+    Expected Outcome:
+    - File reduced from 293 → ~110 lines (62% reduction)
+    - No repetitive handlers
+    - Cleaner, more maintainable code
+    - Easier to add new steps (just add to config)
+    - Single source of truth for flow logic
+    
+    Testing Checklist:
+    [ ] All steps render correctly
+    [ ] Step transitions work
+    [ ] Payment mode selection works
+    [ ] Annual increase selection works
+    [ ] Profile questions work
+    [ ] Health questions work
+    [ ] Conditional routing works (Lump Sum vs Monthly)
+    [ ] Dates selection works (Monthly path)
+    [ ] Lump sum amounts work (Lump Sum path)
+    [ ] Review page displays all data
+    [ ] Edit button works
+    [ ] Calculate button works
+    [ ] Results page displays
+    [ ] Back to review works
+    [ ] Assistant panel integration works
+    [ ] No TypeScript errors
+    [ ] No linter errors
+
+
+( ) STEP 3.3: Update Documentation
+    ────────────────────────────────────────────────────────────────────────
+    Files:
+    - src/components/calculator/lcpstep/README.md (NEW)
+    - LCPFlowOrchestrator.ts (add extensive comments)
+    - LCPStepper.tsx (add header comments)
+    
+    Documentation to Add:
+    1. README.md overview:
+       - Architecture explanation
+       - How to add a new step
+       - How to modify existing steps
+       - Troubleshooting guide
+    
+    2. Code comments in orchestrator:
+       - Explain step configuration structure
+       - Document handler factory pattern
+       - Explain conditional routing
+    
+    3. Code comments in stepper:
+       - Explain orchestrator usage
+       - Document special cases
+       - Reference README for details
+    
+    Expected Outcome:
+    - Clear documentation for future developers
+    - Easy to understand architecture
+    - Easy to extend/modify
+    
+    Testing Checklist:
+    [ ] README is clear and complete
+    [ ] Code comments are helpful
+    [ ] Examples are accurate
+    [ ] No outdated information
+
+
+────────────────────────────────────────────────────────────────────────────
+PHASE 3 CHECKPOINT
+────────────────────────────────────────────────────────────────────────────
+Before proceeding to Phase 4, verify:
+[ ] Orchestrator is complete and tested
+[ ] LCPStepper uses orchestrator correctly
+[ ] All step transitions work
+[ ] Conditional routing works (Lump Sum vs Monthly paths)
+[ ] No repetitive handler code remains
+[ ] Documentation is complete
+[ ] Full user flow works end-to-end
+[ ] No TypeScript errors
+[ ] No linter errors
+
+Full Flow Testing:
+[ ] Monthly payment flow: payment → profile → health → dates → review → results
+[ ] Annual payment flow: payment → profile → health → dates → review → results
+[ ] Lump Sum flow: payment → profile → health → lump sum → review → results
+[ ] Edit functionality works from review page
+[ ] Back button works from results page
+[ ] Assistant panel opens/closes correctly
+[ ] All data persists correctly through flow
+
+Status: (✓) PHASE 3 COMPLETE ✓
+
+
+================================================================================
+PHASE 4: OPTIMIZATION - PERFORMANCE & QUALITY IMPROVEMENTS
+================================================================================
+Objective: Optimize performance, improve accessibility, add comprehensive
+          testing, and ensure production readiness.
+
+Prerequisites: Phase 3 complete (orchestrator working)
+Expected Time: 3-4 hours
+Impact: MEDIUM - Production readiness, better UX, fewer bugs
+
+
+( ) STEP 4.1: Add Comprehensive Unit Tests
+    ────────────────────────────────────────────────────────────────────────
+    Files to Create:
+    - LCPButton.test.tsx
+    - LCPSection.test.tsx
+    - LCPFormInput.test.tsx
+    - LCPFlowOrchestrator.test.ts
+    - LCPStepper.test.tsx
+    
+    Test Coverage Required:
+    1. LCPButton:
+       [ ] Renders option variant
+       [ ] Renders next variant
+       [ ] Selected state works
+       [ ] Disabled state works
+       [ ] Click handler fires
+       [ ] Keyboard navigation works
+       [ ] ARIA labels present
+    
+    2. LCPSection:
+       [ ] Renders with label
+       [ ] Renders children
+       [ ] Tooltip shows/hides
+       [ ] Tooltip keyboard accessible
+    
+    3. LCPFormInput:
+       [ ] Text input works
+       [ ] Date input works
+       [ ] Error state displays
+       [ ] Valid state displays
+       [ ] onChange fires correctly
+       [ ] Validation messages show
+    
+    4. LCPFlowOrchestrator:
+       [ ] Step configuration is valid
+       [ ] Handler factory creates correct handlers
+       [ ] Conditional routing works
+       [ ] Data transformation works
+       [ ] Step number mapping works
+    
+    5. LCPStepper:
+       [ ] Renders initial step
+       [ ] Transitions between steps
+       [ ] Handles form data correctly
+       [ ] Calculation triggers
+       [ ] Results display correctly
+    
+    Expected Outcome:
+    - 80%+ test coverage
+    - Confidence in refactoring
+    - Regression prevention
+    
+    Testing Checklist:
+    [ ] All test files created
+    [ ] All tests pass
+    [ ] Coverage >= 80%
+    [ ] Tests are meaningful (not just coverage)
+    [ ] Tests cover edge cases
+    [ ] Tests are maintainable
+
+
+( ) STEP 4.2: Accessibility Audit & Improvements
+    ────────────────────────────────────────────────────────────────────────
+    Areas to Audit:
+    1. Keyboard Navigation
+    2. Screen Reader Support
+    3. ARIA Labels
+    4. Focus Management
+    5. Color Contrast
+    6. Error Announcements
+    
+    Required Improvements:
+    1. All interactive elements keyboard accessible:
+       [ ] Tab navigation works through all buttons
+       [ ] Enter/Space activates buttons
+       [ ] Escape closes tooltips/modals
+       [ ] Arrow keys navigate options (optional)
+    
+    2. Screen reader support:
+       [ ] All buttons have aria-labels
+       [ ] Form inputs have labels
+       [ ] Error messages announced
+       [ ] Step progress announced
+       [ ] Loading states announced
+    
+    3. Focus management:
+       [ ] Focus visible on all interactive elements
+       [ ] Focus ring styled consistently
+       [ ] Focus doesn't get trapped
+       [ ] Focus moves logically through form
+    
+    4. Color contrast:
+       [ ] All text meets WCAG AA (4.5:1)
+       [ ] Interactive elements meet contrast requirements
+       [ ] Error states clearly visible
+       [ ] Focus indicators clearly visible
+    
+    5. Error handling:
+       [ ] Errors announced to screen readers
+       [ ] Errors clearly associated with inputs
+       [ ] Error recovery obvious
+    
+    Expected Outcome:
+    - WCAG 2.1 AA compliance
+    - Excellent keyboard navigation
+    - Full screen reader support
+    
+    Testing Checklist:
+    [ ] Test with keyboard only (no mouse)
+    [ ] Test with screen reader (NVDA/JAWS/VoiceOver)
+    [ ] Run axe DevTools audit (0 violations)
+    [ ] Test with high contrast mode
+    [ ] Test with zoom (200%+)
+    [ ] All issues documented and fixed
+
+
+( ) STEP 4.3: Performance Optimization
+    ────────────────────────────────────────────────────────────────────────
+    Areas to Optimize:
+    1. Component Re-renders
+    2. Bundle Size
+    3. Memory Usage
+    4. Rendering Performance
+    
+    Optimizations to Implement:
+    1. Memoization:
+       [ ] Wrap expensive components with React.memo
+       [ ] Memoize orchestrator config (already done)
+       [ ] Memoize handler functions (already done with useCallback)
+       [ ] Memoize derived state
+    
+    2. Code splitting:
+       [ ] Lazy load results page (heavy charts?)
+       [ ] Lazy load assistant panel if not used immediately
+       [ ] Dynamic imports for heavy components
+    
+    3. CSS optimization:
+       [ ] Purge unused CSS (if using Tailwind elsewhere)
+       [ ] Optimize CSS module output
+       [ ] Remove duplicate styles
+    
+    4. Bundle analysis:
+       [ ] Run webpack-bundle-analyzer
+       [ ] Check for duplicate dependencies
+       [ ] Optimize import paths
+       [ ] Remove unused exports
+    
+    Expected Outcome:
+    - Reduced re-renders
+    - Smaller bundle size
+    - Faster initial load
+    - Smoother interactions
+    
+    Testing Checklist:
+    [ ] React DevTools Profiler shows minimal re-renders
+    [ ] Bundle size reduced from baseline
+    [ ] Lighthouse performance score >= 90
+    [ ] No memory leaks (Chrome DevTools Memory profiler)
+    [ ] Fast on low-end devices
+
+
+( ) STEP 4.4: Error Handling & Resilience
+    ────────────────────────────────────────────────────────────────────────
+    Error Scenarios to Handle:
+    1. Network errors (API calls)
+    2. Invalid data states
+    3. Missing step data
+    4. Calculation failures
+    5. Unexpected navigation
+    
+    Improvements to Implement:
+    1. Error boundaries:
+       [ ] Wrap LCPStepper in ErrorBoundary
+       [ ] Catch and display calculation errors gracefully
+       [ ] Provide recovery options (retry, go back)
+    
+    2. Validation:
+       [ ] Validate all form inputs before submission
+       [ ] Validate date ranges properly
+       [ ] Validate numeric inputs
+       [ ] Provide clear error messages
+    
+    3. State recovery:
+       [ ] Handle missing formData gracefully
+       [ ] Don't crash if step data is incomplete
+       [ ] Provide sensible defaults
+    
+    4. Logging:
+       [ ] Log errors to console in development
+       [ ] Consider error tracking service (Sentry?)
+       [ ] Log user flow for debugging
+    
+    Expected Outcome:
+    - No unhandled errors
+    - Graceful error recovery
+    - Clear error messages
+    - Better debugging
+    
+    Testing Checklist:
+    [ ] Test with invalid inputs
+    [ ] Test with missing data
+    [ ] Test with network failures
+    [ ] Test with browser back button
+    [ ] Test with direct URL navigation
+    [ ] All errors handled gracefully
+
+
+( ) STEP 4.5: Mobile & Responsive Testing
+    ────────────────────────────────────────────────────────────────────────
+    Devices to Test:
+    1. Mobile (320px - 480px)
+    2. Tablet (768px - 1024px)
+    3. Desktop (1280px+)
+    
+    Areas to Test:
+    1. Layout:
+       [ ] All components fit on small screens
+       [ ] No horizontal scroll
+       [ ] Touch targets >= 44px
+       [ ] Proper spacing on mobile
+    
+    2. Interactions:
+       [ ] Touch events work (not just mouse)
+       [ ] Buttons easy to tap
+       [ ] Form inputs easy to use
+       [ ] Tooltips work on touch devices
+    
+    3. Typography:
+       [ ] Text readable on small screens
+       [ ] Font sizes appropriate
+       [ ] Line heights comfortable
+    
+    4. Performance:
+       [ ] Fast on mobile networks
+       [ ] No jank/lag on interactions
+       [ ] Smooth scrolling
+    
+    Expected Outcome:
+    - Excellent mobile experience
+    - Works on all device sizes
+    - No mobile-specific bugs
+    
+    Testing Checklist:
+    [ ] Test on real iPhone
+    [ ] Test on real Android
+    [ ] Test on real tablet
+    [ ] Test in Chrome DevTools device mode
+    [ ] Test with touch events
+    [ ] Test with slow network (3G)
+    [ ] All issues documented and fixed
+
+
+────────────────────────────────────────────────────────────────────────────
+PHASE 4 CHECKPOINT
+────────────────────────────────────────────────────────────────────────────
+Before proceeding to Phase 5, verify:
+[ ] Test coverage >= 80%
+[ ] All tests passing
+[ ] Accessibility audit complete (0 violations)
+[ ] Performance optimized (Lighthouse >= 90)
+[ ] Error handling comprehensive
+[ ] Mobile testing complete
+[ ] No TypeScript errors
+[ ] No linter errors
+[ ] No console warnings
+
+Quality Checklist:
+[ ] Code is well-documented
+[ ] Components are reusable
+[ ] State management is clean
+[ ] No prop drilling
+[ ] No unnecessary re-renders
+[ ] Bundle size reasonable
+[ ] Loads fast
+[ ] Works on all browsers (Chrome, Firefox, Safari, Edge)
+
+Status: ( ) PHASE 4 COMPLETE ✓
+
+
+================================================================================
+PHASE 5: DOCUMENTATION & KNOWLEDGE TRANSFER
+================================================================================
+Objective: Create comprehensive documentation so other developers can
+          understand, maintain, and extend the LCP calculator. Make this
+          the "gold standard" that other calculators can follow.
+
+Prerequisites: Phase 4 complete (production ready)
+Expected Time: 2-3 hours
+Impact: HIGH - Long-term maintainability, team efficiency
+
+
+( ) STEP 5.1: Create Architecture Documentation
+    ────────────────────────────────────────────────────────────────────────
+    File: src/components/calculator/lcpstep/ARCHITECTURE.md
+    
+    Content to Document:
+    1. System Overview:
+       - What is the LCP calculator?
+       - Who uses it?
+       - How does it fit into the larger app?
+    
+    2. Architecture Diagram:
+       ```
+       LCPStepper (Orchestrator Pattern)
+       │
+       ├─→ LCPFlowOrchestrator (Config + Logic)
+       │   ├─ Step Configuration
+       │   ├─ Handler Factory
+       │   └─ Routing Logic
+       │
+       ├─→ useLCPFlow (State Management)
+       │   ├─ Form Data
+       │   ├─ Calculation
+       │   └─ Navigation
+       │
+       ├─→ Step Components
+       │   ├─ LCPSettlementPaymentsOverview
+       │   ├─ LCPPhysicalProfileOverview
+       │   ├─ LCPHealthOverview
+       │   ├─ LCPDatesSelection
+       │   ├─ LCPLumpSumAmountOverview
+       │   ├─ LCPaymentReviewStep
+       │   └─ LCPaymentResultsPage
+       │
+       └─→ Shared Components
+           ├─ LCPButton (option, next)
+           ├─ LCPSection (label + group)
+           ├─ LCPFormInput (text, date)
+           └─ LCPStepContainer (wrapper)
+       ```
+    
+    3. Data Flow:
+       - How data flows through the system
+       - Form data structure
+       - Step transitions
+       - Calculation flow
+    
+    4. Key Design Decisions:
+       - Why orchestrator pattern?
+       - Why shared components?
+       - Why CSS modules?
+       - Trade-offs made
+    
+    5. Patterns Used:
+       - Orchestrator pattern
+       - Composition
+       - CSS Modules
+       - Custom hooks
+    
+    Expected Outcome:
+    - Clear system overview
+    - Easy to understand architecture
+    - New developers can onboard quickly
+    
+    Testing Checklist:
+    [ ] Diagram is accurate
+    [ ] Explanations are clear
+    [ ] Design decisions explained
+    [ ] Patterns documented
+    [ ] Trade-offs discussed
+
+
+( ) STEP 5.2: Create Developer Guide
+    ────────────────────────────────────────────────────────────────────────
+    File: src/components/calculator/lcpstep/DEVELOPER-GUIDE.md
+    
+    Content to Document:
+    1. Getting Started:
+       - How to run the calculator
+       - How to run tests
+       - How to run in isolation
+    
+    2. Common Tasks:
+       - How to add a new step
+       - How to modify an existing step
+       - How to add a new question
+       - How to modify styling
+       - How to add validation
+    
+    3. Code Examples:
+       ```typescript
+       // Example: Adding a new step to the flow
+       
+       // 1. Add step ID to types
+       export type LCPStep = 'lcp_payment' | ... | 'lcp_new_step';
+       
+       // 2. Create step component
+       const LCPNewStep: React.FC<Props> = ({...}) => {
+         return (
+           <LCPStepContainer title="New Step">
+             <LCPSection label="Question?">
+               {/* content */}
+             </LCPSection>
+           </LCPStepContainer>
+         );
+       };
+       
+       // 3. Add to orchestrator config
+       lcp_new_step: {
+         stepId: 'lcp_new_step',
+         stepNumber: X,
+         component: LCPNewStep,
+         getInitialData: (formData) => ({ /* ... */ }),
+         transformData: (output, formData) => ({ /* ... */ }),
+         getNextStep: (formData) => 'next_step',
+         isDataStep: true
+       }
+       
+       // That's it! The orchestrator handles everything else.
+       ```
+    
+    4. Troubleshooting:
+       - Common errors and solutions
+       - Debugging tips
+       - Where to look when things break
+    
+    5. Testing Guide:
+       - How to write tests
+       - How to test step transitions
+       - How to test validation
+       - How to test calculations
+    
+    Expected Outcome:
+    - Easy to make common changes
+    - Clear examples for every task
+    - Troubleshooting guide
+    
+    Testing Checklist:
+    [ ] Getting started section complete
+    [ ] Common tasks covered
+    [ ] Code examples work
+    [ ] Troubleshooting guide helpful
+    [ ] Testing guide clear
+
+
+( ) STEP 5.3: Create Component API Documentation
+    ────────────────────────────────────────────────────────────────────────
+    File: src/components/calculator/lcpstep/COMPONENT-API.md
+    
+    Document Each Component:
+    1. LCPButton:
+       - Props interface
+       - Variants
+       - Examples
+       - Styling
+    
+    2. LCPSection:
+       - Props interface
+       - Usage
+       - Examples
+       - Tooltip behavior
+    
+    3. LCPFormInput:
+       - Props interface
+       - Types
+       - Validation
+       - Examples
+    
+    4. LCPStepContainer:
+       - Props interface
+       - Usage
+       - Suspense behavior
+    
+    5. Each Step Component:
+       - Props interface
+       - Data requirements
+       - Validation rules
+       - Examples
+    
+    Format Example:
+    ```markdown
+    ## LCPButton
+    
+    ### Description
+    Reusable button component for LCP steps with two variants.
+    
+    ### Props
+    | Prop | Type | Default | Description |
+    |------|------|---------|-------------|
+    | variant | 'option' \| 'next' | Required | Button style variant |
+    | selected | boolean | false | Selected state (option only) |
+    | disabled | boolean | false | Disabled state |
+    | onClick | () => void | undefined | Click handler |
+    | children | ReactNode | undefined | Button content |
+    
+    ### Variants
+    
+    #### Option Variant
+    Used for selection buttons in forms.
+    ```tsx
+    <LCPButton
+      variant="option"
+      selected={value === 'selected'}
+      onClick={() => setValue('selected')}
+    >
+      Option Text
+    </LCPButton>
+    ```
+    
+    #### Next Variant
+    Circular arrow button for progressing to next step.
+    ```tsx
+    <LCPButton
+      variant="next"
+      type="submit"
+      disabled={!isValid}
+      aria-label="Next"
+    >
+      →
+    </LCPButton>
+    ```
+    
+    ### Styling
+    Styles defined in: `shared/LCPButton.module.css`
+    
+    ### Accessibility
+    - Keyboard navigable (Tab, Enter, Space)
+    - ARIA labels supported
+    - Focus visible
+    - Screen reader friendly
+    ```
+    
+    Expected Outcome:
+    - Complete API reference
+    - Easy to use components
+    - Clear examples
+    
+    Testing Checklist:
+    [ ] All components documented
+    [ ] All props documented
+    [ ] Examples are accurate
+    [ ] Styling info included
+    [ ] Accessibility notes included
+
+
+( ) STEP 5.4: Create Migration Guide for Other Calculators
+    ────────────────────────────────────────────────────────────────────────
+    File: src/components/calculator/lcpstep/MIGRATION-GUIDE.md
+    
+    Purpose: Help other developers apply this refactoring to other calculators
+            (Guaranteed calculator, etc.)
+    
+    Content:
+    1. Overview:
+       - Why this architecture is better
+       - Benefits of migration
+       - Effort estimation
+    
+    2. Step-by-Step Migration:
+       - Phase 1: Audit current state
+       - Phase 2: Extract shared components
+       - Phase 3: Migrate step components
+       - Phase 4: Implement orchestrator
+       - Phase 5: Test and optimize
+    
+    3. Reusable Components:
+       - Which LCP components can be reused?
+       - How to adapt them for other calculators?
+       - Creating calculator-agnostic components
+    
+    4. Common Pitfalls:
+       - Things to watch out for
+       - Common mistakes
+       - How to avoid them
+    
+    5. Checklist:
+       ```markdown
+       ## Pre-Migration Checklist
+       [ ] Understand current calculator flow
+       [ ] Document all steps and data
+       [ ] Identify inline style duplication
+       [ ] Identify handler duplication
+       [ ] Plan timeline (2-3 days per calculator)
+       
+       ## Migration Checklist
+       [ ] Phase 1: Shared components created
+       [ ] Phase 2: Step components migrated
+       [ ] Phase 3: Orchestrator implemented
+       [ ] Phase 4: Tests added
+       [ ] Phase 5: Documentation updated
+       
+       ## Post-Migration Checklist
+       [ ] All flows tested
+       [ ] No regressions
+       [ ] Performance improved
+       [ ] Team trained
+       [ ] Documentation complete
+       ```
+    
+    Expected Outcome:
+    - Clear path to migrate other calculators
+    - Reusable patterns
+    - Avoid repeating mistakes
+    
+    Testing Checklist:
+    [ ] Migration steps are clear
+    [ ] Effort estimates realistic
+    [ ] Pitfalls documented
+    [ ] Checklist comprehensive
+
+
+( ) STEP 5.5: Create Video Walkthrough (Optional but Recommended)
+    ────────────────────────────────────────────────────────────────────────
+    Purpose: Visual guide for team members to understand the architecture
+    
+    Content:
+    1. Architecture Overview (5 min):
+       - Show folder structure
+       - Explain orchestrator pattern
+       - Show data flow
+    
+    2. Code Tour (10 min):
+       - Walk through LCPStepper
+       - Explain orchestrator config
+       - Show shared components
+       - Demonstrate step component
+    
+    3. Common Tasks (10 min):
+       - Add a new question
+       - Modify styling
+       - Add a new step
+       - Debug an issue
+    
+    4. Q&A Session (Optional):
+       - Record team questions
+       - Address concerns
+    
+    Tools:
+    - Loom (screen recording)
+    - VS Code
+    - Browser DevTools
+    
+    Expected Outcome:
+    - Team understands architecture visually
+    - Easy onboarding for new developers
+    - Reference for future work
+    
+    Testing Checklist:
+    [ ] Video is clear
+    [ ] Audio is good
+    [ ] Covers key concepts
+    [ ] Shared with team
+    [ ] Embedded in documentation
+
+
+────────────────────────────────────────────────────────────────────────────
+PHASE 5 CHECKPOINT
+────────────────────────────────────────────────────────────────────────────
+Before declaring project complete, verify:
+[ ] Architecture documentation complete
+[ ] Developer guide complete
+[ ] Component API documented
+[ ] Migration guide complete
+[ ] Video walkthrough created (optional)
+[ ] All documentation reviewed
+[ ] Documentation is accurate
+[ ] Examples work
+[ ] Links are valid
+[ ] Shared with team
+
+Documentation Quality Checklist:
+[ ] Easy to understand
+[ ] Comprehensive
+[ ] Accurate
+[ ] Well-organized
+[ ] Searchable
+[ ] Maintainable
+[ ] Visually appealing (diagrams, formatting)
+
+Status: ( ) PHASE 5 COMPLETE ✓
+
+
+================================================================================
+FINAL VERIFICATION & SIGN-OFF
+================================================================================
+
+( ) FINAL STEP: Complete Project Verification
+    ────────────────────────────────────────────────────────────────────────
+    
+    Code Quality:
+    [ ] Zero inline styles in all components
+    [ ] All components use shared components
+    [ ] All CSS in CSS modules
+    [ ] Orchestrator pattern implemented
+    [ ] No code duplication
+    [ ] TypeScript strict mode passes
+    [ ] No linter errors
+    [ ] No console warnings
+    
+    Functionality:
+    [ ] All user flows work end-to-end
+    [ ] Monthly payment flow works
+    [ ] Annual payment flow works
+    [ ] Lump sum flow works
+    [ ] Calculations are correct
+    [ ] Validation works properly
+    [ ] Error handling works
+    [ ] Navigation works (back, edit, etc.)
+    
+    Testing:
+    [ ] All unit tests pass
+    [ ] Test coverage >= 80%
+    [ ] Integration tests pass
+    [ ] E2E tests pass (if applicable)
+    [ ] Manual testing complete
+    [ ] No regressions found
+    
+    Performance:
+    [ ] Lighthouse score >= 90
+    [ ] No memory leaks
+    [ ] Fast on mobile
+    [ ] Bundle size optimized
+    [ ] Minimal re-renders
+    
+    Accessibility:
+    [ ] WCAG 2.1 AA compliant
+    [ ] Keyboard navigation works
+    [ ] Screen reader friendly
+    [ ] High contrast mode works
+    [ ] Focus management correct
+    [ ] axe DevTools: 0 violations
+    
+    Documentation:
+    [ ] Architecture documented
+    [ ] Developer guide complete
+    [ ] Component API documented
+    [ ] Migration guide ready
+    [ ] Code comments comprehensive
+    [ ] README up to date
+    
+    Production Readiness:
+    [ ] No known bugs
+    [ ] Error tracking configured
+    [ ] Analytics configured (if needed)
+    [ ] Monitoring configured
+    [ ] Performance baseline established
+    [ ] Rollback plan exists
+    
+    Team Readiness:
+    [ ] Team trained on new architecture
+    [ ] Questions answered
+    [ ] Documentation reviewed
+    [ ] Feedback incorporated
+    [ ] Handoff complete
+
+
+================================================================================
+PROJECT COMPLETE ✓
+================================================================================
+
+Final Metrics:
+  Lines of Code Reduced: ~1000 lines (820 inline styles + 180 handler code)
+  Code Reduction: ~55% overall
+  Maintainability: 10x improvement
+  Test Coverage: 80%+
+  Accessibility: WCAG 2.1 AA compliant
+  Performance: Lighthouse score >= 90
+  Documentation: Comprehensive
+
+This LCP calculator is now the "Gold Standard" for the project.
+Other calculators should follow this architecture.
+
+Congratulations! 🎉
+
+
+================================================================================
+APPENDIX: USEFUL COMMANDS
+================================================================================
+
+Development:
+  npm run dev                  # Start development server
+  npm test                     # Run all tests
+  npm run test:watch           # Run tests in watch mode
+  npm run lint                 # Run linter
+  npm run type-check           # Run TypeScript checks
+
+Testing:
+  npm test -- LCPButton        # Test specific component
+  npm run test:coverage        # Generate coverage report
+  npm run test:e2e            # Run E2E tests
+
+Performance:
+  npm run build               # Build for production
+  npm run analyze             # Analyze bundle size
+  
+Accessibility:
+  npm run test:a11y           # Run accessibility tests
+
+
+================================================================================
+APPENDIX: FILE STRUCTURE (AFTER REFACTORING)
+================================================================================
+
+lcpstep/
+├── shared/                                    # Shared components
+│   ├── LCPButton.tsx                         # ✨ NEW
+│   ├── LCPButton.module.css                  # ✨ NEW
+│   ├── LCPSection.tsx                        # ✨ NEW
+│   ├── LCPSection.module.css                 # ✨ NEW
+│   ├── LCPFormInput.tsx                      # ✨ NEW
+│   ├── LCPFormInput.module.css               # ✨ NEW
+│   └── index.ts                              # ✨ NEW
+│
+├── hooks/
+│   └── useLCPFlow.ts                         # ✅ Keep (clean)
+│
+├── LCPFlowOrchestrator.ts                    # ✨ NEW (orchestrator)
+├── LCPStepper.tsx                            # 🔄 REFACTORED (293→110 lines)
+├── LCPStepContainer.tsx                      # 🔄 REFACTORED (uses CSS module)
+├── LCPStepContainer.module.css               # ✨ NEW
+├── LCPShared.module.css                      # 🔄 ENHANCED
+│
+├── LCPSettlementPaymentsOverview.tsx         # 🔄 REFACTORED (244→80 lines)
+├── LCPPhysicalProfileOverview.tsx            # 🔄 REFACTORED (397→100 lines)
+├── LCPHealthOverview.tsx                     # 🔄 REFACTORED (320→90 lines)
+├── LCPDatesSelection.tsx                     # 🔄 REFACTORED (441→150 lines)
+├── LCPLumpSumAmountOverview.tsx              # 🔄 REFACTORED
+├── LCPaymentReviewStep.tsx                   # ✅ Keep (mostly clean)
+├── LCPaymentResultsPage.tsx                  # ✅ Keep (mostly clean)
+│
+├── AssistantPanel.tsx                        # ✅ Keep (already good)
+├── AssistantPanel.module.css                 # ✅ Keep
+├── AssistantInputBar.tsx                     # ✅ Keep
+│
+├── __tests__/                                # Tests
+│   ├── LCPButton.test.tsx                    # ✨ NEW
+│   ├── LCPSection.test.tsx                   # ✨ NEW
+│   ├── LCPFormInput.test.tsx                 # ✨ NEW
+│   ├── LCPFlowOrchestrator.test.ts           # ✨ NEW
+│   ├── LCPStepper.test.tsx                   # ✨ NEW
+│   └── LCPDatesSelection.test.tsx            # ✅ Keep (enhance)
+│
+└── docs/                                      # Documentation
+    ├── ARCHITECTURE.md                        # ✨ NEW
+    ├── DEVELOPER-GUIDE.md                     # ✨ NEW
+    ├── COMPONENT-API.md                       # ✨ NEW
+    ├── MIGRATION-GUIDE.md                     # ✨ NEW
+    └── LCP-REFACTOR-TREE.txt                 # 📄 This file
+
+
+Legend:
+  ✨ NEW - New file created during refactoring
+  🔄 REFACTORED - Significantly modified/improved
+  ✅ Keep - Already good, minimal changes
+  📄 Documentation
+
+
+================================================================================
+END OF REFACTORING PLAN
+================================================================================
+

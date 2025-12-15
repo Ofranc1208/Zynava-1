@@ -1,0 +1,79 @@
+/* PaymentSection - Payment-specific styles */
+
+.list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.listItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.93rem;
+  padding: 0.1rem 0;
+}
+
+.label {
+  color: #666;
+  font-weight: 500;
+  margin-right: 0.5rem;
+}
+
+.value {
+  color: #222;
+  font-weight: 600;
+}
+
+/* Lump Sum Payment Styles */
+.lumpSumPayment {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.93rem;
+  padding: 0.1rem 0;
+}
+
+.paymentDetails {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  padding: 0.3rem 0;
+  border-top: 1px solid #f0f0f0;
+  margin-top: 0.3rem;
+  width: 100%;
+}
+
+.paymentRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.85rem;
+}
+
+.paymentLabel {
+  color: #666;
+  font-weight: 500;
+  margin-right: 0.5rem;
+}
+
+.paymentValue {
+  color: #222;
+  font-weight: 600;
+}
+
+/* Responsive adjustments */
+@media (max-width: 640px) {
+  .listItem,
+  .paymentRow {
+    font-size: 0.9rem;
+  }
+  
+  .paymentDetails {
+    padding: 0.2rem 0;
+    margin-top: 0.2rem;
+  }
+}

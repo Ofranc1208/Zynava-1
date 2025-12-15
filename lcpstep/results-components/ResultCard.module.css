@@ -1,0 +1,64 @@
+/* ResultCard - Individual result display card styles */
+
+.card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  padding: 0.5rem 0;
+}
+
+.label {
+  color: #666;
+  font-weight: 600;
+  font-size: 0.98rem;
+  margin-bottom: 0.3rem;
+  text-align: center;
+}
+
+.amount {
+  color: #15803d;
+  font-weight: 800;
+  letter-spacing: 0.01em;
+  text-align: center;
+}
+
+.amountMinimum {
+  font-size: 1.365rem;
+}
+
+.amountMaximum {
+  font-size: 1.89rem;
+}
+
+.amountFamily {
+  font-size: 1.365rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 640px) {
+  .card {
+    margin-bottom: 1.2rem;
+    padding: 0.4rem 0;
+  }
+
+  .label {
+    font-size: 0.9rem;
+  }
+
+  .amountMinimum,
+  .amountFamily {
+    font-size: 1.2rem;
+  }
+
+  .amountMaximum {
+    font-size: 1.6rem;
+  }
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .card {
+    transition: none;
+  }
+}
