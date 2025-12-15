@@ -13,7 +13,7 @@ interface WelcomeSequenceProps {
 export default function WelcomeSequence({ onGetStarted, hideButton = false }: WelcomeSequenceProps) {
   const [isTyping, setIsTyping] = useState(true)
   const [animationStep, setAnimationStep] = useState(0)
-  // 0 = typing, 1 = first greeting, 2 = typing, 3 = second bubble, 4 = typing, 5 = third bubble, 6 = typing, 7 = show Get Started
+  // 0 = typing, 1 = greeting bubble, 2 = typing, 3 = skip ads bubble, 4 = typing, 5 = match supplements bubble, 6 = typing, 7 = no personal info bubble, 8 = typing, 9 = show Get Started
 
   useEffect(() => {
     const timers: NodeJS.Timeout[] = []
@@ -21,38 +21,48 @@ export default function WelcomeSequence({ onGetStarted, hideButton = false }: We
     // Animated message sequence
     timers.push(setTimeout(() => {
       setIsTyping(false)
-      setAnimationStep(1)
+      setAnimationStep(1) // Greeting bubble
     }, 1200))
     
     timers.push(setTimeout(() => {
       setIsTyping(true)
-      setAnimationStep(2)
+      setAnimationStep(2) // Typing indicator for skip ads
     }, 2000))
     
     timers.push(setTimeout(() => {
       setIsTyping(false)
-      setAnimationStep(3) // First bubble appears
+      setAnimationStep(3) // Skip ads bubble appears
     }, 3200))
     
     timers.push(setTimeout(() => {
       setIsTyping(true)
-      setAnimationStep(4) // Typing indicator for second bubble
+      setAnimationStep(4) // Typing indicator for match supplements
     }, 4000))
     
     timers.push(setTimeout(() => {
       setIsTyping(false)
-      setAnimationStep(5) // Second bubble appears
+      setAnimationStep(5) // Match supplements bubble appears
     }, 5200))
     
     timers.push(setTimeout(() => {
       setIsTyping(true)
-      setAnimationStep(6) // Typing indicator before Get Started button
+      setAnimationStep(6) // Typing indicator for no personal info
     }, 5800))
     
     timers.push(setTimeout(() => {
       setIsTyping(false)
-      setAnimationStep(7) // Show Get Started button
+      setAnimationStep(7) // No personal info bubble appears
     }, 7000))
+    
+    timers.push(setTimeout(() => {
+      setIsTyping(true)
+      setAnimationStep(8) // Typing indicator before Get Started button
+    }, 7600))
+    
+    timers.push(setTimeout(() => {
+      setIsTyping(false)
+      setAnimationStep(9) // Show Get Started button
+    }, 8800))
 
     return () => timers.forEach(t => clearTimeout(t))
   }, [])
@@ -67,7 +77,7 @@ export default function WelcomeSequence({ onGetStarted, hideButton = false }: We
       {/* First greeting message */}
       {animationStep >= 1 && (
         <ChatBubble
-          message="Hi, I’m Z."
+          message="Hi, I'm Z."
           sender="advisor"
           timestamp={new Date()}
         />
@@ -78,7 +88,7 @@ export default function WelcomeSequence({ onGetStarted, hideButton = false }: We
         <TypingIndicator isVisible={isTyping} />
       )}
       
-      {/* Second explanation message - first bubble */}
+      {/* Second message - Skip ads */}
       {animationStep >= 3 && (
         <ChatBubble
           message={
@@ -96,12 +106,30 @@ export default function WelcomeSequence({ onGetStarted, hideButton = false }: We
         <TypingIndicator isVisible={isTyping} />
       )}
       
-      {/* Third explanation message - second bubble */}
+      {/* Third message - Match supplements */}
       {animationStep >= 5 && (
         <ChatBubble
           message={
             <>
-              <strong>No personal info or sign up.</strong> Let's match supplements that align with your <strong>health goal</strong> and <strong>budget</strong>.
+              Let's match supplements that align with your <strong>health goal</strong> and <strong>budget</strong>.
+            </>
+          }
+          sender="advisor"
+          timestamp={new Date()}
+        />
+      )}
+      
+      {/* Typing indicator for fourth message */}
+      {animationStep === 6 && (
+        <TypingIndicator isVisible={isTyping} />
+      )}
+      
+      {/* Fourth message - No personal info */}
+      {animationStep >= 7 && (
+        <ChatBubble
+          message={
+            <>
+              <strong>No personal info</strong> or <strong>sign up</strong> is ever needed.
             </>
           }
           sender="advisor"
@@ -110,12 +138,12 @@ export default function WelcomeSequence({ onGetStarted, hideButton = false }: We
       )}
       
       {/* Typing indicator before Get Started button */}
-      {animationStep === 6 && (
+      {animationStep === 8 && (
         <TypingIndicator isVisible={isTyping} />
       )}
       
       {/* Get Started button - hide after clicking */}
-      {animationStep >= 7 && !hideButton && (
+      {animationStep >= 9 && !hideButton && (
         <div className={styles.getStartedContainer}>
           <button
             className={styles.getStartedButton}

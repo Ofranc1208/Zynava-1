@@ -17,7 +17,7 @@
   -ms-flex-pack: center;
   justify-content: center;
   z-index: 1000;
-  padding: 1rem;
+  padding: 0.25rem; /* Minimal padding - more edge-to-edge look */
   /* Animation with vendor prefixes */
   -webkit-animation: fadeIn 0.2s ease;
   animation: fadeIn 0.2s ease;
@@ -139,7 +139,7 @@
 /* Responsive - Tablet and Below */
 @media (max-width: 768px) {
   .overlay {
-    padding: 0.75rem;
+    padding: 0.25rem; /* Minimal padding - edge-to-edge */
   }
   
   .modal {
@@ -153,7 +153,7 @@
 /* Responsive - Mobile Phones (iPhone 16 Pro, iPhone 14/15, etc.) */
 @media (max-width: 480px) {
   .overlay {
-    padding: 0.5rem;
+    padding: 0.25rem; /* Minimal padding - edge-to-edge */
   }
   
   .modal {
@@ -167,7 +167,7 @@
 /* Responsive - Small iPhones (SE, 13 mini, etc.) */
 @media (max-width: 390px) {
   .overlay {
-    padding: 0.5rem 0.25rem;
+    padding: 0.125rem; /* Ultra-minimal padding */
   }
   
   .modal {
@@ -179,7 +179,7 @@
 /* Responsive - Very Short Screens (landscape orientation) */
 @media (max-height: 600px) {
   .overlay {
-    padding: 0.25rem;
+    padding: 0.125rem; /* Ultra-minimal padding */
   }
   
   .modal {

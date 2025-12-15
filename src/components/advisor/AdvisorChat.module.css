@@ -12,7 +12,7 @@
 
 .chatHeader {
   background: linear-gradient(135deg, #ff6b35 0%, #e55a2b 100%);
-  padding: 12px 24px 10px 24px; /* Increased padding by 15% for more width */
+  padding: 10px 18px 8px 18px; /* Reduced by 20% for slimmer header */
   color: white;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   display: flex;
@@ -26,7 +26,7 @@
 .headerContent {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 2px; /* Reduced from 4px for tighter spacing */
   flex: 1; /* Take available space */
   align-items: flex-start;
 }
@@ -133,9 +133,9 @@
 .messagesContent {
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  padding: 20px;
-  padding-bottom: 32px; /* Extra bottom spacing */
+  gap: 12px; /* Reduced from 16px */
+  padding: 16px; /* Reduced from 20px */
+  padding-bottom: 24px; /* Reduced from 32px */
   min-height: 100%; /* Ensure content fills container */
 }
 
@@ -190,7 +190,7 @@
   }
   
   .chatHeader {
-    padding: 12px 18px 10px 18px;
+    padding: 10px 14px 8px 14px; /* Reduced by 20% */
   }
   
   .headerTitle {
@@ -202,16 +202,16 @@
   }
   
   .messagesContent {
-    padding: 16px;
-    padding-bottom: 24px;
-    gap: 14px;
+    padding: 14px;
+    padding-bottom: 20px;
+    gap: 12px;
   }
 }
 
 /* Responsive - Mobile Phones (iPhone 16 Pro, iPhone 14/15, etc.) */
 @media (max-width: 480px) {
   .chatHeader {
-    padding: 10px 14px 8px 14px;
+    padding: 8px 11px 6px 11px; /* Reduced by 20% */
   }
   
   .headerIcon {
@@ -237,16 +237,16 @@
   }
   
   .messagesContent {
-    padding: 14px;
-    padding-bottom: 20px;
-    gap: 12px;
+    padding: 12px;
+    padding-bottom: 18px;
+    gap: 10px;
   }
 }
 
 /* Responsive - Small iPhones (SE, 13 mini, etc.) */
 @media (max-width: 390px) {
   .chatHeader {
-    padding: 8px 12px 6px 12px;
+    padding: 6px 10px 5px 10px; /* Reduced by 20% */
   }
   
   .headerTitle {
@@ -258,16 +258,16 @@
   }
   
   .messagesContent {
-    padding: 12px;
-    padding-bottom: 16px;
-    gap: 10px;
+    padding: 10px;
+    padding-bottom: 14px;
+    gap: 9px;
   }
 }
 
 /* Responsive - Landscape Mode (short height) */
 @media (max-height: 700px) {
   .chatHeader {
-    padding: 8px 16px 6px 16px;
+    padding: 6px 13px 5px 13px; /* Reduced by 20% */
   }
   
   .headerIcon {
@@ -283,9 +283,9 @@
   }
   
   .messagesContent {
-    padding: 12px;
-    padding-bottom: 16px;
-    gap: 10px;
+    padding: 10px;
+    padding-bottom: 14px;
+    gap: 9px;
   }
 }
 
