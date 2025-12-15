@@ -38,8 +38,8 @@
   position: relative;
   width: 100%;
   max-width: 460px;
-  height: 70%;
-  max-height: 650px; /* Fixed max-height for consistency */
+  height: 80%; /* Increased from 70% by 15% */
+  max-height: 750px; /* Increased from 650px by 15% */
   background: #ffffff;
   /* Border radius with vendor prefixes for older browsers */
   -webkit-border-radius: 16px;
@@ -144,7 +144,7 @@
   
   .modal {
     max-width: 100%;
-    height: 85%;
+    height: 95%; /* Increased from 85% by 15% (capped at 95% for safe padding) */
     max-height: none;
     border-radius: 12px;
   }
@@ -158,7 +158,7 @@
   
   .modal {
     width: 100%;
-    height: 90%;
+    height: 95%; /* Increased from 90% by 15% (capped at 95% for safe padding) */
     max-height: none;
     border-radius: 12px;
   }
@@ -171,7 +171,7 @@
   }
   
   .modal {
-    height: 92%;
+    height: 97%; /* Increased from 92% by 15% (capped at 97% for safe padding) */
     max-height: none;
   }
 }
@@ -183,7 +183,7 @@
   }
   
   .modal {
-    height: 95%;
+    height: 98%; /* Increased from 95% by 15% (capped at 98% for safe padding) */
     max-height: none;
     border-radius: 8px;
   }
