@@ -139,12 +139,12 @@
 /* Responsive - Tablet and Below */
 @media (max-width: 768px) {
   .overlay {
-    padding: 0.25rem; /* Minimal padding - edge-to-edge */
+    padding: 0.5rem; /* Small padding for tablet */
   }
   
   .modal {
     max-width: 100%;
-    height: 95%; /* Increased from 85% by 15% (capped at 95% for safe padding) */
+    height: 98%; /* Nearly full height */
     max-height: none;
     border-radius: 12px;
   }
@@ -153,39 +153,42 @@
 /* Responsive - Mobile Phones (iPhone 16 Pro, iPhone 14/15, etc.) */
 @media (max-width: 480px) {
   .overlay {
-    padding: 0.25rem; /* Minimal padding - edge-to-edge */
+    padding: 0; /* No padding - true edge-to-edge */
+    align-items: stretch; /* Fill entire height */
   }
   
   .modal {
     width: 100%;
-    height: 95%; /* Increased from 90% by 15% (capped at 95% for safe padding) */
+    height: 100%; /* Full height - no bottom gap */
     max-height: none;
-    border-radius: 12px;
+    border-radius: 0; /* No rounded corners for full screen */
+    margin: 0;
   }
 }
 
 /* Responsive - Small iPhones (SE, 13 mini, etc.) */
 @media (max-width: 390px) {
   .overlay {
-    padding: 0.125rem; /* Ultra-minimal padding */
+    padding: 0; /* No padding - true edge-to-edge */
   }
   
   .modal {
-    height: 97%; /* Increased from 92% by 15% (capped at 97% for safe padding) */
+    height: 100%; /* Full height - no bottom gap */
     max-height: none;
+    border-radius: 0;
   }
 }
 
 /* Responsive - Very Short Screens (landscape orientation) */
 @media (max-height: 600px) {
   .overlay {
-    padding: 0.125rem; /* Ultra-minimal padding */
+    padding: 0; /* No padding */
   }
   
   .modal {
-    height: 98%; /* Increased from 95% by 15% (capped at 98% for safe padding) */
+    height: 100%; /* Full height - no bottom gap */
     max-height: none;
-    border-radius: 8px;
+    border-radius: 0;
   }
 }
 
