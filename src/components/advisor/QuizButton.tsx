@@ -42,30 +42,44 @@ export default function QuizButton({
     e.currentTarget.blur()
   }
 
-  // Extract emoji from label if it starts with one
-  // Handles both simple emojis (💪, 🛡️) and complex emojis with ZWJ (🏃‍♂️, 🚶‍♂️, 🧘‍♀️)
-  const spaceIndex = label.indexOf(' ')
-  const firstPart = spaceIndex > 0 ? label.substring(0, spaceIndex) : null
+  // Check if this is a demographics button
+  const isDemographic = value.startsWith('male-') || value.startsWith('female-')
+
+  // Special handling for demographics buttons: split "Male 18-35" into "Male" (top) and "18-35" (bottom)
+  let icon: string | null = null
+  let displayLabel: string = label
   
-  // Improved emoji detection:
-  // 1. Check if it starts with an emoji character (Unicode ranges for emojis)
-  // 2. Allow up to 8 characters to handle complex emojis with ZWJ and variation selectors
-  // 3. Must not start with alphanumeric
-  const isEmoji = firstPart && 
-    firstPart.length > 0 &&
-    firstPart.length <= 8 && // Increased from 4 to handle complex emojis (🏃‍♂️ = 4 chars, can be longer)
-    !/^[a-zA-Z0-9]/.test(firstPart) &&
-    // Check if it contains emoji characters (Unicode ranges: 1F300-1F9FF, 2600-26FF, 2700-27BF, etc.)
-    /[\u{1F300}-\u{1F9FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F600}-\u{1F64F}\u{1F680}-\u{1F6FF}\u{24C2}-\u{1F251}]/u.test(firstPart)
-  
-  const icon = isEmoji ? firstPart : null
-  const displayLabel = isEmoji && spaceIndex > 0 ? label.substring(spaceIndex + 1) : label
+  if (isDemographic && (label.startsWith('Male ') || label.startsWith('Female '))) {
+    // For demographics with "Male" or "Female" prefix, split them
+    const spaceIndex = label.indexOf(' ')
+    icon = spaceIndex > 0 ? label.substring(0, spaceIndex) : null // "Male" or "Female"
+    displayLabel = spaceIndex > 0 ? label.substring(spaceIndex + 1) : label // Age range
+  } else {
+    // Extract emoji from label if it starts with one
+    // Handles both simple emojis (💪, 🛡️) and complex emojis with ZWJ (🏃‍♂️, 🚶‍♂️, 🧘‍♀️)
+    const spaceIndex = label.indexOf(' ')
+    const firstPart = spaceIndex > 0 ? label.substring(0, spaceIndex) : null
+    
+    // Improved emoji detection:
+    // 1. Check if it starts with an emoji character (Unicode ranges for emojis)
+    // 2. Allow up to 8 characters to handle complex emojis with ZWJ and variation selectors
+    // 3. Must not start with alphanumeric
+    const isEmoji = firstPart && 
+      firstPart.length > 0 &&
+      firstPart.length <= 8 && // Increased from 4 to handle complex emojis (🏃‍♂️ = 4 chars, can be longer)
+      !/^[a-zA-Z0-9]/.test(firstPart) &&
+      // Check if it contains emoji characters (Unicode ranges: 1F300-1F9FF, 2600-26FF, 2700-27BF, etc.)
+      /[\u{1F300}-\u{1F9FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F600}-\u{1F64F}\u{1F680}-\u{1F6FF}\u{24C2}-\u{1F251}]/u.test(firstPart)
+    
+    icon = isEmoji ? firstPart : null
+    displayLabel = isEmoji && spaceIndex > 0 ? label.substring(spaceIndex + 1) : label
+  }
 
   return (
     <button
       id={id}
       type="button"
-      className={`${styles.quizButton} ${isSelected ? styles.selected : ''} ${disabled ? styles.disabled : ''}`}
+      className={`${styles.quizButton} ${isSelected ? styles.selected : ''} ${disabled ? styles.disabled : ''} ${isDemographic ? styles.demographic : ''}`}
       onClick={handleClick}
       onTouchEnd={handleTouchEnd}
       disabled={disabled}
@@ -73,7 +87,7 @@ export default function QuizButton({
       tabIndex={0}
     >
       {icon && (
-        <span className={styles.icon}>{icon}</span>
+        <span className={`${styles.icon} ${isDemographic && (icon === 'Male' || icon === 'Female') ? styles.demographicText : ''}`}>{icon}</span>
       )}
       <span className={styles.label}>{displayLabel}</span>
       {multiSelect && (

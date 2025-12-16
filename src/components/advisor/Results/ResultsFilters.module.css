@@ -1,0 +1,81 @@
+/* Results Filters Styles */
+
+.filtersContainer {
+  margin-bottom: 1rem;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+.filtersContainer::-webkit-scrollbar {
+  display: none;
+}
+
+.filterTabs {
+  display: flex;
+  gap: 0.5rem;
+  padding: 0.25rem;
+  background: #ffffff;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  min-width: max-content;
+}
+
+.filterTab {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.65rem 1rem;
+  background: transparent;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+.filterTab:hover {
+  background: #f8fafc;
+}
+
+.filterTab.active {
+  background: #ff6b35;
+  color: white;
+  box-shadow: 0 2px 8px rgba(255, 107, 53, 0.3);
+}
+
+.tabIcon {
+  font-size: 1rem;
+}
+
+.tabLabel {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #374151;
+}
+
+.filterTab.active .tabLabel {
+  color: white;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .filterTabs {
+    gap: 0.35rem;
+    padding: 0.2rem;
+  }
+  
+  .filterTab {
+    padding: 0.5rem 0.75rem;
+  }
+  
+  .tabIcon {
+    font-size: 0.9rem;
+  }
+  
+  .tabLabel {
+    font-size: 0.75rem;
+  }
+}
+

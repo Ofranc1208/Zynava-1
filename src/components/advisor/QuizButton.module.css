@@ -119,6 +119,24 @@
   display: none; /* Remove all radio/checkbox circles */
 }
 
+/* Demographics-specific styling: smaller icons, larger age text */
+.quizButton.demographic .icon {
+  font-size: 1.1rem; /* Smaller icon for demographics */
+}
+
+/* Text styling for "Male"/"Female" in demographics buttons */
+.quizButton.demographic .icon.demographicText {
+  font-size: 0.9rem; /* Text size for Male/Female */
+  font-weight: 600;
+  color: #2d3748;
+  letter-spacing: 0.02em;
+}
+
+.quizButton.demographic .label {
+  font-size: 1rem; /* Larger age text for demographics */
+  font-weight: 700; /* Bolder for emphasis */
+}
+
 /* Responsive - Tablet and Below */
 @media (max-width: 768px) {
   .quizButton {
@@ -133,6 +151,18 @@
   
   .label {
     font-size: 0.78rem; /* Reduced from 0.88rem */
+  }
+  
+  .quizButton.demographic .icon {
+    font-size: 1rem; /* Smaller icon for demographics on tablet */
+  }
+  
+  .quizButton.demographic .icon.demographicText {
+    font-size: 0.85rem; /* Text size for Male/Female on tablet */
+  }
+  
+  .quizButton.demographic .label {
+    font-size: 0.95rem; /* Larger age text for demographics on tablet */
   }
 }
 
@@ -155,6 +185,18 @@
     font-size: 0.75rem; /* Reduced from 0.85rem */
     line-height: 1.2;
   }
+  
+  .quizButton.demographic .icon {
+    font-size: 0.95rem; /* Smaller icon for demographics on mobile */
+  }
+  
+  .quizButton.demographic .icon.demographicText {
+    font-size: 0.8rem; /* Text size for Male/Female on mobile */
+  }
+  
+  .quizButton.demographic .label {
+    font-size: 0.9rem; /* Larger age text for demographics on mobile */
+  }
 }
 
 /* Responsive - Small iPhones (SE, 13 mini, etc.) */
@@ -171,6 +213,18 @@
   
   .label {
     font-size: 0.72rem; /* Reduced from 0.82rem */
+  }
+  
+  .quizButton.demographic .icon {
+    font-size: 0.9rem; /* Smaller icon for demographics on small phones */
+  }
+  
+  .quizButton.demographic .icon.demographicText {
+    font-size: 0.75rem; /* Text size for Male/Female on small phones */
+  }
+  
+  .quizButton.demographic .label {
+    font-size: 0.85rem; /* Larger age text for demographics on small phones */
   }
 }
 

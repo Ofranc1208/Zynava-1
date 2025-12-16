@@ -1,0 +1,246 @@
+/* Results Page Styles */
+
+.resultsContainer {
+  width: 100%;
+  padding: 1.2rem 0.8rem;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  min-height: 100vh;
+  background: #f8fafc;
+}
+
+/* Desktop - wider container for more products */
+@media (min-width: 1200px) {
+  .resultsContainer {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 1.2rem 1.6rem;
+  }
+}
+
+/* Header */
+.header {
+  margin-bottom: 0.75rem;
+  padding: 0;
+  background: transparent;
+  text-align: center;
+}
+
+.headerTop {
+  margin-bottom: 0.5rem;
+}
+
+.title {
+  font-size: 1.8rem;
+  font-weight: 900;
+  color: #1f2937;
+  margin: 0;
+  line-height: 1.2;
+  letter-spacing: -0.5px;
+}
+
+.trustMessage {
+  font-size: 0.8rem;
+  color: #ff6b35;
+  margin: 0.3rem 0 0 0;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+}
+
+.preferencesChips {
+  display: flex;
+  flex-wrap: nowrap;
+  justify-content: center;
+  gap: 0.2rem;
+  margin-bottom: 0.6rem;
+  overflow: hidden;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.2rem 0.45rem;
+  background: #f0fdf4;
+  color: #15803d;
+  font-size: 0.6rem;
+  font-weight: 600;
+  border-radius: 20px;
+  border: 1px solid #bbf7d0;
+  text-transform: capitalize;
+  gap: 0.1rem;
+  white-space: nowrap;
+  flex-shrink: 1;
+  min-width: 0;
+}
+
+/* Results Grid - Responsive columns */
+.resultsGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.6rem;
+  margin-bottom: 1.1rem;
+}
+
+/* Desktop - 4 columns for more products */
+@media (min-width: 1400px) {
+  .resultsGrid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.8rem;
+  }
+}
+
+/* Large desktop - 3-4 columns */
+@media (min-width: 1200px) and (max-width: 1399px) {
+  .resultsGrid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.7rem;
+  }
+}
+
+/* Empty State */
+.emptyState {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 3rem 1rem;
+  background: #ffffff;
+  border-radius: 12px;
+  border: 2px dashed #e2e8f0;
+}
+
+.emptyState p {
+  color: #6b7280;
+  margin-bottom: 1rem;
+}
+
+.retryButton {
+  padding: 0.75rem 1.5rem;
+  background: #ff6b35;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.retryButton:hover {
+  background: #e55a2b;
+}
+
+/* Why Section */
+.whySection {
+  background: #ffffff;
+  padding: 1rem;
+  border-radius: 12px;
+  margin-bottom: 1.1rem;
+  border: 1px solid #e2e8f0;
+}
+
+.whySection h3 {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin: 0 0 0.4rem 0;
+}
+
+.whySection p {
+  font-size: 0.8rem;
+  color: #6b7280;
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* Actions */
+.actions {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.primaryButton {
+  padding: 0.7rem 1.2rem;
+  background: #ff6b35;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.primaryButton:hover {
+  background: #e55a2b;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(255, 107, 53, 0.3);
+}
+
+.secondaryButton {
+  padding: 0.7rem 1.2rem;
+  background: #ffffff;
+  color: #374151;
+  border: 2px solid #e2e8f0;
+  border-radius: 10px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.secondaryButton:hover {
+  border-color: #ff6b35;
+  color: #ff6b35;
+}
+
+/* Responsive - Tablet */
+@media (max-width: 768px) {
+  .resultsContainer {
+    padding: 1rem;
+  }
+  
+  .title {
+    font-size: 1.5rem;
+  }
+  
+  .subtitle {
+    font-size: 0.9rem;
+  }
+  
+  .resultsGrid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.6rem;
+  }
+}
+
+/* Responsive - Mobile */
+@media (max-width: 480px) {
+  .title {
+    font-size: 1.5rem;
+  }
+  
+  .trustMessage {
+    font-size: 0.8rem;
+  }
+  
+  .chip {
+    font-size: 0.75rem;
+    padding: 0.3rem 0.7rem;
+  }
+  
+  .resultsGrid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.5rem;
+  }
+  
+  .actions {
+    flex-direction: column;
+  }
+  
+  .primaryButton,
+  .secondaryButton {
+    width: 100%;
+    text-align: center;
+  }
+}
+

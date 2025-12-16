@@ -16,7 +16,6 @@ interface ProcessingAnimationProps {
  */
 export default function ProcessingAnimation({ onComplete, onViewResults }: ProcessingAnimationProps) {
   const [currentStep, setCurrentStep] = useState(0);
-  const [isComplete, setIsComplete] = useState(false);
 
   const steps = [
     { text: 'Shopping through hundreds of brands...', duration: 1000 },
@@ -35,49 +34,20 @@ export default function ProcessingAnimation({ onComplete, onViewResults }: Proce
 
       return () => clearTimeout(timer);
     } else {
-      // All steps complete, show completion message
+      // All steps complete - go directly to results (no completion page)
       const finalDelay = setTimeout(() => {
-        setIsComplete(true);
         onComplete();
+        onViewResults(); // Navigate directly to results page
       }, 400);
 
       return () => clearTimeout(finalDelay);
     }
-  }, [currentStep, onComplete]);
-
-  // Auto-navigate to results after completion message is shown
-  useEffect(() => {
-    if (isComplete) {
-      const navigateDelay = setTimeout(() => {
-        onViewResults();
-      }, 1500); // Show completion message for 1.5 seconds before navigating
-
-      return () => clearTimeout(navigateDelay);
-    }
-  }, [isComplete, onViewResults]);
+  }, [currentStep, onComplete, onViewResults]);
 
   // Calculate progress correctly to reach exactly 100%
   const progress = currentStep >= steps.length 
     ? 100 
     : Math.min(((currentStep + 1) / steps.length) * 100, 100);
-
-  // Show completion message after all steps (briefly before auto-navigation)
-  if (isComplete) {
-    return (
-      <div className={styles.container}>
-        <div className={styles.card}>
-          <div className={styles.completionContainer}>
-            <div className={styles.completionIcon}>✨</div>
-            <h2 className={styles.completionTitle}>Ready to be Amazed!</h2>
-            <p className={styles.completionMessage}>
-              We've found the perfect supplements tailored just for you!
-            </p>
-            <div className={styles.loadingText}>Taking you to your results...</div>
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className={styles.container}>

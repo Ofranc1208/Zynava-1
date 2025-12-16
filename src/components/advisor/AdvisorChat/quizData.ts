@@ -30,17 +30,17 @@ export const QUIZ_STEPS: Record<string, AdvisorStep> = {
     message: "About You",
     options: [
       // Row 1: Age 18-35
-      { id: 'male-18-35', label: '👨 Male, 18-35', value: 'male-18-35' },
-      { id: 'female-18-35', label: '👩 Female, 18-35', value: 'female-18-35' },
+      { id: 'male-18-35', label: 'Male 18-35', value: 'male-18-35' },
+      { id: 'female-18-35', label: 'Female 18-35', value: 'female-18-35' },
       // Row 2: Age 36-50
-      { id: 'male-36-50', label: '👨 Male, 36-50', value: 'male-36-50' },
-      { id: 'female-36-50', label: '👩 Female, 36-50', value: 'female-36-50' },
+      { id: 'male-36-50', label: '36-50', value: 'male-36-50' },
+      { id: 'female-36-50', label: '36-50', value: 'female-36-50' },
       // Row 3: Age 51-65
-      { id: 'male-51-65', label: '👨 Male, 51-65', value: 'male-51-65' },
-      { id: 'female-51-65', label: '👩 Female, 51-65', value: 'female-51-65' },
+      { id: 'male-51-65', label: '51-65', value: 'male-51-65' },
+      { id: 'female-51-65', label: '51-65', value: 'female-51-65' },
       // Row 4: Age 65+
-      { id: 'male-65-plus', label: '👨 Male, 65+', value: 'male-65-plus' },
-      { id: 'female-65-plus', label: '👩 Female, 65+', value: 'female-65-plus' },
+      { id: 'male-65-plus', label: '65+', value: 'male-65-plus' },
+      { id: 'female-65-plus', label: '65+', value: 'female-65-plus' },
     ],
     isComplete: false,
   },
