@@ -22,6 +22,8 @@ body {
   -moz-osx-font-smoothing: grayscale;
   /* iOS Safari: Improve rendering performance */
   -webkit-overflow-scrolling: touch;
+  background-color: #FFFDD0; /* Cream/White background for all pages */
+  min-height: 100vh;
 }
 
 a {

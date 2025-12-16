@@ -31,7 +31,7 @@ export default function TestAnimationPage() {
     <div style={{ 
       padding: '2rem', 
       minHeight: '100vh', 
-      background: '#f8fafc',
+      background: '#FFFDD0', /* Cream/White background */
       display: 'flex',
       flexDirection: 'column',
       alignItems: 'center',

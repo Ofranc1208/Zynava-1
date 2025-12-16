@@ -27,14 +27,14 @@ export default function HomeHeroSection() {
       }}>
             <h2 style={{
               fontSize: 'clamp(1.3rem, 3.5vw, 2.2rem)',
-              fontWeight: '950',
+              fontWeight: '800',
               color: '#ffffff',
-              margin: '0 0 0.8rem 0',
+              margin: '0 0 0.36rem 0', /* Reduced by another 10% from 0.4rem */
               textTransform: 'none',
               lineHeight: 1.15,
-              fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", sans-serif',
+              fontFamily: '"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
               textShadow: '0 3px 8px rgba(0, 0, 0, 0.9)',
-              letterSpacing: '-0.02em'
+              letterSpacing: '-0.01em'
             }}>
               Find the Right Supplement
             </h2>
@@ -43,33 +43,37 @@ export default function HomeHeroSection() {
           color: '#ffffff',
           margin: '0',
           lineHeight: 1.4,
-          fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", sans-serif',
+          fontFamily: '"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
           textShadow: '0 2px 6px rgba(0, 0, 0, 0.85)',
           fontWeight: '600'
         }}>
           No guesswork. Never overpay.
         </p>
         <p style={{
-          fontSize: 'clamp(1rem, 2.4vw, 1.2rem)',
+          fontSize: 'clamp(0.85rem, 2.04vw, 1.02rem)', /* Reduced by 15% */
           color: '#ffffff',
-          margin: '0.6rem 0 0',
+          margin: '0.27rem 0 0',
           lineHeight: 1.4,
-          fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", sans-serif',
+          fontFamily: '"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
           textShadow: '0 2px 5px rgba(0, 0, 0, 0.8)',
           opacity: 0.95,
-          fontWeight: '500'
+          fontWeight: '500',
+          maxWidth: '100%',
+          wordWrap: 'break-word'
         }}>
           100% price match guaranteed.
         </p>
         <p style={{
-          fontSize: 'clamp(0.95rem, 2.2vw, 1.1rem)',
+          fontSize: 'clamp(0.81rem, 1.87vw, 0.935rem)', /* Reduced by 15% */
           color: '#ffffff',
-          margin: '0.6rem 0 0',
+          margin: '0.27rem 0 0',
           lineHeight: 1.3,
-          fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", sans-serif',
+          fontFamily: '"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
           textShadow: '0 2px 5px rgba(0, 0, 0, 0.8)',
           opacity: 0.9,
-          fontWeight: '500'
+          fontWeight: '500',
+          maxWidth: '100%',
+          wordWrap: 'break-word'
         }}>
           30,000+ supplements analyzed by Z-SCORE™
         </p>
