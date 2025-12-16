@@ -1,0 +1,2050 @@
+================================================================================
+                    ZYNAVA FITSCORE™ ALGORITHM
+                    Version 1.2.1 (MVP-Ready) - December 2024
+================================================================================
+
+TABLE OF CONTENTS
+-----------------
+1.  OVERVIEW
+2.  INPUT: USER PROFILE (from 6-step quiz)
+3.  PHASE 1: THE SIEVE (Hard Filters)
+4.  PHASE 2: THE SCORER (Soft Ranking)
+5.  PHASE 3: VENDOR OPTIMIZER (Multi-Vendor + Promos)
+6.  PHASE 4: DIVERSITY & OUTPUT
+    └── INGREDIENT CATEGORY DEFINITIONS (Single Source of Truth)
+7.  COMPLETE FORMULA (with Confidence Multiplier)
+8.  WORKED EXAMPLES
+9.  LEARNING LAYER (CTR/CVR Smoothing)
+10. DATA REQUIREMENTS (with Tag Confidence)
+11. CONCERN TO INGREDIENT MAPPING
+12. STARTER STACK DEFINITIONS
+13. GOAL RELATEDNESS MATRIX
+14. CAUTION TAGS SYSTEM (aligned with Section 2)
+
+SINGLE SOURCES OF TRUTH:
+- Caution Flags:        Section 2 (derivation) + Section 14 (penalties)
+- Ingredient→Category:  Section 6 (INGREDIENT CATEGORY DEFINITIONS)
+- Concern→Ingredient:   Section 11 (CONCERN TO INGREDIENT MAPPING)
+- Starter Stacks:       Section 12 (goal-based default stacks)
+
+VERSION 1.2.1 CHANGELOG:
+- CLEANUP: Caution flag logic now consistent (Section 2 ↔ Section 14)
+  - stimulant-sensitive is EXPLICIT-ONLY (no assumptions from activity)
+  - pregnancy-nursing is EXPLICIT-ONLY (no assumptions from demographics)
+- CLEANUP: Ingredient→Category mapping marked as single source of truth
+  - Added: immune-support, hormone-support categories
+  - Added: Conflict resolution rules (e.g., magnesium-glycinate → sleep-support)
+  - Expanded ingredient lists per category
+
+VERSION 1.2 CHANGELOG:
+- Fixed: IngredientScore division-by-zero when concerns='none'
+- Fixed: primaryIngredient now picks BEST match (not arbitrary [0])
+- Added: Stack Builder Rule (3+ ingredient categories in Top 5)
+- Added: Ingredient Category taxonomy for diversity
+- Added: Tag Confidence fields for AI-parsed data quality
+- Added: Confidence Multiplier penalty for low-confidence products
+- Added: VendorListing shipping reliability fields
+- Updated: CTR vs CVR terminology clarified in Learning Layer
+- Updated: Future v2 notes for category-specific CPS ranges
+
+================================================================================
+1. OVERVIEW
+================================================================================
+
+PURPOSE:
+Filter 30,000+ supplement products across multiple vendors down to the TOP 5 
+personalized recommendations for each user, factoring in:
+- What they want (wellness goal + specific supplement focus)
+- Who they are (age, gender, activity level)
+- What they need (dietary restrictions)
+- How they buy (budget, subscription, shipping preferences)
+- Best current deals (BOGO, sales, flash promos)
+- Ingredient quality and dosage (not just presence)
+
+THE FUNNEL:
+30,000 products → ~200 candidates (hard filter) → scored → top 5 output
+
+KEY DIFFERENTIATORS:
+1. MasterProduct vs VendorListing separation (Trivago for Supplements)
+2. Ingredient STRENGTH scoring (dosage matters, not just presence)
+3. Demographic safety layer (prevent dangerous recommendations)
+4. Caution tags system (systematic safety filtering)
+5. Multi-vendor price + promo optimization
+6. Diversity penalty (build stacks, not synonym lists)
+
+
+================================================================================
+2. INPUT: USER PROFILE (AdvisorInput)
+================================================================================
+
+The quiz produces this data structure:
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ AdvisorInput                                                                │
+├─────────────────────────────────────────────────────────────────────────────┤
+│                                                                             │
+│ goals: GoalId[]                                                             │
+│   - Single selection from 8 options                                         │
+│   - Values: 'overall-health', 'boost-immunity', 'energy-vitality',          │
+│             'bone-joint', 'heart-health', 'gut-health',                     │
+│             'sleep-stress', 'brain-health'                                  │
+│                                                                             │
+│ demographic: DemographicId                                                  │
+│   - 8 combinations of gender + age                                          │
+│   - Values: 'male-18-35', 'male-36-50', 'male-51-65', 'male-65-plus',       │
+│             'female-18-35', 'female-36-50', 'female-51-65', 'female-65-plus'│
+│                                                                             │
+│ activityLevel: ActivityLevel                                                │
+│   - 8 lifestyle options                                                     │
+│   - Values: 'power-lifter', 'endurance-athlete', 'regular-gym-goer',        │
+│             'active-lifestyle', 'light-exercise', 'desk-worker',            │
+│             'low-activity', 'recovery-injury'                               │
+│                                                                             │
+│ diet: DietType                                                              │
+│   - 8 dietary preferences                                                   │
+│   - Values: 'no-preference', 'vegan', 'vegetarian', 'gluten-free',          │
+│             'sugar-free', 'kosher', 'halal', 'non-gmo-organic'              │
+│                                                                             │
+│ concerns: ConcernId[]                                                       │
+│   - Multi-select from goal-specific options (7 per goal + 'none')           │
+│   - These map to MASTER INGREDIENT IDs                                      │
+│   - Special case: 'none' triggers STARTER STACK logic (see Section 12)     │
+│                                                                             │
+│ shoppingPreferences: ShoppingPreference[]                                   │
+│   - Multi-select up to 3                                                    │
+│   - Values: 'budget-friendly', 'premium-quality', 'subscribe-save',         │
+│             'free-shipping', 'new-arrivals', 'on-sale', 'bundle-deals'      │
+│                                                                             │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+DERIVED CAUTION FLAGS (computed from demographic + activity + optional inputs):
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ user.cautionFlags: string[]                                                 │
+│                                                                             │
+│ Derived automatically from quiz data:                                       │
+│   - 'post-menopausal' if demographic is female-51-65 or female-65-plus      │
+│   - 'senior' if demographic contains 65-plus                                │
+│   - 'high-intensity' if activity is power-lifter or endurance-athlete       │
+│   - 'low-tolerance' if activity is low-activity or recovery-injury          │
+│                                                                             │
+│ OPTIONAL (from explicit user input, NOT assumed):                           │
+│   - 'stimulant-sensitive' if user explicitly indicates caffeine sensitivity │
+│   - 'pregnancy-possible' if user explicitly indicates (do not assume)       │
+│                                                                             │
+│ NOTE: Do NOT assume caffeine sensitivity from activity level.               │
+│       Only apply 'stimulant-sensitive' if user explicitly opts in.          │
+│       Consider adding optional toggle: "I'm sensitive to caffeine" (yes/no) │
+│                                                                             │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+OPTIONAL QUIZ ADDITIONS (for v1.3):
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ stimulantSensitive: boolean    // "I'm sensitive to caffeine/stimulants"    │
+│ pregnancyNursing: boolean      // "I'm pregnant or nursing"                 │
+│ takingMedications: boolean     // "I take prescription medications"         │
+│                                                                             │
+│ These explicit flags are more reliable than assumptions from activity level.│
+└─────────────────────────────────────────────────────────────────────────────┘
+
+CAUTION FLAGS → SCORING IMPACT:
+See Section 14 (CAUTION TAGS SYSTEM) for:
+- How user.cautionFlags match against product.cautionTags
+- Specific penalty values per flag/tag combination
+- Hard filter vs soft penalty rules
+
+
+================================================================================
+3. PHASE 1: THE SIEVE (Hard Filters)
+================================================================================
+
+PURPOSE: Reduce 30,000 products to ~100-500 candidates instantly
+
+FILTER 1: INGREDIENT MATCH (Required)
+-------------------------------------
+- Map user's selected concerns (Step 5) to Master Ingredient IDs
+- Only products containing at least ONE matching ingredient pass
+
+Logic:
+  IF user.concerns CONTAINS 'none':
+    targetIngredients = STARTER_STACK[user.goals[0]]  // See Section 12
+  ELSE:
+    targetIngredients = mapConcernsToIngredients(user.concerns)
+  
+  Filter: product.masterIngredients INTERSECTS targetIngredients
+
+
+FILTER 2: DIETARY COMPLIANCE (Required)
+---------------------------------------
+These are HARD DISQUALIFICATIONS - no exceptions:
+
+┌──────────────────────┬────────────────────────────────────────────────────┐
+│ User Diet            │ Product Requirement                                │
+├──────────────────────┼────────────────────────────────────────────────────┤
+│ vegan                │ product.isVegan === true                           │
+│ vegetarian           │ product.isVegetarian === true                      │
+│ gluten-free          │ product.isGlutenFree === true                      │
+│ kosher               │ product.isKosher === true                          │
+│ halal                │ product.isHalal === true                           │
+│ sugar-free           │ product.isSugarFree === true                       │
+│ no-preference        │ No filter applied                                  │
+│ non-gmo-organic      │ Soft preference (handled in Phase 2)               │
+└──────────────────────┴────────────────────────────────────────────────────┘
+
+
+FILTER 3: CAUTION TAG SAFETY (Required)
+---------------------------------------
+Hard exclusions based on user caution flags:
+
+┌──────────────────────┬────────────────────────────────────────────────────┐
+│ User Caution Flag    │ Exclude Products With                              │
+├──────────────────────┼────────────────────────────────────────────────────┤
+│ post-menopausal      │ cautionTags CONTAINS 'high-iron'                   │
+│ pregnancy-possible   │ cautionTags CONTAINS 'not-pregnancy-safe'          │
+│ senior               │ cautionTags CONTAINS 'high-stimulant' (hard)       │
+│                      │ (Note: most caution tags are soft penalties)       │
+└──────────────────────┴────────────────────────────────────────────────────┘
+
+
+FILTER 4: AVAILABILITY (Required)
+---------------------------------
+- product.inStock === true (at least one vendor)
+- product.isDiscontinued === false
+
+
+RESULT: ~100-500 candidates passed to Phase 2
+
+
+================================================================================
+4. PHASE 2: THE SCORER (Soft Ranking)
+================================================================================
+
+For each candidate product, calculate a FITSCORE (0-100 scale)
+
+FORMULA:
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                                                                             │
+│  FitScore = IngredientScore      (0-35 points)  ← Primary driver            │
+│           + GoalAlignmentScore   (0-15 points)  ← Goal relevance            │
+│           + DemographicScore     (0-15 points)  ← Age/Gender fit            │
+│           + ActivityScore        (0-10 points)  ← Lifestyle fit             │
+│           + QualityScore         (0-15 points)  ← Brand + reviews           │
+│           + DietaryBonusScore    (0-10 points)  ← Certification bonus       │
+│           - CautionPenalty       (0-20 points)  ← Safety deductions         │
+│                                                                             │
+│  TOTAL POSSIBLE: 100 points (before caution penalties)                      │
+│                                                                             │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+
+COMPONENT A: INGREDIENT SCORE (0-35 points)
+-------------------------------------------
+Measures how well the product matches user's selected supplement concerns.
+NOW INCLUDES DOSAGE/STRENGTH EVALUATION.
+
+STEP 0: Determine Target Ingredients (CRITICAL - prevents division by zero)
+  // Use the SAME targetIngredients logic from Phase 1 (The Sieve)
+  
+  IF user.concerns includes 'none' OR user.concerns is empty:
+    // Use Starter Stack (see Section 12)
+    targetIngredients = getStarterStack(user.goals[0])
+    // This guarantees a non-empty list
+  ELSE:
+    targetIngredients = mapConcernsToIngredients(user.concerns)
+  
+  // SAFETY CHECK: If targetIngredients is STILL empty, fall back to goal scoring only
+  IF targetIngredients.length === 0:
+    IngredientScore = 0  // Skip ingredient scoring, rely on Goal Alignment
+    primaryIngredient = null
+    SKIP TO COMPONENT B
+
+Step 1: Identify Matched Ingredients
+  matchedIngredients = intersection(targetIngredients, product.masterIngredients)
+  
+  // If no matches, product scores 0 for ingredient match
+  IF matchedIngredients.length === 0:
+    IngredientScore = 0
+    primaryIngredient = null
+    CONTINUE TO COMPONENT B
+
+Step 2: Score Each Matched Ingredient for Dosage Quality
+
+  ingredientScoreMap = {}  // Track score per ingredient for "best match" selection
+  
+  For each matchedIngredient:
+    productDosage = product.ingredientStrength[matchedIngredient]  // mg or IU
+    optimalRange = OPTIMAL_DOSAGE[matchedIngredient]  // { min, optimal, max }
+    
+    IF productDosage < optimalRange.min:
+      // Underdosed - significant penalty
+      dosageMultiplier = 0.4
+    
+    ELSE IF productDosage < optimalRange.optimal:
+      // Below optimal but acceptable
+      dosageMultiplier = 0.7
+    
+    ELSE IF productDosage <= optimalRange.max:
+      // Optimal range
+      dosageMultiplier = 1.0
+    
+    ELSE:
+      // Overdosed (wasteful but not harmful for most)
+      dosageMultiplier = 0.9
+    
+    // Apply bioavailability modifier (optional)
+    bioavailability = product.bioavailabilityTier || 1.0  // 0.7 to 1.1
+    
+    thisIngredientScore = dosageMultiplier × bioavailability
+    ingredientScoreMap[matchedIngredient] = thisIngredientScore
+
+Step 3: Calculate Final Ingredient Score (division-safe)
+  matchRatio = matchedIngredients.length / targetIngredients.length  // Always valid (targetIngredients > 0)
+  avgDosageQuality = sum(ingredientScoreMap values) / matchedIngredients.length  // Always valid (matchedIngredients > 0)
+  
+  IngredientScore = matchRatio × avgDosageQuality × 35
+
+Step 4: Determine Primary Ingredient (for "Why We Recommended" display)
+  // DON'T just pick [0] - pick the BEST matched ingredient
+  
+  primaryIngredient = findBestMatchedIngredient(ingredientScoreMap, targetIngredients)
+  
+  // Logic: Pick ingredient with highest (dosageMultiplier × bioavailability)
+  // If tied, prefer the ingredient that appears earlier in targetIngredients 
+  // (reflects user's concern selection order / importance)
+  
+  FUNCTION findBestMatchedIngredient(scoreMap, orderedTargets):
+    bestIngredient = null
+    bestScore = 0
+    bestPriority = Infinity
+    
+    FOR EACH [ingredient, score] IN scoreMap:
+      priority = orderedTargets.indexOf(ingredient)
+      IF score > bestScore OR (score === bestScore AND priority < bestPriority):
+        bestIngredient = ingredient
+        bestScore = score
+        bestPriority = priority
+    
+    RETURN bestIngredient
+
+
+OPTIMAL DOSAGE REFERENCE TABLE:
+┌─────────────────────────┬──────────┬─────────┬──────────┬──────────────────┐
+│ Ingredient              │ Min (mg) │ Optimal │ Max (mg) │ Notes            │
+├─────────────────────────┼──────────┼─────────┼──────────┼──────────────────┤
+│ magnesium-glycinate     │ 100      │ 300     │ 500      │ Per serving      │
+│ vitamin-d3              │ 1000 IU  │ 2000 IU │ 5000 IU  │ IU not mg        │
+│ omega-3 (EPA+DHA)       │ 500      │ 1000    │ 3000     │ Combined EPA+DHA │
+│ ashwagandha             │ 300      │ 600     │ 1200     │ Root extract     │
+│ zinc                    │ 15       │ 30      │ 50       │ Elemental zinc   │
+│ vitamin-c               │ 250      │ 500     │ 2000     │ Per serving      │
+│ b12                     │ 500 mcg  │ 1000mcg │ 5000mcg  │ Methylcobalamin  │
+│ coq10                   │ 100      │ 200     │ 400      │ Ubiquinol better │
+│ iron                    │ 18       │ 27      │ 45       │ For deficiency   │
+│ collagen                │ 5000     │ 10000   │ 20000    │ Peptides         │
+│ probiotics              │ 10B CFU  │ 30B CFU │ 100B CFU │ Colony units     │
+│ melatonin               │ 0.5      │ 3       │ 10       │ Less is more     │
+│ l-theanine              │ 100      │ 200     │ 400      │ Per serving      │
+│ lions-mane              │ 500      │ 1000    │ 3000     │ Fruiting body    │
+│ curcumin                │ 250      │ 500     │ 1500     │ With piperine    │
+│ glucosamine             │ 1000     │ 1500    │ 3000     │ With chondroitin │
+└─────────────────────────┴──────────┴─────────┴──────────┴──────────────────┘
+
+
+COMPONENT B: GOAL ALIGNMENT SCORE (0-15 points)
+-----------------------------------------------
+Does the product align with the user's primary wellness goal?
+Uses GOAL RELATEDNESS MATRIX (see Section 13).
+
+Calculation:
+  userGoal = user.goals[0]
+  productGoals = product.goalTags
+  
+  bestRelatedness = 0
+  FOR EACH productGoal IN productGoals:
+    relatedness = GOAL_RELATEDNESS[userGoal][productGoal] || 0
+    bestRelatedness = max(bestRelatedness, relatedness)
+  
+  GoalAlignmentScore = bestRelatedness × 15
+
+
+COMPONENT C: DEMOGRAPHIC SCORE (0-15 points)
+--------------------------------------------
+Is this product suitable/optimized for the user's age and gender?
+
+Calculation:
+  userDemo = user.demographic  // e.g., 'female-36-50'
+  demographicMultiplier = product.demographicScores[userDemo] || 0.5
+  
+  DemographicScore = demographicMultiplier × 15
+
+Demographic Scoring Guidelines for Products:
+
+┌─────────────────────┬──────────────────────────────────────────────────────┐
+│ Product Type        │ Demographic Score Multipliers                        │
+├─────────────────────┼──────────────────────────────────────────────────────┤
+│ Women's Multi       │ female-*: 1.0, male-*: 0.2                           │
+│ Men's Prostate      │ male-36+: 1.0, male-18-35: 0.5, female-*: 0.0        │
+│ Prenatal Vitamin    │ female-18-35: 1.0, female-36-50: 0.8, others: 0.1    │
+│ Senior Formula      │ *-65-plus: 1.0, *-51-65: 0.8, *-36-50: 0.4           │
+│ Athletic Recovery   │ *-18-35: 1.0, *-36-50: 0.9, *-51-65: 0.7             │
+│ General Magnesium   │ all demographics: 0.8-1.0 (universally suitable)     │
+│ High-Iron Formula   │ female-18-35: 1.0, female-36-50: 0.9, female-51+: 0.1│
+│ Testosterone Supp   │ male-36+: 1.0, male-18-35: 0.7, female-*: 0.0        │
+└─────────────────────┴──────────────────────────────────────────────────────┘
+
+
+COMPONENT D: ACTIVITY LEVEL SCORE (0-10 points)
+-----------------------------------------------
+Does the product fit the user's lifestyle and activity level?
+
+Calculation:
+  userActivity = user.activityLevel
+  activityMultiplier = product.activityScores[userActivity] || 0.5
+  
+  ActivityScore = activityMultiplier × 10
+
+Activity Scoring Guidelines:
+
+┌─────────────────────┬──────────────────────────────────────────────────────┐
+│ Product Type        │ Activity Level Score Multipliers                     │
+├─────────────────────┼──────────────────────────────────────────────────────┤
+│ Pre-workout/Stim    │ power-lifter: 1.0, endurance: 0.9, desk: 0.3, low: 0 │
+│ Electrolytes        │ athletes: 1.0, active: 0.8, desk/low: 0.4            │
+│ Joint Support       │ power-lifter: 1.0, recovery-injury: 1.0, low: 0.6    │
+│ Gentle Energy       │ desk-worker: 1.0, low-activity: 0.9, athletes: 0.5   │
+│ Recovery Formula    │ recovery-injury: 1.0, athletes: 0.9, desk: 0.6       │
+│ Stress/Adaptogen    │ desk-worker: 1.0, low-activity: 0.9, power: 0.7      │
+│ Creatine            │ power-lifter: 1.0, endurance: 0.8, desk: 0.4         │
+│ General Vitamin     │ all activity levels: 0.7-0.9                         │
+└─────────────────────┴──────────────────────────────────────────────────────┘
+
+
+COMPONENT E: QUALITY SCORE (0-15 points)
+----------------------------------------
+Trust signals based on brand reputation and social proof
+
+Calculation:
+  brandTierScore = getBrandTierScore(product.brandTier)
+  reviewScore = getReviewScore(product.rating, product.reviewCount)
+  certificationBonus = getCertificationBonus(product)
+  
+  QualityScore = brandTierScore + reviewScore + certificationBonus
+
+Sub-calculations:
+
+  BRAND TIER (0-6 points):
+  ┌──────────┬────────┬────────────────────────────────────────────────────┐
+  │ Tier     │ Points │ Examples                                           │
+  ├──────────┼────────┼────────────────────────────────────────────────────┤
+  │ A        │ 6      │ Thorne, Pure Encapsulations, Life Extension,       │
+  │          │        │ Jarrow Formulas, Nordic Naturals, Garden of Life   │
+  ├──────────┼────────┼────────────────────────────────────────────────────┤
+  │ B        │ 4      │ NOW Foods, Nature's Way, Doctor's Best,            │
+  │          │        │ Source Naturals, Solgar, Nature Made               │
+  ├──────────┼────────┼────────────────────────────────────────────────────┤
+  │ C        │ 2      │ Generic, Store Brand, Unknown, Private Label       │
+  └──────────┴────────┴────────────────────────────────────────────────────┘
+
+  REVIEW SCORE (0-6 points):
+    ratingPoints = (product.rating / 5) × 3  // 0-3 points
+    
+    // Logarithmic scale for volume (diminishing returns)
+    volumePoints = min(3, log10(product.reviewCount + 1))
+    // 10 reviews = 1 pt, 100 reviews = 2 pts, 1000 reviews = 3 pts
+    
+    reviewScore = ratingPoints + volumePoints
+
+  CERTIFICATION BONUS (0-3 points):
+    +1 if product.thirdPartyTested === true
+    +1 if product.gmpCertified === true
+    +1 if product.nsfCertified === true OR product.uspVerified === true
+
+
+COMPONENT F: DIETARY BONUS SCORE (0-10 points)
+----------------------------------------------
+Bonus for exceeding dietary requirements (not just meeting them)
+
+Calculation:
+  baseScore = 5  // Passed hard filter in Phase 1
+  
+  IF user.diet === 'non-gmo-organic':
+    IF product.isOrganic: baseScore += 3
+    IF product.isNonGMO: baseScore += 2
+  
+  IF product.allergenFree === true: baseScore += 2
+  IF product.cleanLabel === true: baseScore += 1
+  IF product.noArtificialColors === true: baseScore += 1
+  
+  DietaryBonusScore = min(10, baseScore)
+
+
+COMPONENT G: CAUTION PENALTY (0-20 points deduction)
+----------------------------------------------------
+Systematic safety deductions based on caution tag matches.
+See Section 14 for full CAUTION TAGS SYSTEM.
+
+Calculation:
+  penalty = 0
+  
+  FOR EACH tag IN product.cautionTags:
+    IF tag IN CAUTION_PENALTIES[user.cautionFlags]:
+      penalty += CAUTION_PENALTIES[user.cautionFlags][tag]
+  
+  CautionPenalty = min(20, penalty)
+
+Example Penalties:
+  - User is 'post-menopausal' + Product has 'high-iron' → -15 points
+  - User is 'low-tolerance' + Product has 'high-stimulant' → -20 points
+  - User is 'senior' + Product has 'moderate-stimulant' → -10 points
+
+
+================================================================================
+5. PHASE 3: VENDOR OPTIMIZER (Multi-Vendor + Promos)
+================================================================================
+
+After scoring products, we now select the BEST VENDOR for each product
+
+INPUT: Scored products with multiple vendor listings
+OUTPUT: Each product paired with its optimal vendor listing
+
+FOR EACH PRODUCT:
+
+Step 1: Get All Vendor Listings
+-------------------------------
+  listings = getAllListings(product.mpid)
+  // Returns: iHerb listing, Amazon listing, Vitamin Shoppe listing, etc.
+
+
+Step 2: Calculate Effective Price Per Listing
+----------------------------------------------
+For each listing, calculate the TRUE cost considering promos:
+
+  basePrice = listing.price
+  servings = listing.servings
+  baseCPS = basePrice / servings  // Cost Per Serving
+  
+  // Apply active promotions
+  activePromos = getActivePromos(listing.vendor, listing.sku)
+  
+  effectivePrice = basePrice
+  
+  FOR EACH promo IN activePromos:
+    IF promo.type === 'PERCENT_OFF':
+      effectivePrice = effectivePrice × (1 - promo.discountValue / 100)
+    
+    IF promo.type === 'BOGO':
+      effectivePrice = effectivePrice / 2  // Buy one get one = 50% off
+    
+    IF promo.type === 'FIXED_DISCOUNT':
+      effectivePrice = effectivePrice - promo.discountValue
+    
+    IF promo.type === 'BUY_2_GET_1':
+      effectivePrice = effectivePrice × 0.67  // 33% off effective
+  
+  effectiveCPS = effectivePrice / servings
+  
+  // Apply subscription discount if user prefers it
+  IF 'subscribe-save' IN user.shoppingPreferences AND listing.hasSubscription:
+    subscriptionCPS = effectiveCPS × (1 - listing.subscriptionDiscount / 100)
+    effectiveCPS = subscriptionCPS
+
+
+Step 3: Score Each Listing Based on User Preferences
+-----------------------------------------------------
+
+VendorScore = PriceScore + PreferenceScore + PromoScore
+
+  PRICE SCORE (0-40 points) - NORMALIZED:
+  
+    // Define CPS range for normalization (prevents edge cases)
+    // v1.2: Global ranges (good enough for MVP)
+    CPS_MIN = 0.05   // $0.05/serving is rock bottom
+    CPS_MAX = 2.00   // $2.00/serving is premium territory
+    
+    // ================================================================
+    // FUTURE (v2): Category-specific CPS ranges
+    // Different supplement categories have very different CPS distributions:
+    //
+    //   CATEGORY_CPS_RANGES = {
+    //     'vitamin-d3':    { min: 0.02, max: 0.15 },  // Very cheap
+    //     'omega-3':       { min: 0.15, max: 0.80 },  // Mid-range
+    //     'probiotics':    { min: 0.30, max: 1.50 },  // More expensive
+    //     'collagen':      { min: 0.50, max: 2.50 },  // Premium
+    //     'nootropics':    { min: 0.40, max: 2.00 },  // Varies widely
+    //     'multivitamin':  { min: 0.10, max: 1.00 },  // Depends on complexity
+    //   }
+    //
+    //   Then: CPS_MIN/MAX = CATEGORY_CPS_RANGES[primaryIngredientCategory]
+    //   This prevents a $0.50 vitamin D from looking "overpriced" when
+    //   compared against probiotics' different scale.
+    // ================================================================
+    
+    // Clamp and normalize
+    normalizedCPS = clamp((effectiveCPS - CPS_MIN) / (CPS_MAX - CPS_MIN), 0, 1)
+    
+    IF 'budget-friendly' IN user.shoppingPreferences:
+      // Lower CPS = higher score (full weight on price)
+      PriceScore = 40 × (1 - normalizedCPS)
+    
+    ELSE IF 'premium-quality' IN user.shoppingPreferences:
+      // Ignore price, reward quality indicators
+      PriceScore = 20  // Fixed base
+      IF listing.vendor === 'thorne-direct' OR product.brandTier === 'A':
+        PriceScore += 20
+    
+    ELSE:
+      // Balanced pricing (default)
+      PriceScore = 30 × (1 - normalizedCPS)
+
+
+  PREFERENCE SCORE (0-30 points):
+    score = 0
+    
+    IF 'subscribe-save' IN prefs AND listing.hasSubscription:
+      score += 10
+      IF listing.subscriptionDiscount >= 15: score += 3  // Good discount
+    
+    IF 'free-shipping' IN prefs:
+      IF listing.freeShipping: score += 8
+      ELSE IF listing.freeShippingThreshold <= 25: score += 4
+      ELSE IF listing.freeShippingThreshold <= 50: score += 2
+    
+    IF 'bundle-deals' IN prefs AND listing.hasBundleOption:
+      score += 8
+    
+    IF 'new-arrivals' IN prefs AND listing.isNewArrival:
+      score += 6
+    
+    // Shipping speed bonus (if data available)
+    IF listing.shippingDays <= 2: score += 3
+    ELSE IF listing.shippingDays <= 5: score += 1
+    
+    PreferenceScore = min(30, score)
+
+
+  PROMO SCORE (0-30 points):
+    score = 0
+    
+    IF 'on-sale' IN prefs AND activePromos.length > 0:
+      score += 15
+      
+      // Bonus based on discount depth
+      maxDiscount = max(activePromos.map(p => p.discountValue))
+      score += min(15, maxDiscount / 2)  // 30% off = +15 pts
+    
+    ELSE IF activePromos.length > 0:
+      // Even if user didn't select "on sale", promos help
+      score += 8
+      score += min(7, max(activePromos.map(p => p.discountValue)) / 4)
+    
+    // BOGO is extra valuable
+    IF activePromos.any(p => p.type === 'BOGO'):
+      score += 5
+    
+    PromoScore = min(30, score)
+
+
+Step 4: Select Best Vendor
+--------------------------
+  bestListing = listings.maxBy(listing => listing.VendorScore)
+  
+  // Attach to product
+  product.selectedVendor = bestListing.vendor
+  product.displayPrice = bestListing.effectivePrice
+  product.originalPrice = bestListing.price (if different, for strikethrough)
+  product.affiliateUrl = bestListing.affiliateUrl
+  product.promoBadge = formatPromoBadge(bestListing.activePromos)
+  product.vendorScore = bestListing.VendorScore
+
+
+================================================================================
+6. PHASE 4: DIVERSITY & OUTPUT
+================================================================================
+
+PURPOSE: Prevent showing 5 nearly identical products. Build STACKS, not synonyms.
+
+DIVERSITY RULES:
+1. No more than 2 products from the same brand
+2. No more than 2 products with the same PRIMARY matched ingredient
+3. AT LEAST 3 unique ingredient CATEGORIES across 5 results (STACK BUILDER RULE)
+
+================================================================================
+INGREDIENT CATEGORY DEFINITIONS (SINGLE SOURCE OF TRUTH)
+================================================================================
+This is THE canonical mapping of ingredient → category.
+Used by: Stack Builder, Future CPS normalization, Diversity rules
+
+RULE: An ingredient belongs to ONE primary category only.
+      If it could fit multiple, pick the most common use case.
+
+┌─────────────────────┬────────────────────────────────────────────────────────┐
+│ Category ID         │ Master Ingredient IDs (prefix match with *)            │
+├─────────────────────┼────────────────────────────────────────────────────────┤
+│ minerals            │ magnesium-*, zinc-*, iron-*, calcium-*, selenium,      │
+│                     │ potassium, chromium, copper, iodine, manganese         │
+├─────────────────────┼────────────────────────────────────────────────────────┤
+│ vitamins            │ vitamin-d3, vitamin-c, vitamin-k2, vitamin-e,          │
+│                     │ b12, b-complex, folate, biotin, vitamin-a, niacin      │
+├─────────────────────┼────────────────────────────────────────────────────────┤
+│ adaptogens          │ ashwagandha, rhodiola, holy-basil, maca, ginseng,      │
+│                     │ eleuthero, schisandra, cordyceps, reishi               │
+├─────────────────────┼────────────────────────────────────────────────────────┤
+│ amino-acids         │ l-theanine, l-glutamine, taurine, gaba, 5-htp,         │
+│                     │ l-tyrosine, l-carnitine, glycine, tryptophan           │
+├─────────────────────┼────────────────────────────────────────────────────────┤
+│ omega-fatty-acids   │ omega-3, fish-oil, krill-oil, algae-oil, dha, epa,     │
+│                     │ omega-6, evening-primrose, flaxseed-oil                │
+├─────────────────────┼────────────────────────────────────────────────────────┤
+│ gut-health          │ probiotics, prebiotics, digestive-enzymes, collagen,   │
+│                     │ l-glutamine-gut, fiber, psyllium, slippery-elm         │
+├─────────────────────┼────────────────────────────────────────────────────────┤
+│ nootropics          │ lions-mane, bacopa, ginkgo, phosphatidylserine,        │
+│                     │ alpha-gpc, citicoline, huperzine-a                     │
+├─────────────────────┼────────────────────────────────────────────────────────┤
+│ joint-support       │ glucosamine, chondroitin, msm, hyaluronic-acid,        │
+│                     │ boswellia, type-ii-collagen, cetyl-myristoleate        │
+├─────────────────────┼────────────────────────────────────────────────────────┤
+│ heart-support       │ coq10, nattokinase, bergamot, plant-sterols,           │
+│                     │ hawthorn, red-yeast-rice, garlic-extract               │
+├─────────────────────┼────────────────────────────────────────────────────────┤
+│ sleep-support       │ melatonin, valerian, passionflower, magnesium-glycinate│
+│                     │ lemon-balm, chamomile, l-tryptophan                    │
+├─────────────────────┼────────────────────────────────────────────────────────┤
+│ antioxidants        │ curcumin, quercetin, resveratrol, astaxanthin, nac,    │
+│                     │ glutathione, alpha-lipoic-acid, pycnogenol             │
+├─────────────────────┼────────────────────────────────────────────────────────┤
+│ energy-compounds    │ caffeine, creatine, b-vitamins, coq10-energy,          │
+│                     │ pqq, d-ribose, nadh, green-tea-extract                 │
+├─────────────────────┼────────────────────────────────────────────────────────┤
+│ immune-support      │ vitamin-c-immune, elderberry, echinacea, beta-glucan,  │
+│                     │ andrographis, olive-leaf, oregano-oil                  │
+├─────────────────────┼────────────────────────────────────────────────────────┤
+│ hormone-support     │ dhea, dim, vitex, maca-hormone, saw-palmetto,          │
+│                     │ black-cohosh, fenugreek                                │
+└─────────────────────┴────────────────────────────────────────────────────────┘
+
+CONFLICT RESOLUTION:
+- magnesium-glycinate → sleep-support (primary use case)
+- magnesium-citrate → minerals (general use)
+- l-glutamine → amino-acids (default)
+- l-glutamine-gut → gut-health (specific formulation)
+- coq10 → heart-support (default)
+- coq10-energy → energy-compounds (marketed for energy)
+
+DEFAULT: If ingredient not found → category = 'other'
+
+ALGORITHM (Improved - Skip, Don't Mutate + Stack Builder):
+
+  // Sort all products by combined score
+  sortedProducts = products.sortBy(TotalScore DESC)
+  
+  // Selection tracking
+  selectedProducts = []
+  brandCounts = {}
+  ingredientCounts = {}
+  categoryCounts = {}
+  uniqueCategories = new Set()
+  
+  FOR EACH product IN sortedProducts:
+    // Determine primary ingredient (the one that BEST matches user's concern)
+    primaryIngredient = getPrimaryMatchedIngredient(product, user.concerns, product.ingredientScoreMap)
+    ingredientCategory = getIngredientCategory(primaryIngredient)
+    
+    // Check brand diversity
+    IF brandCounts[product.brand] >= 2:
+      CONTINUE  // Skip this product (don't add, don't penalize)
+    
+    // Check ingredient diversity (no more than 2 of same ingredient)
+    IF ingredientCounts[primaryIngredient] >= 2:
+      CONTINUE  // Skip this product
+    
+    // STACK BUILDER: If we already have 4 products and < 3 unique categories,
+    // the 5th product MUST be from a new category
+    IF selectedProducts.length === 4 AND uniqueCategories.size < 3:
+      IF categoryCounts[ingredientCategory] > 0:
+        CONTINUE  // Skip - we need a new category for the final slot
+    
+    // Product passes diversity check - add it
+    selectedProducts.push(product)
+    brandCounts[product.brand] = (brandCounts[product.brand] || 0) + 1
+    ingredientCounts[primaryIngredient] = (ingredientCounts[primaryIngredient] || 0) + 1
+    categoryCounts[ingredientCategory] = (categoryCounts[ingredientCategory] || 0) + 1
+    uniqueCategories.add(ingredientCategory)
+    
+    IF selectedProducts.length >= 5:
+      BREAK
+  
+  // FALLBACK: If we couldn't find 5 products with 3+ categories, 
+  // still return best available (don't fail silently)
+  IF selectedProducts.length < 5:
+    // Continue adding from sorted list, relaxing category constraint
+    FOR EACH remaining product IN sortedProducts (not already selected):
+      // Only apply brand/ingredient constraints
+      IF brandCounts[product.brand] < 2 AND ingredientCounts[primaryIngredient] < 2:
+        selectedProducts.push(product)
+        IF selectedProducts.length >= 5:
+          BREAK
+  
+  RETURN selectedProducts
+
+
+HELPER FUNCTION: getPrimaryMatchedIngredient (IMPROVED)
+-------------------------------------------------------
+  // Returns the ingredient with the BEST dosage/quality score
+  // NOT just product.masterIngredients[0] (which is arbitrary)
+  
+  function getPrimaryMatchedIngredient(product, userConcerns, ingredientScoreMap):
+    targetIngredients = getTargetIngredients(userConcerns)  // Respects 'none' → starter stack
+    matchedIngredients = intersection(targetIngredients, product.masterIngredients)
+    
+    IF matchedIngredients.length === 0:
+      // Fallback: use product's first ingredient
+      RETURN product.masterIngredients[0]
+    
+    IF matchedIngredients.length === 1:
+      RETURN matchedIngredients[0]
+    
+    // Multiple matches: pick the one with BEST score
+    // ingredientScoreMap was computed in Phase 2, Component A
+    bestIngredient = null
+    bestScore = 0
+    bestPriority = Infinity  // Lower = user selected it earlier = more important
+    
+    FOR EACH ingredient IN matchedIngredients:
+      score = ingredientScoreMap[ingredient] || 0
+      priority = targetIngredients.indexOf(ingredient)
+      
+      // Prefer higher score; if tied, prefer earlier in user's selection
+      IF score > bestScore OR (score === bestScore AND priority < bestPriority):
+        bestIngredient = ingredient
+        bestScore = score
+        bestPriority = priority
+    
+    RETURN bestIngredient
+
+
+HELPER FUNCTION: getIngredientCategory
+--------------------------------------
+  function getIngredientCategory(ingredient):
+    // Map ingredient to its category
+    FOR EACH [category, ingredients] IN INGREDIENT_CATEGORIES:
+      IF ingredient matches any in ingredients (prefix or exact):
+        RETURN category
+    RETURN 'other'  // Default category
+
+
+FINAL OUTPUT STRUCTURE:
+-----------------------
+Return Top 5 products with:
+
+  {
+    mpid: string,
+    name: string,
+    brand: string,
+    brandTier: 'A' | 'B' | 'C',
+    
+    // Scoring
+    fitScore: number,         // 0-100 product fit
+    vendorScore: number,      // 0-100 vendor fit
+    totalScore: number,       // Combined score
+    
+    // Selected vendor
+    vendor: string,
+    displayPrice: number,     // Effective price with promos
+    originalPrice: number,    // For strikethrough if discounted
+    affiliateUrl: string,
+    promoBadge: string | null, // e.g., "25% OFF", "BOGO"
+    
+    // Display info
+    primaryIngredient: string,
+    dosageInfo: string,       // e.g., "400mg per serving"
+    form: string,             // capsule, powder, etc.
+    servings: number,
+    
+    // Trust badges
+    dietaryBadges: string[],  // ['Vegan', 'Gluten-Free']
+    certifications: string[], // ['NSF Certified', '3rd Party Tested']
+    
+    // Why we recommended it
+    matchReasons: string[]    // ['Matches your sleep goal', 'Great for desk workers']
+  }
+
+
+================================================================================
+7. COMPLETE FORMULA
+================================================================================
+
+FINAL COMBINED SCORE FOR EACH PRODUCT-VENDOR PAIR:
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                                                                             │
+│  RawScore = (ProductFitScore × 0.6) + (VendorScore × 0.4)                   │
+│                                                                             │
+│  TotalScore = RawScore × ConfidenceMultiplier                               │
+│                                                                             │
+│  Where:                                                                     │
+│                                                                             │
+│  ProductFitScore (0-100) =                                                  │
+│      IngredientScore (0-35)      ← With dosage quality                      │
+│    + GoalAlignmentScore (0-15)   ← Using relatedness matrix                 │
+│    + DemographicScore (0-15)     ← Age/gender suitability                   │
+│    + ActivityScore (0-10)        ← Lifestyle fit                            │
+│    + QualityScore (0-15)         ← Brand tier + reviews + certs             │
+│    + DietaryBonusScore (0-10)    ← Exceeds requirements                     │
+│    - CautionPenalty (0-20)       ← Safety deductions                        │
+│                                                                             │
+│  VendorScore (0-100) =                                                      │
+│      PriceScore (0-40)           ← Normalized CPS                           │
+│    + PreferenceScore (0-30)      ← Subscribe/shipping/bundles               │
+│    + PromoScore (0-30)           ← Active deals                             │
+│                                                                             │
+│  ConfidenceMultiplier (0.85-1.0) =                                          │
+│      IF product.manuallyVerified: 1.0                                       │
+│      ELSE IF product.overallConfidence >= 0.7: 1.0                          │
+│      ELSE IF product.overallConfidence >= 0.5: 0.90                         │
+│      ELSE: EXCLUDE (don't show at all)                                      │
+│                                                                             │
+│  TotalScore range: 0-100                                                    │
+│                                                                             │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+DATA CONFIDENCE RULES:
+- Products with overallConfidence < 0.5 AND !manuallyVerified → EXCLUDE entirely
+- Products with overallConfidence < 0.7 AND !manuallyVerified → 10% penalty + never show in position 1
+- Products with manuallyVerified: true → No penalty regardless of AI confidence
+
+This ensures AI-parsed data doesn't accidentally recommend incorrectly tagged products.
+
+WEIGHT RATIONALE:
+- 60% Product Fit: The RIGHT product matters most (safety, efficacy, match)
+- 40% Vendor Fit: But getting the best deal is important too (value, convenience)
+
+
+================================================================================
+8. WORKED EXAMPLES
+================================================================================
+
+EXAMPLE 1: Budget-Conscious Sleep Seeker
+----------------------------------------
+
+USER INPUT:
+  goals: ['sleep-stress']
+  demographic: 'female-36-50'
+  activityLevel: 'desk-worker'
+  diet: 'vegan'
+  concerns: ['sleep-magnesium', 'stress-adaptogens']
+  shoppingPreferences: ['budget-friendly', 'subscribe-save']
+  
+  Derived cautionFlags: []  // No special cautions
+
+PHASE 1 - SIEVE:
+  Target ingredients: ['magnesium-glycinate', 'ashwagandha']
+  Diet filter: isVegan === true
+  Caution filter: None applied
+  Result: 47 products pass
+
+PHASE 2 - SCORING:
+
+  PRODUCT A: NOW Magnesium Glycinate 180ct (Vegan, 400mg/serving)
+  
+  Ingredient Score:
+    - Matches: magnesium-glycinate (1 of 2 concerns = 50%)
+    - Dosage: 400mg in optimal range (300-500) → multiplier 1.0
+    - Score: 0.5 × 1.0 × 35 = 17.5 points
+  
+  Goal Alignment:
+    - Product goals: ['sleep-stress', 'overall-health']
+    - Relatedness: sleep-stress → sleep-stress = 1.0
+    - Score: 1.0 × 15 = 15 points
+  
+  Demographic:
+    - female-36-50 multiplier: 0.85
+    - Score: 0.85 × 15 = 12.75 points
+  
+  Activity:
+    - desk-worker multiplier: 0.95
+    - Score: 0.95 × 10 = 9.5 points
+  
+  Quality:
+    - Brand: NOW = Tier B = 4 pts
+    - Rating: 4.7/5 = 2.82 pts
+    - Reviews: 1500 = log10(1500) = 3.18 → capped at 3 pts = 3 pts
+    - Certifications: GMP = 1 pt
+    - Score: 4 + 2.82 + 3 + 1 = 10.82 points
+  
+  Dietary Bonus:
+    - Passed vegan filter = 5 pts
+    - Clean label = 1 pt
+    - Score: 6 points
+  
+  Caution Penalty: 0 points
+  
+  ProductFitScore: 17.5 + 15 + 12.75 + 9.5 + 10.82 + 6 - 0 = 71.57
+
+
+  PRODUCT B: Thorne Magnesium Bisglycinate 60ct (Vegan, 200mg/serving)
+  
+  Ingredient Score:
+    - Matches: magnesium-glycinate (1 of 2)
+    - Dosage: 200mg below optimal (300-500) → multiplier 0.7
+    - Score: 0.5 × 0.7 × 35 = 12.25 points
+  
+  Goal Alignment: 1.0 × 15 = 15 points
+  Demographic: 0.90 × 15 = 13.5 points
+  Activity: 0.90 × 10 = 9.0 points
+  
+  Quality:
+    - Brand: Thorne = Tier A = 6 pts
+    - Rating: 4.6/5 = 2.76 pts
+    - Reviews: 850 = 2.93 pts
+    - Certifications: GMP + NSF = 2 pts
+    - Score: 6 + 2.76 + 2.93 + 2 = 13.69 points
+  
+  Dietary Bonus: 5 + 3 (organic) = 8 points
+  
+  Caution Penalty: 0 points
+  
+  ProductFitScore: 12.25 + 15 + 13.5 + 9 + 13.69 + 8 - 0 = 71.44
+
+
+PHASE 3 - VENDOR OPTIMIZER:
+
+  Product A (NOW Mag) - iHerb Listing:
+    - Price: $18.99 / 180 servings = $0.106/serving
+    - Promo: 15% off sitewide → $16.14 / 180 = $0.090/serving
+    - Has subscription: No
+    - Free shipping: Yes (>$20)
+    
+    Price Score (budget-friendly):
+      normalizedCPS = (0.090 - 0.05) / (2.00 - 0.05) = 0.021
+      PriceScore = 40 × (1 - 0.021) = 39.2 points
+    
+    Preference Score:
+      - No subscription = 0
+      - Free shipping (requires $20) = 4
+      - Score: 4 points
+    
+    Promo Score:
+      - User didn't select 'on-sale' but promo exists = 8 pts
+      - 15% off = 3.75 pts
+      - Score: 11.75 points
+    
+    VendorScore: 39.2 + 4 + 11.75 = 54.95
+
+  Product A (NOW Mag) - Vitamin Shoppe Listing:
+    - Price: $21.99 / 180 = $0.122/serving
+    - Promo: None
+    - Subscription: Yes, 15% off → $0.104/serving
+    - Free shipping: No ($75 threshold)
+    
+    Price Score:
+      normalizedCPS = (0.104 - 0.05) / 1.95 = 0.028
+      PriceScore = 40 × (1 - 0.028) = 38.9 points
+    
+    Preference Score:
+      - Subscription with 15% = 10 + 3 = 13 pts
+      - Free shipping (high threshold) = 0
+      - Score: 13 points
+    
+    Promo Score: 0 points
+    
+    VendorScore: 38.9 + 13 + 0 = 51.9
+
+  Winner for Product A: iHerb (54.95 vs 51.9)
+
+
+FINAL COMBINED SCORES:
+  Product A (NOW + iHerb): 
+    (71.57 × 0.6) + (54.95 × 0.4) = 42.94 + 21.98 = 64.92
+  
+  Product B (Thorne + best vendor):
+    (71.44 × 0.6) + (48.0 × 0.4) = 42.86 + 19.2 = 62.06
+
+
+DIVERSITY CHECK:
+  - Product A: Brand=NOW, PrimaryIngredient=magnesium-glycinate
+  - Product B: Brand=Thorne, PrimaryIngredient=magnesium-glycinate
+  - Both can appear (different brands, same ingredient OK for first 2)
+
+
+================================================================================
+9. LEARNING LAYER (Future Implementation)
+================================================================================
+
+SEGMENT PERFORMANCE TRACKING
+----------------------------
+For each user segment (demographic + activity + goal), track:
+- Impressions (how many times we showed product X)
+- Clicks (how many times they clicked product X)
+- Conversions (if affiliate network provides callback)
+
+SEGMENT KEY FORMAT:
+  "{demographic}:{activityLevel}:{goal}"
+  Example: "female-36-50:desk-worker:sleep-stress"
+
+LEARNED BOOST CALCULATION (with Bayesian smoothing):
+  
+  // Get raw performance data
+  segmentData = getSegmentPerformance(segmentKey, product.mpid)
+  
+  // =================================================================
+  // METRIC DEFINITIONS (for clarity):
+  //
+  // CTR (Click-Through Rate) = clicks / impressions
+  //   - Used for: Ranking/display optimization
+  //   - Meaning: "How likely is this user to CLICK this product?"
+  //
+  // CVR (Conversion Rate) = conversions / clicks  
+  //   - Used for: Final optimization (if affiliate callbacks available)
+  //   - Meaning: "How likely is a clicker to PURCHASE?"
+  //
+  // For v1, we use CTR only (no conversion callbacks yet)
+  // For v2+, blend CTR and CVR when conversion data is available
+  // =================================================================
+  
+  // Bayesian smoothing to prevent small sample overfitting
+  // Uses Beta distribution prior
+  PRIOR_ALPHA = 1    // Prior successes (clicks)
+  PRIOR_BETA = 50    // Prior failures (assumes 2% baseline CTR)
+  
+  // SMOOTHED CTR (Click-Through Rate)
+  smoothedCTR = (segmentData.clicks + PRIOR_ALPHA) / 
+                (segmentData.impressions + PRIOR_ALPHA + PRIOR_BETA)
+  
+  industryBaselineCTR = 0.02  // 2% is typical affiliate CTR
+  
+  ctrPerformanceRatio = smoothedCTR / industryBaselineCTR
+  
+  // For v1: Boost based on CTR only
+  LearnedBoost = min(10, max(-5, (ctrPerformanceRatio - 1) × 5))
+  
+  // FUTURE (v2): When conversion data is available, blend CTR and CVR
+  // ----------------------------------------------------------------
+  // smoothedCVR = (segmentData.conversions + 0.5) / (segmentData.clicks + 25)
+  // industryBaselineCVR = 0.03  // 3% typical CVR for supplements
+  // cvrPerformanceRatio = smoothedCVR / industryBaselineCVR
+  //
+  // LearnedBoost = min(10, max(-5, 
+  //   (ctrPerformanceRatio × 0.4 + cvrPerformanceRatio × 0.6 - 1) × 5
+  // ))
+  // CVR weighted higher because purchases matter more than clicks
+  // ----------------------------------------------------------------
+  
+  // Only apply if we have minimum data
+  IF segmentData.impressions < 50:
+    LearnedBoost = 0  // Not enough data yet for CTR
+  
+  // Future: Higher threshold for CVR (needs more conversions)
+  // IF segmentData.clicks < 20:
+  //   // Use CTR-only boost, not blended
+
+
+EVENT TRACKING SCHEMA
+---------------------
+Log these events for learning:
+
+  QuizCompleted {
+    sessionId: string,
+    timestamp: Date,
+    userProfile: AdvisorInput,
+    cautionFlags: string[]
+  }
+  
+  RecommendationShown {
+    sessionId: string,
+    timestamp: Date,
+    products: [{
+      mpid: string,
+      position: number,      // 1-5
+      fitScore: number,
+      vendorScore: number,
+      totalScore: number,
+      vendor: string,
+      displayPrice: number
+    }]
+  }
+  
+  ProductClicked {
+    sessionId: string,
+    timestamp: Date,
+    mpid: string,
+    position: number,
+    vendor: string,
+    affiliateUrl: string
+  }
+  
+  Conversion {  // If affiliate network provides callback
+    sessionId: string,
+    timestamp: Date,
+    mpid: string,
+    vendor: string,
+    orderValue: number,
+    commission: number
+  }
+
+
+ANALYTICS DASHBOARDS (what you can measure):
+- Top goals by segment
+- Top concerns selected per goal
+- Diet distribution (% vegan, gluten-free, etc.)
+- Preference distribution (budget vs premium)
+- Top converting products by segment
+- Drop-off points by quiz step
+- CTR by product position (1st vs 5th recommendation)
+
+
+================================================================================
+10. DATA REQUIREMENTS
+================================================================================
+
+MASTER PRODUCT DATABASE
+-----------------------
+Each product needs these fields:
+
+  MasterProduct {
+    // Identity
+    mpid: string,                   // Unique normalized ID: 'thorne-mag-glycinate-120'
+    name: string,                   // 'Magnesium Bisglycinate 120ct'
+    brand: string,                  // 'Thorne'
+    brandTier: 'A' | 'B' | 'C',
+    
+    // Ingredient normalization (THE MOAT)
+    masterIngredients: string[],    // ['magnesium-glycinate', 'vitamin-b6']
+    
+    // NEW: Ingredient strength (dosage per serving)
+    ingredientStrength: {
+      'magnesium-glycinate': 200,   // mg
+      'vitamin-b6': 10              // mg
+    },
+    
+    // NEW: Bioavailability rating (optional)
+    bioavailabilityTier: number,    // 0.7 to 1.1 (default 1.0)
+    
+    // Goal alignment
+    goalTags: GoalId[],             // ['sleep-stress', 'overall-health']
+    
+    // Demographic suitability (0.0 - 1.0 for each)
+    demographicScores: {
+      'male-18-35': 0.8,
+      'male-36-50': 0.85,
+      'male-51-65': 0.9,
+      'male-65-plus': 0.85,
+      'female-18-35': 0.9,
+      'female-36-50': 0.95,
+      'female-51-65': 0.9,
+      'female-65-plus': 0.85
+    },
+    
+    // Activity level fit (0.0 - 1.0 for each)
+    activityScores: {
+      'power-lifter': 0.7,
+      'endurance-athlete': 0.8,
+      'regular-gym-goer': 0.8,
+      'active-lifestyle': 0.85,
+      'light-exercise': 0.9,
+      'desk-worker': 1.0,
+      'low-activity': 0.9,
+      'recovery-injury': 0.85
+    },
+    
+    // Dietary compliance
+    isVegan: boolean,
+    isVegetarian: boolean,
+    isGlutenFree: boolean,
+    isKosher: boolean,
+    isHalal: boolean,
+    isSugarFree: boolean,
+    isOrganic: boolean,
+    isNonGMO: boolean,
+    
+    // NEW: Additional dietary fields
+    allergenFree: boolean,          // No common allergens (soy, dairy, nuts, etc.)
+    cleanLabel: boolean,            // Minimal fillers/additives
+    noArtificialColors: boolean,
+    
+    // NEW: Caution tags (for safety filtering)
+    cautionTags: string[],          // ['high-iron', 'high-stimulant', 'hormone-support']
+    
+    // NEW: Stimulant info
+    stimulantLevel: 0 | 1 | 2 | 3,  // 0=none, 1=mild, 2=moderate, 3=high
+    caffeineMg: number | null,      // Specific caffeine content if applicable
+    
+    // Quality signals
+    thirdPartyTested: boolean,
+    gmpCertified: boolean,
+    nsfCertified: boolean,
+    uspVerified: boolean,
+    
+    // NEW: Evidence tier (internal, not shown to users)
+    evidenceTier: 'A' | 'B' | 'C',  // A=strong research, B=moderate, C=limited
+    
+    // Form factor
+    form: 'capsule' | 'tablet' | 'powder' | 'liquid' | 'gummy' | 'softgel',
+    servingsPerContainer: number,
+    
+    // Flags
+    isStarterStack: boolean,        // Good for "None" selections
+    isDiscontinued: boolean,
+    
+    // ================================================================
+    // DATA QUALITY / CONFIDENCE FIELDS (for AI-parsed data)
+    // ================================================================
+    // When using AI to extract data from product descriptions, track
+    // confidence levels so we can down-weight low-confidence data.
+    
+    tagConfidence: {
+      ingredients: number,          // 0.0-1.0 confidence in ingredient extraction
+      dosage: number,               // 0.0-1.0 confidence in dosage/strength parsing
+      dietary: number,              // 0.0-1.0 confidence in vegan/GF flags
+      caution: number               // 0.0-1.0 confidence in caution tag assignment
+    },
+    
+    overallConfidence: number,      // Average of above, 0.0-1.0
+    manuallyVerified: boolean,      // True if human reviewed the data
+    verifiedDate: Date | null,      // When human verified
+    dataSource: 'api' | 'scrape' | 'ai-parse' | 'manual',
+    
+    // USAGE IN SCORING:
+    // Products with overallConfidence < 0.7 AND !manuallyVerified:
+    //   - Apply a 10-15% penalty to total score
+    //   - Flag for priority manual review
+    //   - Don't show in position 1 (push to positions 2-5)
+    //
+    // Products with overallConfidence < 0.5:
+    //   - Exclude from recommendations entirely until verified
+  }
+
+
+VENDOR LISTINGS DATABASE
+------------------------
+  VendorListing {
+    // Identity
+    mpid: string,                   // Links to MasterProduct
+    vendor: string,                 // 'iherb', 'amazon', 'vitaminshoppe', 'thorne'
+    vendorSku: string,
+    affiliateUrl: string,
+    
+    // Pricing
+    price: number,
+    servings: number,
+    costPerServing: number,         // Calculated: price / servings
+    
+    // Availability
+    inStock: boolean,
+    stockLevel: 'high' | 'medium' | 'low' | 'out',
+    
+    // Shipping
+    freeShipping: boolean,
+    freeShippingThreshold: number,  // Minimum order for free shipping
+    shippingDays: number,           // Estimated delivery days
+    
+    // Subscription
+    hasSubscription: boolean,
+    subscriptionDiscount: number,   // Percentage off for subscribe
+    
+    // Other features
+    hasBundleOption: boolean,
+    isNewArrival: boolean,
+    returnPolicy: 'full' | 'partial' | 'none',
+    
+    // Social proof (can differ by vendor)
+    rating: number,                 // 0-5
+    reviewCount: number,
+    
+    // ================================================================
+    // SHIPPING/RELIABILITY SCORES (for vendor selection)
+    // ================================================================
+    shippingReliabilityScore: number,  // 0.0-1.0 based on historical performance
+    avgDeliveryDays: number,           // Actual average, not estimate
+    onTimeDeliveryRate: number,        // 0.0-1.0 (% of orders delivered on time)
+    
+    // Return policy details
+    returnPolicyFlag: 'generous' | 'standard' | 'strict',
+    returnWindowDays: number,          // How many days to return
+    
+    // Customer service quality (internal tracking)
+    vendorTrustScore: number,          // 0.0-1.0 based on complaints/resolution
+    
+    lastUpdated: Date,
+    priceLastVerified: Date            // When we last confirmed the price is accurate
+  }
+
+
+ACTIVE PROMOTIONS DATABASE
+--------------------------
+  ActivePromo {
+    id: string,
+    vendor: string,
+    promoCode: string | null,
+    
+    type: 'PERCENT_OFF' | 'BOGO' | 'BUY_2_GET_1' | 'FIXED_DISCOUNT' | 'FREE_SHIPPING' | 'BUNDLE',
+    discountValue: number,          // e.g., 25 for 25% off, or fixed $ amount
+    
+    affectedMpids: string[] | 'ALL', // Which products qualify
+    affectedCategories: string[],   // Alternative: apply to categories
+    
+    startDate: Date,
+    endDate: Date,
+    
+    conditions: string | null,      // e.g., "Min $50 order", "First order only"
+    minOrderValue: number | null,
+    
+    isActive: boolean,
+    displayBadge: string            // e.g., "25% OFF", "BOGO", "Flash Sale"
+  }
+
+
+================================================================================
+11. CONCERN TO INGREDIENT MAPPING
+================================================================================
+
+Maps user's Step 5 selections to searchable master ingredient IDs.
+THIS IS YOUR PROPRIETARY MOAT - maintain carefully.
+
+VERSION: 1.0
+NOTE: Maintain synonyms and variants for maximum match coverage.
+
+CONCERN_TO_INGREDIENTS: Record<ConcernId, string[]> = {
+  
+  // ═══════════════════════════════════════════════════════════════════════
+  // OVERALL WELLNESS
+  // ═══════════════════════════════════════════════════════════════════════
+  'overall-multivitamin': [
+    'multivitamin',
+    'multi-vitamin',
+    'daily-multi'
+  ],
+  'overall-vitamin-d': [
+    'vitamin-d3',
+    'vitamin-d3-k2',
+    'cholecalciferol',
+    'vitamin-d'
+  ],
+  'overall-omega3': [
+    'omega-3',
+    'fish-oil',
+    'epa-dha',
+    'algae-omega',
+    'krill-oil'
+  ],
+  'overall-magnesium': [
+    'magnesium-glycinate',
+    'magnesium-citrate',
+    'magnesium-complex',
+    'magnesium-threonate',
+    'magnesium-malate'
+  ],
+  'overall-vitamin-c': [
+    'vitamin-c',
+    'ascorbic-acid',
+    'liposomal-vitamin-c',
+    'buffered-vitamin-c'
+  ],
+  'overall-probiotics': [
+    'probiotic',
+    'multi-strain-probiotic',
+    'spore-probiotic',
+    'lactobacillus',
+    'bifidobacterium'
+  ],
+  'overall-b-complex': [
+    'b-complex',
+    'methylated-b',
+    'b-vitamins',
+    'vitamin-b-complex'
+  ],
+
+  // ═══════════════════════════════════════════════════════════════════════
+  // BOOST IMMUNITY
+  // ═══════════════════════════════════════════════════════════════════════
+  'immune-zinc': [
+    'zinc-picolinate',
+    'zinc-glycinate',
+    'zinc-citrate',
+    'zinc',
+    'zinc-carnosine'
+  ],
+  'immune-antioxidants': [
+    'liposomal-vitamin-c',
+    'vitamin-c',
+    'antioxidant-blend'
+  ],
+  'immune-vitamin-d': [
+    'vitamin-d3',
+    'vitamin-d3-k2'
+  ],
+  'immune-elderberry': [
+    'elderberry',
+    'sambucus',
+    'elderberry-syrup',
+    'elderberry-extract'
+  ],
+  'immune-cold-flu': [
+    'quercetin',
+    'zinc',
+    'vitamin-c',
+    'echinacea',
+    'andrographis'
+  ],
+  'immune-probiotics': [
+    'immune-probiotic',
+    'probiotic',
+    'saccharomyces-boulardii'
+  ],
+  'immune-seasonal': [
+    'elderberry',
+    'echinacea',
+    'astragalus',
+    'seasonal-support'
+  ],
+
+  // ═══════════════════════════════════════════════════════════════════════
+  // ENERGY & VITALITY
+  // ═══════════════════════════════════════════════════════════════════════
+  'energy-b12': [
+    'methylated-b-complex',
+    'b12-methylcobalamin',
+    'methylcobalamin',
+    'adenosylcobalamin',
+    'b-complex'
+  ],
+  'energy-coq10': [
+    'coq10-ubiquinol',
+    'coq10',
+    'ubiquinol',
+    'ubiquinone'
+  ],
+  'energy-iron': [
+    'iron-bisglycinate',
+    'iron',
+    'ferrous-bisglycinate',
+    'chelated-iron'
+  ],
+  'energy-fatigue': [
+    'b12-methylcobalamin',
+    'iron',
+    'adrenal-support',
+    'rhodiola'
+  ],
+  'energy-adrenal': [
+    'ashwagandha',
+    'rhodiola',
+    'adaptogen',
+    'adrenal-support',
+    'holy-basil',
+    'eleuthero'
+  ],
+  'energy-morning': [
+    'b-complex',
+    'coq10',
+    'green-tea-extract',
+    'cordyceps'
+  ],
+  'energy-afternoon': [
+    'b12',
+    'green-tea-extract',
+    'rhodiola',
+    'maca'
+  ],
+
+  // ═══════════════════════════════════════════════════════════════════════
+  // BONE & JOINT
+  // ═══════════════════════════════════════════════════════════════════════
+  'joint-mobility': [
+    'collagen-peptides',
+    'collagen',
+    'type-ii-collagen',
+    'hydrolyzed-collagen'
+  ],
+  'joint-inflammation': [
+    'curcumin',
+    'turmeric',
+    'boswellia',
+    'bromelain'
+  ],
+  'joint-glucosamine': [
+    'glucosamine-chondroitin',
+    'glucosamine',
+    'chondroitin',
+    'msm',
+    'glucosamine-msm'
+  ],
+  'joint-calcium': [
+    'calcium-magnesium',
+    'calcium',
+    'calcium-citrate',
+    'algae-calcium'
+  ],
+  'joint-vitamin-d': [
+    'vitamin-d3-k2',
+    'vitamin-d3'
+  ],
+  'joint-pain': [
+    'glucosamine',
+    'msm',
+    'collagen',
+    'boswellia',
+    'devils-claw'
+  ],
+  'joint-arthritis': [
+    'turmeric',
+    'boswellia',
+    'glucosamine',
+    'omega-3',
+    'type-ii-collagen'
+  ],
+
+  // ═══════════════════════════════════════════════════════════════════════
+  // HEART HEALTH
+  // ═══════════════════════════════════════════════════════════════════════
+  'heart-omega3': [
+    'omega-3',
+    'fish-oil',
+    'krill-oil',
+    'epa-dha',
+    'algae-omega'
+  ],
+  'heart-coq10': [
+    'coq10',
+    'coq10-ubiquinol',
+    'ubiquinol'
+  ],
+  'heart-magnesium': [
+    'magnesium-glycinate',
+    'magnesium-taurate'
+  ],
+  'heart-circulation': [
+    'beet-root',
+    'l-arginine',
+    'nitric-oxide',
+    'l-citrulline'
+  ],
+  'heart-antioxidants': [
+    'resveratrol',
+    'grape-seed',
+    'coq10',
+    'vitamin-e'
+  ],
+  'heart-cholesterol': [
+    'plant-sterols',
+    'red-yeast-rice',
+    'niacin',
+    'berberine',
+    'omega-3'
+  ],
+  'heart-blood-pressure': [
+    'magnesium',
+    'coq10',
+    'potassium',
+    'hawthorn',
+    'olive-leaf'
+  ],
+
+  // ═══════════════════════════════════════════════════════════════════════
+  // GUT HEALTH
+  // ═══════════════════════════════════════════════════════════════════════
+  'gut-probiotic-balance': [
+    'spore-probiotic',
+    'multi-strain-probiotic',
+    'bacillus-coagulans',
+    'probiotic'
+  ],
+  'gut-digestive-enzymes': [
+    'digestive-enzymes',
+    'bromelain',
+    'papain',
+    'lipase',
+    'protease',
+    'amylase'
+  ],
+  'gut-leaky-gut': [
+    'l-glutamine',
+    'zinc-carnosine',
+    'collagen',
+    'slippery-elm'
+  ],
+  'gut-constipation': [
+    'prebiotic-fiber',
+    'psyllium',
+    'inulin',
+    'magnesium-citrate',
+    'triphala'
+  ],
+  'gut-food-sensitivity': [
+    'digestive-enzymes',
+    'hcl-betaine',
+    'ox-bile'
+  ],
+  'gut-inflammation': [
+    'l-glutamine',
+    'aloe-vera',
+    'slippery-elm',
+    'dgl-licorice',
+    'curcumin'
+  ],
+  'gut-bloating': [
+    'digestive-enzymes',
+    'ginger',
+    'peppermint',
+    'activated-charcoal',
+    'fennel'
+  ],
+
+  // ═══════════════════════════════════════════════════════════════════════
+  // SLEEP & STRESS
+  // ═══════════════════════════════════════════════════════════════════════
+  'sleep-magnesium': [
+    'magnesium-glycinate',
+    'magnesium-threonate',
+    'magnesium-taurate'
+  ],
+  'stress-adaptogens': [
+    'ashwagandha',
+    'ksm-66',
+    'rhodiola',
+    'holy-basil',
+    'reishi'
+  ],
+  'sleep-melatonin': [
+    'melatonin',
+    'time-release-melatonin'
+  ],
+  'stress-anxiety': [
+    'l-theanine',
+    'gaba',
+    'lemon-balm',
+    'passionflower'
+  ],
+  'sleep-quality': [
+    'magnesium',
+    'l-theanine',
+    'glycine',
+    'tart-cherry'
+  ],
+  'stress-cortisol': [
+    'ashwagandha',
+    'phosphatidylserine',
+    'rhodiola',
+    'holy-basil'
+  ],
+  'sleep-insomnia': [
+    'valerian',
+    'passionflower',
+    'melatonin',
+    'hops',
+    'magnolia-bark'
+  ],
+
+  // ═══════════════════════════════════════════════════════════════════════
+  // BRAIN HEALTH
+  // ═══════════════════════════════════════════════════════════════════════
+  'brain-lion-mane': [
+    'lions-mane',
+    'lions-mane-mushroom',
+    'hericium-erinaceus'
+  ],
+  'brain-omega3': [
+    'omega-3-dha',
+    'dha',
+    'algae-dha',
+    'fish-oil-dha'
+  ],
+  'brain-focus': [
+    'alpha-gpc',
+    'cdp-choline',
+    'citicoline',
+    'phosphatidylserine'
+  ],
+  'brain-ginkgo': [
+    'ginkgo-biloba',
+    'ginkgo'
+  ],
+  'brain-memory': [
+    'bacopa',
+    'phosphatidylserine',
+    'lions-mane',
+    'huperzine-a'
+  ],
+  'brain-b12': [
+    'b12-methylcobalamin',
+    'b-complex',
+    'methylcobalamin'
+  ],
+  'brain-cognitive': [
+    'nootropic-blend',
+    'lions-mane',
+    'alpha-gpc',
+    'bacopa',
+    'acetyl-l-carnitine'
+  ],
+
+  // ═══════════════════════════════════════════════════════════════════════
+  // SPECIAL CASES
+  // ═══════════════════════════════════════════════════════════════════════
+  'none': []  // Triggers STARTER STACK logic (see Section 12)
+}
+
+
+================================================================================
+12. STARTER STACK DEFINITIONS
+================================================================================
+
+When user selects "None of the above" in Step 5, use these defaults based on goal.
+These are evidence-based "foundation stacks" for each wellness goal.
+
+STARTER_STACK_BY_GOAL: Record<GoalId, string[]> = {
+  
+  'overall-health': [
+    'multivitamin',           // Foundation
+    'vitamin-d3-k2',          // Most people deficient
+    'omega-3'                 // Anti-inflammatory, brain, heart
+  ],
+  
+  'boost-immunity': [
+    'vitamin-d3',             // Critical for immune function
+    'zinc',                   // Supports immune cells
+    'vitamin-c'               // Antioxidant, immune support
+  ],
+  
+  'energy-vitality': [
+    'b-complex',              // Energy metabolism
+    'coq10',                  // Cellular energy
+    'iron'                    // Only if risk of deficiency
+  ],
+  
+  'bone-joint': [
+    'collagen',               // Joint structure
+    'vitamin-d3-k2',          // Bone metabolism
+    'calcium-magnesium'       // Bone minerals
+  ],
+  
+  'heart-health': [
+    'omega-3',                // Triglycerides, inflammation
+    'coq10',                  // Heart muscle energy
+    'magnesium-glycinate'     // Heart rhythm, BP
+  ],
+  
+  'gut-health': [
+    'probiotic',              // Microbiome balance
+    'digestive-enzymes',      // Nutrient absorption
+    'l-glutamine'             // Gut lining integrity
+  ],
+  
+  'sleep-stress': [
+    'magnesium-glycinate',    // Relaxation, sleep quality
+    'ashwagandha',            // Stress adaptation
+    'l-theanine'              // Calm without sedation
+  ],
+  
+  'brain-health': [
+    'omega-3-dha',            // Brain structure
+    'lions-mane',             // Neurogenesis
+    'b-complex'               // Neurotransmitter production
+  ]
+}
+
+
+================================================================================
+13. GOAL RELATEDNESS MATRIX
+================================================================================
+
+Defines how related different wellness goals are for product matching.
+Used in GoalAlignmentScore calculation.
+
+Values: 0.0 (unrelated) to 1.0 (exact match)
+
+GOAL_RELATEDNESS: Record<GoalId, Record<GoalId, number>> = {
+  
+  'overall-health': {
+    'overall-health': 1.0,
+    'boost-immunity': 0.5,
+    'energy-vitality': 0.6,
+    'bone-joint': 0.4,
+    'heart-health': 0.5,
+    'gut-health': 0.4,
+    'sleep-stress': 0.4,
+    'brain-health': 0.5
+  },
+  
+  'boost-immunity': {
+    'overall-health': 0.5,
+    'boost-immunity': 1.0,
+    'energy-vitality': 0.3,
+    'bone-joint': 0.2,
+    'heart-health': 0.3,
+    'gut-health': 0.7,      // Gut-immune axis
+    'sleep-stress': 0.4,    // Sleep affects immunity
+    'brain-health': 0.2
+  },
+  
+  'energy-vitality': {
+    'overall-health': 0.6,
+    'boost-immunity': 0.3,
+    'energy-vitality': 1.0,
+    'bone-joint': 0.2,
+    'heart-health': 0.5,    // Cardiovascular = energy
+    'gut-health': 0.4,
+    'sleep-stress': 0.5,    // Sleep = energy
+    'brain-health': 0.6     // Mental energy
+  },
+  
+  'bone-joint': {
+    'overall-health': 0.4,
+    'boost-immunity': 0.2,
+    'energy-vitality': 0.3,
+    'bone-joint': 1.0,
+    'heart-health': 0.2,
+    'gut-health': 0.3,
+    'sleep-stress': 0.2,
+    'brain-health': 0.1
+  },
+  
+  'heart-health': {
+    'overall-health': 0.5,
+    'boost-immunity': 0.3,
+    'energy-vitality': 0.5,
+    'bone-joint': 0.2,
+    'heart-health': 1.0,
+    'gut-health': 0.3,
+    'sleep-stress': 0.4,    // Stress affects heart
+    'brain-health': 0.5     // Vascular brain health
+  },
+  
+  'gut-health': {
+    'overall-health': 0.5,
+    'boost-immunity': 0.7,  // Gut-immune axis
+    'energy-vitality': 0.4,
+    'bone-joint': 0.3,
+    'heart-health': 0.3,
+    'gut-health': 1.0,
+    'sleep-stress': 0.5,    // Gut-brain axis
+    'brain-health': 0.6     // Gut-brain axis
+  },
+  
+  'sleep-stress': {
+    'overall-health': 0.4,
+    'boost-immunity': 0.4,
+    'energy-vitality': 0.5,
+    'bone-joint': 0.2,
+    'heart-health': 0.4,
+    'gut-health': 0.5,
+    'sleep-stress': 1.0,
+    'brain-health': 0.7     // Cognitive & mood
+  },
+  
+  'brain-health': {
+    'overall-health': 0.5,
+    'boost-immunity': 0.2,
+    'energy-vitality': 0.6,
+    'bone-joint': 0.1,
+    'heart-health': 0.5,    // Vascular brain health
+    'gut-health': 0.6,      // Gut-brain axis
+    'sleep-stress': 0.7,    // Cognitive & mood
+    'brain-health': 1.0
+  }
+}
+
+
+================================================================================
+14. CAUTION TAGS SYSTEM
+================================================================================
+
+Systematic safety layer to prevent potentially harmful recommendations.
+
+USER CAUTION FLAGS:
+┌───────────────────────┬────────────────────────────────────────────────────┐
+│ Flag                  │ Source                                             │
+├───────────────────────┼────────────────────────────────────────────────────┤
+│                       │                                                    │
+│ AUTO-DERIVED (from quiz answers - no user action needed):                  │
+│                       │                                                    │
+│ post-menopausal       │ demographic = female-51-65 OR female-65-plus       │
+│ senior                │ demographic contains '65-plus'                     │
+│ young-adult           │ demographic contains '18-35'                       │
+│ high-intensity        │ activity = power-lifter OR endurance-athlete       │
+│ low-tolerance         │ activity = low-activity OR recovery-injury         │
+│                       │                                                    │
+├───────────────────────┼────────────────────────────────────────────────────┤
+│                       │                                                    │
+│ EXPLICIT-ONLY (user must opt-in via toggle - NEVER assume):                │
+│                       │                                                    │
+│ stimulant-sensitive   │ User answers "Yes" to "Sensitive to caffeine?"     │
+│ pregnancy-nursing     │ User answers "Yes" to "Pregnant or nursing?"       │
+│ taking-medications    │ User answers "Yes" to "Taking medications?"        │
+│                       │                                                    │
+│ NOTE: Do NOT derive stimulant-sensitive from activity level.               │
+│       A desk worker may love coffee. A power lifter may be caffeine-free.  │
+│       Assumptions here create false negatives and user frustration.        │
+│                       │                                                    │
+└───────────────────────┴────────────────────────────────────────────────────┘
+
+SINGLE SOURCE OF TRUTH:
+- Auto-derived flags: Computed in deriveCautionFlags() from AdvisorInput
+- Explicit flags: Set only if user explicitly opts in via optional toggles
+- See Section 2 for the canonical derivation logic
+
+PRODUCT CAUTION TAGS:
+┌───────────────────────┬────────────────────────────────────────────────────┐
+│ Tag                   │ Applied To Products That...                        │
+├───────────────────────┼────────────────────────────────────────────────────┤
+│ high-iron             │ Contain >20mg iron per serving                     │
+│ high-stimulant        │ Contain >200mg caffeine or strong stims            │
+│ moderate-stimulant    │ Contain 50-200mg caffeine                          │
+│ hormone-support       │ Contain DHEA, testosterone boosters, etc.          │
+│ blood-thinner-interact│ May interact with blood thinners (fish oil, etc.) │
+│ thyroid-interact      │ May affect thyroid (kelp, iodine, etc.)            │
+│ not-pregnancy-safe    │ Known issues for pregnancy/nursing                 │
+│ high-dose-fat-soluble │ Very high Vitamin A, D, E, or K                    │
+└───────────────────────┴────────────────────────────────────────────────────┘
+
+CAUTION PENALTIES (points deducted):
+┌───────────────────────┬───────────────────────┬────────────────────────────┐
+│ User Flag             │ Product Tag           │ Penalty                    │
+├───────────────────────┼───────────────────────┼────────────────────────────┤
+│ post-menopausal       │ high-iron             │ -20 (or HARD FILTER)       │
+│ senior                │ high-stimulant        │ -20 (or HARD FILTER)       │
+│ senior                │ moderate-stimulant    │ -10                        │
+│ low-tolerance         │ high-stimulant        │ -20 (or HARD FILTER)       │
+│ low-tolerance         │ moderate-stimulant    │ -15                        │
+│ caffeine-sensitive    │ high-stimulant        │ -20                        │
+│ caffeine-sensitive    │ moderate-stimulant    │ -10                        │
+│ pregnancy-possible    │ not-pregnancy-safe    │ HARD FILTER (exclude)      │
+│ pregnancy-possible    │ high-dose-fat-soluble │ -15                        │
+│ any female            │ hormone-support       │ -20 (testosterone supp)    │
+│ young-adult male      │ hormone-support       │ -5 (less concerning)       │
+└───────────────────────┴───────────────────────┴────────────────────────────┘
+
+NOTE: This is NOT medical advice. These are shopping preference filters to 
+provide more relevant recommendations. Users should always consult healthcare 
+providers for medical decisions.
+
+
+================================================================================
+END OF ALGORITHM DOCUMENTATION
+================================================================================
+
+VERSION HISTORY:
+- v1.0 (Dec 2024): Initial algorithm design
+- v1.1 (Dec 2024): Added:
+    • Ingredient strength/dosage scoring
+    • Normalized price scoring (CPS clamping)
+    • Starter Stack definitions for "None" selections
+    • Caution tags safety system
+    • Goal Relatedness matrix
+    • Improved diversity logic (skip, don't mutate)
+    • Missing data fields (allergenFree, cleanLabel, stimulantLevel, etc.)
+    • Bayesian smoothing for learning layer
+    • Comprehensive ingredient mapping with synonyms
+
+NEXT STEPS:
+1. Review v1.1 with stakeholder
+2. Validate weightings with sample products
+3. Build TypeScript implementation
+4. Create data ingestion script (AI-powered product tagging)
+5. Test with real product data
+6. Iterate based on results
+
+
+================================================================================
+                    PROPRIETARY & CONFIDENTIAL
+                    © 2024 Zynava. All Rights Reserved.
+================================================================================
