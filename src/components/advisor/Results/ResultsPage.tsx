@@ -109,10 +109,10 @@ export default function ResultsPage({ quizParams }: ResultsPageProps) {
   const goalDisplay = quizParams.goals?.replace(/-/g, ' ') || 'Overall health'
   
   // Format preferences as chips
-  const allPreferences = [
-    dietDisplay && { label: dietDisplay, icon: '✓' },
+  const allPreferences: Array<{ label: string; icon: string }> = [
+    ...(dietDisplay ? [{ label: dietDisplay, icon: '✓' }] : []),
     ...preferencesList.map(pref => ({ label: pref.replace(/-/g, ' '), icon: '✓' }))
-  ].filter(Boolean)
+  ]
 
   return (
     <div className={styles.resultsContainer}>
