@@ -26,6 +26,8 @@ export default function AdvisorChat({ onClose }: AdvisorChatProps) {
   const [isNavigatingBack, setIsNavigatingBack] = useState(false)
   const [showReview, setShowReview] = useState(false)
   const [isProcessing, setIsProcessing] = useState(false)
+  const [chatMessages, setChatMessages] = useState<Array<{role: 'user' | 'assistant', content: string}>>([])
+  const [isChatLoading, setIsChatLoading] = useState(false)
   const messagesContainerRef = useRef<HTMLDivElement>(null)
   const autoScrollTimeoutRef = useRef<NodeJS.Timeout | null>(null)
   const previousStepRef = useRef<string>('welcome')
@@ -226,6 +228,54 @@ export default function AdvisorChat({ onClose }: AdvisorChatProps) {
     handlePrevious()
   }
 
+  const handleChatMessage = async (message: string) => {
+    // Add user message to chat
+    setChatMessages(prev => [...prev, { role: 'user', content: message }])
+    setIsChatLoading(true)
+
+    try {
+      // Prepare quiz context if quiz is completed
+      const quizContext = (showReview || isProcessing) ? {
+        goals: input.goals,
+        demographic: input.demographic,
+        activity: input.activityLevel,
+        diet: input.diet,
+        concerns: input.concerns,
+      } : undefined
+
+      // Call API
+      const response = await fetch('/api/advisor/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          message,
+          conversationHistory: chatMessages,
+          quizContext,
+        }),
+      })
+
+      const data = await response.json()
+      
+      // Add assistant response
+      if (data.message) {
+        setChatMessages(prev => [...prev, { role: 'assistant', content: data.message }])
+      } else if (data.error) {
+        setChatMessages(prev => [...prev, { 
+          role: 'assistant', 
+          content: 'I apologize, but I\'m having trouble right now. Please try again.' 
+        }])
+      }
+    } catch (error) {
+      console.error('Chat error:', error)
+      setChatMessages(prev => [...prev, { 
+        role: 'assistant', 
+        content: 'I apologize, but I\'m having trouble connecting right now. Please try again.' 
+      }])
+    } finally {
+      setIsChatLoading(false)
+    }
+  }
+
   const currentStepData = steps[currentStep]
 
   return (
@@ -316,6 +366,21 @@ export default function AdvisorChat({ onClose }: AdvisorChatProps) {
           {isTyping && showQuiz && (
             <TypingIndicator isVisible={isTyping} />
           )}
+
+          {/* Chat messages */}
+          {chatMessages.map((msg, idx) => (
+            <ChatBubble
+              key={idx}
+              message={msg.content}
+              sender={msg.role === 'user' ? 'user' : 'advisor'}
+              timestamp={new Date()}
+            />
+          ))}
+
+          {/* Chat loading indicator */}
+          {isChatLoading && (
+            <TypingIndicator isVisible={true} />
+          )}
           
           {/* Extra spacing at bottom for better scroll experience */}
           <div className={styles.bottomSpacer} />
@@ -324,12 +389,10 @@ export default function AdvisorChat({ onClose }: AdvisorChatProps) {
 
       {/* Input bar at bottom */}
       <AdvisorInputBar
-        onSend={(message) => {
-          // TODO: Handle user message
-          console.log('User message:', message)
-        }}
-        disabled={isTyping}
-        placeholder="Ask anything"
+        onSend={handleChatMessage}
+        disabled={isTyping || isProcessing}
+        isLoading={isChatLoading}
+        placeholder="Ask anything about supplements..."
       />
     </div>
   )

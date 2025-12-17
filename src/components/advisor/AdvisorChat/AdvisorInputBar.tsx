@@ -7,27 +7,31 @@ interface AdvisorInputBarProps {
   onSend: (message: string) => void
   disabled?: boolean
   placeholder?: string
+  isLoading?: boolean
 }
 
 export default function AdvisorInputBar({ 
   onSend, 
   disabled = false,
-  placeholder = 'Ask anything'
+  placeholder = 'Ask anything about supplements...',
+  isLoading = false
 }: AdvisorInputBarProps) {
   const [input, setInput] = useState('')
   const textareaRef = useRef<HTMLTextAreaElement>(null)
 
-  // Auto-resize textarea
+  // Auto-resize textarea with max height
   useEffect(() => {
     if (textareaRef.current) {
       textareaRef.current.style.height = 'auto'
-      textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`
+      const scrollHeight = textareaRef.current.scrollHeight
+      const maxHeight = 120 // Max 3 lines
+      textareaRef.current.style.height = `${Math.min(scrollHeight, maxHeight)}px`
     }
   }, [input])
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault()
-    if (input.trim() && !disabled) {
+    if (input.trim() && !disabled && !isLoading) {
       onSend(input.trim())
       setInput('')
       if (textareaRef.current) {
@@ -55,10 +59,10 @@ export default function AdvisorInputBar({
         type="button"
         className={styles.plusButton}
         onClick={() => {
-          // TODO: Implement attachment/file upload
+          // TODO: Implement attachment/file upload if needed
           console.log('Attachment not yet implemented')
         }}
-        disabled={disabled}
+        disabled={disabled || isLoading}
         aria-label="Attach file"
         title="Attach file"
       >
@@ -79,7 +83,7 @@ export default function AdvisorInputBar({
           onKeyDown={handleKeyDown}
           placeholder={placeholder}
           className={styles.input}
-          disabled={disabled}
+          disabled={disabled || isLoading}
           rows={1}
           maxLength={1000}
           aria-label="Message input"
@@ -113,14 +117,18 @@ export default function AdvisorInputBar({
           <button
             type="submit"
             className={styles.sendButton}
-            disabled={disabled || !input.trim()}
+            disabled={disabled || !input.trim() || isLoading}
             aria-label="Send message"
             title="Send message"
           >
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <line x1="22" y1="2" x2="11" y2="13"></line>
-              <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
-            </svg>
+            {isLoading ? (
+              <div className={styles.loadingSpinner} />
+            ) : (
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="22" y1="2" x2="11" y2="13"></line>
+                <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+              </svg>
+            )}
           </button>
         )}
       </div>
