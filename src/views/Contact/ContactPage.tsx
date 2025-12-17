@@ -1,3 +1,5 @@
+'use client'
+
 export function ContactPage() {
   return (
     <main style={{

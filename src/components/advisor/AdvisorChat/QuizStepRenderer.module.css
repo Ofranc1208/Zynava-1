@@ -20,6 +20,10 @@
   min-height: 511px;
   height: 511px;
   
+  /* Card width - full width on mobile, constrained on larger screens */
+  width: 100%;
+  max-width: 420px; /* Constrain width for centering on larger screens */
+  
   /* Allow scrolling only if content somehow exceeds (shouldn't happen) */
   overflow-y: auto;
   overflow-x: hidden;

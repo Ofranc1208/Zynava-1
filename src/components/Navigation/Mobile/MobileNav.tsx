@@ -258,44 +258,44 @@ export function MobileNav() {
             }
             
             return (
-              <Link
-                key={link.href}
-                href={link.href}
-                onClick={closeMenu}
-                style={{
-                  fontSize: '1.1rem',
+            <Link
+              key={link.href}
+              href={link.href}
+              onClick={closeMenu}
+              style={{
+                fontSize: '1.1rem',
                   fontWeight: isActive ? '600' : '500',
-                  textDecoration: 'none',
+                textDecoration: 'none',
                   color: isActive ? '#ff6b35' : '#1a1a1a',
-                  padding: '1rem 1.5rem',
-                  borderRadius: '8px',
+                padding: '1rem 1.5rem',
+                borderRadius: '8px',
                   backgroundColor: isActive ? '#fff5f0' : '#ffffff',
                   border: isActive ? '1px solid #ff6b35' : '1px solid #e5e7eb',
-                  minHeight: '48px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  transition: 'all 0.2s ease',
-                  animation: isOpen ? `slideInRight 0.3s ease ${index * 0.05}s both` : 'none',
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.backgroundColor = '#f9fafb'
-                  e.currentTarget.style.borderColor = '#d1d5db'
-                  e.currentTarget.style.transform = 'translateX(4px)'
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.backgroundColor = '#ffffff'
-                  e.currentTarget.style.borderColor = '#e5e7eb'
-                  e.currentTarget.style.transform = 'translateX(0)'
-                }}
-                onTouchStart={(e) => {
-                  e.currentTarget.style.backgroundColor = '#f3f4f6'
-                }}
-                onTouchEnd={(e) => {
-                  e.currentTarget.style.backgroundColor = '#ffffff'
-                }}
-              >
-                {link.label}
-              </Link>
+                minHeight: '48px',
+                display: 'flex',
+                alignItems: 'center',
+                transition: 'all 0.2s ease',
+                animation: isOpen ? `slideInRight 0.3s ease ${index * 0.05}s both` : 'none',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = '#f9fafb'
+                e.currentTarget.style.borderColor = '#d1d5db'
+                e.currentTarget.style.transform = 'translateX(4px)'
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = '#ffffff'
+                e.currentTarget.style.borderColor = '#e5e7eb'
+                e.currentTarget.style.transform = 'translateX(0)'
+              }}
+              onTouchStart={(e) => {
+                e.currentTarget.style.backgroundColor = '#f3f4f6'
+              }}
+              onTouchEnd={(e) => {
+                e.currentTarget.style.backgroundColor = '#ffffff'
+              }}
+            >
+              {link.label}
+            </Link>
             )
           })}
         </nav>

@@ -80,7 +80,7 @@ export default function QuizStepRenderer({
   }
 
   return (
-    <div className={styles.quizStepContainer}>
+    <div className={styles.quizStepContainer} data-quiz-card>
       {/* Question text with back button on same line */}
       <div className={styles.questionHeader}>
         {!isFirstStep && onPrevious && (
