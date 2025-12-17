@@ -7,14 +7,16 @@ export default function HomeHeroSection() {
     <section style={{
       position: 'relative',
       width: '100%',
-      height: '32vh',
-      maxHeight: '32vh',
+      height: '25.6vh', // 20% reduced for mobile (32vh * 0.8)
+      maxHeight: '25.6vh',
       backgroundColor: '#000',
       overflow: 'hidden',
       margin: 0,
       paddingTop: '0.8rem',
       paddingBottom: '0.8rem'
-    }}>
+    }}
+    className="hero-section-responsive"
+    >
       <HeroBackgroundContainer />
       
       {/* Banner Overlay - Left side, no background */}

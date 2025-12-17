@@ -2,10 +2,9 @@
 
 import { useState, useEffect } from 'react'
 import HeroSection from './components/Hero'
-import NavigationBar from './components/NavigationBar'
-import TrustBadge from './components/Hero/hero-badge'
+import TopBrandsBanner from './components/TopBrandsBanner'
 import SupplementAdvisorCard from './components/SupplementAdvisor'
-import WhyChooseSection from './components/WhyChoose'
+import HomepageContent from './components/HomepageContent'
 
 export function HomePage() {
   const [isDesktop, setIsDesktop] = useState(false)
@@ -27,7 +26,10 @@ export function HomePage() {
     <main>
       <HeroSection />
       
-      {/* Stacked layout: Chat card, Stars, Navigation bar - vertical on all screen sizes */}
+      {/* Top Brands Banner */}
+      <TopBrandsBanner />
+      
+      {/* Stacked layout: Chat card - vertical on all screen sizes */}
       <div style={{
         width: '100%',
         maxWidth: isDesktop ? '700px' : '600px',
@@ -38,38 +40,17 @@ export function HomePage() {
         alignItems: 'center',
         gap: '1.25rem'
       }}>
-        {/* Row 1: Chat section - larger on desktop */}
+        {/* Chat section - larger on desktop */}
         <div style={{ 
           width: '100%',
           maxWidth: isDesktop ? '650px' : '500px'
         }}>
           <SupplementAdvisorCard />
         </div>
-        
-        {/* Row 2: Stars */}
-        <div style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          width: '100%'
-        }}>
-          <TrustBadge />
-        </div>
-        
-        {/* Row 3: Navigation bar (Flash Deals, Top Seller, Bundle Deals) */}
-        <div style={{ 
-          width: '100%',
-          maxWidth: '500px',
-          display: 'flex',
-          justifyContent: 'center'
-        }}>
-          <div style={{ width: '100%' }}>
-            <NavigationBar />
-          </div>
-        </div>
       </div>
-      
-      <WhyChooseSection />
+
+      {/* Long-form Homepage Content */}
+      <HomepageContent />
     </main>
   )
 }

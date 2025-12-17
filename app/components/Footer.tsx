@@ -13,6 +13,7 @@ export function Footer() {
         gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
         gap: '2rem',
         fontSize: '0.9rem',
+        backgroundColor: '#ffffff',
       }}
     >
       <div>

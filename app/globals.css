@@ -34,3 +34,11 @@ a {
 /* Note: Responsive navigation is handled by JavaScript in DualNavbar.tsx */
 /* CSS-based display rules removed to prevent conflicts with JS-based rendering */
 
+/* Hero section responsive height: 20% reduced on mobile, full height on desktop */
+@media (min-width: 768px) {
+  .hero-section-responsive {
+    height: 32vh !important;
+    max-height: 32vh !important;
+  }
+}
+

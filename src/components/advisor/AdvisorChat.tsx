@@ -107,7 +107,7 @@ export default function AdvisorChat({ onClose }: AdvisorChatProps) {
     resetQuiz,
   } = useAdvisorQuiz(handleComplete)
 
-  // Scroll to keep new messages visible in the middle of viewport
+  // Scroll to keep new messages visible at bottom of viewport
   useEffect(() => {
     if (!messagesContainerRef.current) return
 
@@ -116,50 +116,29 @@ export default function AdvisorChat({ onClose }: AdvisorChatProps) {
       clearTimeout(autoScrollTimeoutRef.current)
     }
 
-    // Scroll to show new content in the middle of the viewport
-    // This makes it easier to see and interact with
+    // Scroll to show new content at the bottom of the viewport
+    // This makes it easier to see the latest messages from ChatGPT
     autoScrollTimeoutRef.current = setTimeout(() => {
       if (messagesContainerRef.current) {
         const container = messagesContainerRef.current
         const scrollHeight = container.scrollHeight
         const clientHeight = container.clientHeight
         
-        // If content fits in viewport, scroll to top
-        if (scrollHeight <= clientHeight) {
-          container.scrollTo({
-            top: 0,
-            behavior: 'smooth'
-          })
-          return
-        }
-        
-        // Calculate scroll position to center new content in viewport
-        // Position new content at approximately 1/3 from top (middle-upper area)
-        // This leaves space at top and bottom for better visibility
-        const viewportMiddle = clientHeight * 0.33 // Position at 1/3 from top
-        const maxScroll = scrollHeight - clientHeight
-        
-        // Scroll to position where latest content appears in middle-upper area
-        // We want: latest content position - viewportMiddle = scrollTop
-        // Latest content is at scrollHeight, so:
-        const targetScroll = Math.max(0, scrollHeight - clientHeight + viewportMiddle)
-        
-        // But we can't scroll past maxScroll
-        const finalScroll = Math.min(targetScroll, maxScroll)
-        
+        // Always scroll to the bottom to show latest messages
+        // This is the standard UX for chat applications
         container.scrollTo({
-          top: finalScroll,
+          top: scrollHeight - clientHeight,
           behavior: 'smooth'
         })
       }
-    }, 200) // Slightly longer delay to ensure DOM has updated
+    }, 100) // Small delay to ensure DOM has updated
 
     return () => {
       if (autoScrollTimeoutRef.current) {
         clearTimeout(autoScrollTimeoutRef.current)
       }
     }
-  }, [currentStep, showQuiz, isTyping, input, welcomeComplete])
+  }, [currentStep, showQuiz, isTyping, input, welcomeComplete, chatMessages, isChatLoading])
 
   // Track navigation direction to prevent auto-advance when going back
   useEffect(() => {

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef, useEffect, FormEvent } from 'react'
+import { useState, FormEvent } from 'react'
 import styles from './AdvisorInputBar.module.css'
 
 interface AdvisorInputBarProps {
@@ -17,26 +17,14 @@ export default function AdvisorInputBar({
   isLoading = false
 }: AdvisorInputBarProps) {
   const [input, setInput] = useState('')
-  const textareaRef = useRef<HTMLTextAreaElement>(null)
 
-  // Auto-resize textarea with max height
-  useEffect(() => {
-    if (textareaRef.current) {
-      textareaRef.current.style.height = 'auto'
-      const scrollHeight = textareaRef.current.scrollHeight
-      const maxHeight = 120 // Max 3 lines
-      textareaRef.current.style.height = `${Math.min(scrollHeight, maxHeight)}px`
-    }
-  }, [input])
+  // Fixed height input - no auto-resize, CSS handles all sizing
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault()
     if (input.trim() && !disabled && !isLoading) {
       onSend(input.trim())
       setInput('')
-      if (textareaRef.current) {
-        textareaRef.current.style.height = 'auto'
-      }
     }
   }
 
@@ -77,7 +65,6 @@ export default function AdvisorInputBar({
         <textarea
           id="advisor-message-input"
           name="message"
-          ref={textareaRef}
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={handleKeyDown}

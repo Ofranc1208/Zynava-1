@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 
 export function DesktopNav() {
   return (
@@ -9,6 +10,7 @@ export function DesktopNav() {
         width: '100%',
         height: '100%',
         padding: '0 1.75rem',
+        paddingLeft: '0.75rem',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
@@ -18,14 +20,24 @@ export function DesktopNav() {
       <Link
         href="/"
         style={{
-          fontSize: '1.5rem',
-          fontWeight: 'bold',
+          display: 'flex',
+          alignItems: 'center',
           textDecoration: 'none',
-          color: '#1a1a1a',
-          letterSpacing: '0.05em'
         }}
       >
-        ZYNAVA
+        <Image
+          src="/assets/images/Logo.png"
+          alt="ZYNAVA Logo"
+          width={343}
+          height={103}
+          style={{
+            height: 'auto',
+            width: 'auto',
+            maxHeight: '103px',
+            maxWidth: '343px',
+          }}
+          priority
+        />
       </Link>
       <div
         style={{

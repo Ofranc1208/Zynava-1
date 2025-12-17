@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 
 export function MobileNav() {
   const [isOpen, setIsOpen] = useState(false)
@@ -44,6 +45,7 @@ export function MobileNav() {
           width: '100%',
           height: '100%',
           padding: '0 1.75rem',
+          paddingLeft: '0.75rem',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
@@ -53,14 +55,24 @@ export function MobileNav() {
         <Link
           href="/"
           style={{
-            fontSize: '1.25rem',
-            fontWeight: 'bold',
+            display: 'flex',
+            alignItems: 'center',
             textDecoration: 'none',
-            color: '#1a1a1a',
-            letterSpacing: '0.05em'
           }}
         >
-          ZYNAVA
+          <Image
+            src="/assets/images/Logo.png"
+            alt="ZYNAVA Logo"
+            width={257}
+            height={86}
+            style={{
+              height: 'auto',
+              width: 'auto',
+              maxHeight: '86px',
+              maxWidth: '257px',
+            }}
+            priority
+          />
         </Link>
         <button
           onClick={toggleMenu}
@@ -140,14 +152,23 @@ export function MobileNav() {
             href="/"
             onClick={closeMenu}
             style={{
-              fontSize: '1.25rem',
-              fontWeight: 'bold',
+              display: 'flex',
+              alignItems: 'center',
               textDecoration: 'none',
-              color: '#1a1a1a',
-              letterSpacing: '0.05em'
             }}
           >
-            ZYNAVA
+            <Image
+              src="/assets/images/Logo.png"
+              alt="ZYNAVA Logo"
+              width={257}
+              height={86}
+              style={{
+                height: 'auto',
+                width: 'auto',
+                maxHeight: '86px',
+                maxWidth: '257px',
+              }}
+            />
           </Link>
           <button
             onClick={closeMenu}
