@@ -48,7 +48,7 @@ export function HomePage() {
           <SupplementAdvisorCard />
         </div>
       </div>
-
+      
       {/* Long-form Homepage Content */}
       <HomepageContent />
     </main>

@@ -3,9 +3,11 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
+import { usePathname } from 'next/navigation'
 
 export function MobileNav() {
   const [isOpen, setIsOpen] = useState(false)
+  const pathname = usePathname()
 
   // Prevent body scroll when menu is open
   useEffect(() => {
@@ -30,12 +32,11 @@ export function MobileNav() {
   }
 
   const navLinks = [
-    { href: '/main', label: 'Home' },
+    { href: '/', label: 'Home' },
+    { href: '/advisor', label: 'Supplement Advisor', isButton: true },
+    { href: '/how-it-works', label: 'How It Works' },
+    { href: '/ingredients', label: 'Ingredients' },
     { href: '/about', label: 'About' },
-    { href: '/contact', label: 'Contact' },
-    { href: '/faq', label: 'FAQ' },
-    { href: '/products', label: 'Shop' },
-    { href: '/cart', label: 'Cart' },
   ]
 
   return (
@@ -70,7 +71,7 @@ export function MobileNav() {
               width: 'auto',
               maxHeight: '86px',
               maxWidth: '257px',
-            }}
+          }}
             priority
           />
         </Link>
@@ -167,7 +168,7 @@ export function MobileNav() {
                 width: 'auto',
                 maxHeight: '86px',
                 maxWidth: '257px',
-              }}
+            }}
             />
           </Link>
           <button
@@ -207,46 +208,96 @@ export function MobileNav() {
             gap: '0.75rem',
           }}
         >
-          {navLinks.map((link, index) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              onClick={closeMenu}
-              style={{
-                fontSize: '1.1rem',
-                fontWeight: '500',
-                textDecoration: 'none',
-                color: '#1a1a1a',
-                padding: '1rem 1.5rem',
-                borderRadius: '8px',
-                backgroundColor: '#ffffff',
-                border: '1px solid #e5e7eb',
-                minHeight: '48px',
-                display: 'flex',
-                alignItems: 'center',
-                transition: 'all 0.2s ease',
-                animation: isOpen ? `slideInRight 0.3s ease ${index * 0.05}s both` : 'none',
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.backgroundColor = '#f9fafb'
-                e.currentTarget.style.borderColor = '#d1d5db'
-                e.currentTarget.style.transform = 'translateX(4px)'
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.backgroundColor = '#ffffff'
-                e.currentTarget.style.borderColor = '#e5e7eb'
-                e.currentTarget.style.transform = 'translateX(0)'
-              }}
-              onTouchStart={(e) => {
-                e.currentTarget.style.backgroundColor = '#f3f4f6'
-              }}
-              onTouchEnd={(e) => {
-                e.currentTarget.style.backgroundColor = '#ffffff'
-              }}
-            >
-              {link.label}
-            </Link>
-          ))}
+          {navLinks.map((link, index) => {
+            const isActive = pathname === link.href
+            const isButton = link.isButton || false
+            
+            if (isButton) {
+              return (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  onClick={closeMenu}
+                  style={{
+                    fontSize: '1.1rem',
+                    fontWeight: '600',
+                    textDecoration: 'none',
+                    color: '#ffffff',
+                    padding: '1rem 1.5rem',
+                    borderRadius: '8px',
+                    backgroundColor: '#ff6b35',
+                    border: '2px solid #ff6b35',
+                    minHeight: '48px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    transition: 'all 0.2s ease',
+                    animation: isOpen ? `slideInRight 0.3s ease ${index * 0.05}s both` : 'none',
+                    textAlign: 'center',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = '#e55a2b'
+                    e.currentTarget.style.borderColor = '#e55a2b'
+                    e.currentTarget.style.transform = 'translateX(4px)'
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = '#ff6b35'
+                    e.currentTarget.style.borderColor = '#ff6b35'
+                    e.currentTarget.style.transform = 'translateX(0)'
+                  }}
+                  onTouchStart={(e) => {
+                    e.currentTarget.style.backgroundColor = '#e55a2b'
+                  }}
+                  onTouchEnd={(e) => {
+                    e.currentTarget.style.backgroundColor = '#ff6b35'
+                  }}
+                >
+                  {link.label}
+                </Link>
+              )
+            }
+            
+            return (
+              <Link
+                key={link.href}
+                href={link.href}
+                onClick={closeMenu}
+                style={{
+                  fontSize: '1.1rem',
+                  fontWeight: isActive ? '600' : '500',
+                  textDecoration: 'none',
+                  color: isActive ? '#ff6b35' : '#1a1a1a',
+                  padding: '1rem 1.5rem',
+                  borderRadius: '8px',
+                  backgroundColor: isActive ? '#fff5f0' : '#ffffff',
+                  border: isActive ? '1px solid #ff6b35' : '1px solid #e5e7eb',
+                  minHeight: '48px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  transition: 'all 0.2s ease',
+                  animation: isOpen ? `slideInRight 0.3s ease ${index * 0.05}s both` : 'none',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = '#f9fafb'
+                  e.currentTarget.style.borderColor = '#d1d5db'
+                  e.currentTarget.style.transform = 'translateX(4px)'
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = '#ffffff'
+                  e.currentTarget.style.borderColor = '#e5e7eb'
+                  e.currentTarget.style.transform = 'translateX(0)'
+                }}
+                onTouchStart={(e) => {
+                  e.currentTarget.style.backgroundColor = '#f3f4f6'
+                }}
+                onTouchEnd={(e) => {
+                  e.currentTarget.style.backgroundColor = '#ffffff'
+                }}
+              >
+                {link.label}
+              </Link>
+            )
+          })}
         </nav>
       </div>
     </>

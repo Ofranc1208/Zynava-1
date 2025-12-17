@@ -7,81 +7,40 @@ import { MobileNav } from './Mobile/MobileNav'
 /**
  * DualNavbar - Main Navigation Component
  * 
- * A complete navigation system that handles both desktop and mobile navigation.
- * Uses responsive detection to show only the appropriate navigation for the screen size.
- * 
- * Features:
- * - Responsive desktop/mobile switching (768px breakpoint)
- * - Client-side hydration for SSR compatibility
- * - Zero layout shift with pre-calculated heights
- * - Only one navigation bar rendered at a time (no duplicates)
+ * Optimized for fast load times:
+ * - Uses CSS media queries for responsive design (no JS layout shift)
+ * - Renders both navbars with CSS display:none (no hydration mismatch)
+ * - Minimal client-side state changes
  */
 
 export function DualNavbar() {
-  const [isMobile, setIsMobile] = useState(false)
-  const [isClient, setIsClient] = useState(false)
+  const [isMounted, setIsMounted] = useState(false)
 
-  // Client-side hydration and responsive detection
+  // Minimal hydration - just track if we're on client
   useEffect(() => {
-    const checkIsMobile = () => {
-      const width = window.innerWidth
-      // Standard responsive breakpoint (768px)
-      setIsMobile(width < 768)
-    }
-
-    // Immediate client-side rendering
-    setIsClient(true)
-    checkIsMobile()
-    window.addEventListener('resize', checkIsMobile)
-
-    return () => {
-      if (typeof window !== 'undefined') {
-        window.removeEventListener('resize', checkIsMobile)
-      }
-    }
+    setIsMounted(true)
   }, [])
 
-  // Show loading state during SSR hydration
-  if (!isClient) {
     return (
       <nav style={{
         backgroundColor: '#ffffff',
         borderBottom: '1px solid #e5e7eb',
-        height: '54px',
-        minHeight: '54px',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        position: 'sticky',
-        top: 0,
-        zIndex: 1000,
-      }}>
-        <div style={{ color: '#9ca3af', fontSize: '0.875rem' }}>Loading navigation...</div>
-      </nav>
-    )
-  }
-
-  // Responsive heights: 54px for mobile, 64px for desktop
-  const navbarHeight = isMobile ? '54px' : '64px'
-
-  const navbarStyle: React.CSSProperties = {
-    backgroundColor: '#ffffff',
-    borderBottom: '1px solid #e5e7eb',
-    height: navbarHeight,
-    minHeight: navbarHeight,
-    maxHeight: navbarHeight,
     boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
     position: 'sticky',
     top: 0,
     zIndex: 1000,
     margin: 0,
     padding: 0,
-  }
-
-  return (
-    <nav style={navbarStyle}>
-      {/* Only render ONE navigation based on screen size - no duplicates */}
-      {isMobile ? <MobileNav /> : <DesktopNav />}
+    }}>
+      {/* Desktop Navigation - hidden on mobile via CSS */}
+      <div style={{ display: 'none' }} className="nav-desktop">
+        {isMounted && <DesktopNav />}
+      </div>
+      
+      {/* Mobile Navigation - hidden on desktop via CSS */}
+      <div style={{ display: 'none' }} className="nav-mobile">
+        {isMounted && <MobileNav />}
+      </div>
     </nav>
   )
 }

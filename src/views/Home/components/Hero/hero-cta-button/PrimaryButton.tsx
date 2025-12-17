@@ -4,7 +4,7 @@ import Link from 'next/link'
 
 export default function PrimaryButton() {
   return (
-    <Link href="/products" style={{
+    <Link href="/advisor" style={{
       fontWeight: '600',
       fontSize: 'clamp(0.9rem, 2vw, 1rem)',
       borderRadius: '19px',
@@ -21,7 +21,7 @@ export default function PrimaryButton() {
       textAlign: 'center',
       cursor: 'pointer'
     }}>
-      Shop Now
+      Get Started
     </Link>
   )
 }

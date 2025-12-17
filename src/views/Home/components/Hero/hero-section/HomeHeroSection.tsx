@@ -34,7 +34,7 @@ export default function HomeHeroSection() {
               margin: '0 0 0.36rem 0', /* Reduced by another 10% from 0.4rem */
               textTransform: 'none',
               lineHeight: 1.15,
-              fontFamily: '"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
+              fontFamily: '"Poppins", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
               textShadow: '0 3px 8px rgba(0, 0, 0, 0.9)',
               letterSpacing: '-0.01em'
             }}>
@@ -45,7 +45,7 @@ export default function HomeHeroSection() {
           color: '#ffffff',
           margin: '0',
           lineHeight: 1.4,
-          fontFamily: '"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
+          fontFamily: '"Poppins", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
           textShadow: '0 2px 6px rgba(0, 0, 0, 0.85)',
           fontWeight: '600'
         }}>
@@ -56,7 +56,7 @@ export default function HomeHeroSection() {
           color: '#ffffff',
           margin: '0.27rem 0 0',
           lineHeight: 1.4,
-          fontFamily: '"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
+          fontFamily: '"Poppins", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
           textShadow: '0 2px 5px rgba(0, 0, 0, 0.8)',
           opacity: 0.95,
           fontWeight: '500',
@@ -70,7 +70,7 @@ export default function HomeHeroSection() {
           color: '#ffffff',
           margin: '0.27rem 0 0',
           lineHeight: 1.3,
-          fontFamily: '"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
+          fontFamily: '"Poppins", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
           textShadow: '0 2px 5px rgba(0, 0, 0, 0.8)',
           opacity: 0.9,
           fontWeight: '500',

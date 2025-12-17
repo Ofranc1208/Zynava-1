@@ -22,7 +22,7 @@ body {
   -moz-osx-font-smoothing: grayscale;
   /* iOS Safari: Improve rendering performance */
   -webkit-overflow-scrolling: touch;
-  background-color: #FFFDD0; /* Cream/White background for all pages */
+  background-color: #fffff2; /* Page background for all pages */
   min-height: 100vh;
 }
 
@@ -33,6 +33,33 @@ a {
 
 /* Note: Responsive navigation is handled by JavaScript in DualNavbar.tsx */
 /* CSS-based display rules removed to prevent conflicts with JS-based rendering */
+
+/* Navigation Responsive Display - CSS-based for instant response */
+@media (max-width: 767px) {
+  /* Mobile: Show mobile nav, hide desktop nav */
+  .nav-desktop {
+    display: none !important;
+  }
+  
+  .nav-mobile {
+    display: block !important;
+    height: 54px;
+    min-height: 54px;
+  }
+}
+
+@media (min-width: 768px) {
+  /* Desktop: Show desktop nav, hide mobile nav */
+  .nav-mobile {
+    display: none !important;
+  }
+  
+  .nav-desktop {
+    display: block !important;
+    height: 64px;
+    min-height: 64px;
+  }
+}
 
 /* Hero section responsive height: 20% reduced on mobile, full height on desktop */
 @media (min-width: 768px) {

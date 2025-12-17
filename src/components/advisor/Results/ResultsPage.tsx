@@ -4,6 +4,7 @@ import React, { useState, useMemo } from 'react'
 import styles from './ResultsPage.module.css'
 import ResultsControlBar from './ResultsControlBar'
 import ResultCard from './ResultCard'
+import { ComplianceBadge } from '@/src/components/shared/ComplianceBadge'
 import { ALL_PRODUCTS, type MockResult } from './mockData'
 import { rankProductsByZScore, type QuizInput, type ScoredProduct } from './zScoreAlgorithm'
 
@@ -143,6 +144,9 @@ export default function ResultsPage({ quizParams }: ResultsPageProps) {
         filters={filters}
         onFiltersChange={setFilters}
       />
+
+      {/* Compliance Badge */}
+      <ComplianceBadge />
 
       {/* Results Grid */}
       <div className={styles.resultsGrid}>

@@ -35,14 +35,14 @@ Ingredient quality, dosage effectiveness, goal match, demographic safety, activi
 
 ## Common Ingredients
 
-**Magnesium:** Sleep, relaxation, stress — 200-400mg daily
-**Ashwagandha:** Stress, anxiety, sleep — 300-600mg daily
-**Omega-3:** Heart, brain, inflammation — 1000-2000mg daily
-**Vitamin D3:** Bone, immunity, mood — 1000-5000 IU daily
-**CoQ10:** Heart, energy, aging — 100-200mg daily
-**L-Theanine:** Focus, calm, sleep — 100-200mg daily
-**Probiotics:** Gut health, immunity — 10-50 billion CFU daily
-**Collagen:** Joints, skin — 10-20g daily
+**Magnesium:** Sleep, relaxation, stress - 200-400mg daily
+**Ashwagandha:** Stress, anxiety, sleep - 300-600mg daily
+**Omega-3:** Heart, brain, inflammation - 1000-2000mg daily
+**Vitamin D3:** Bone, immunity, mood - 1000-5000 IU daily
+**CoQ10:** Heart, energy, aging - 100-200mg daily
+**L-Theanine:** Focus, calm, sleep - 100-200mg daily
+**Probiotics:** Gut health, immunity - 10-50 billion CFU daily
+**Collagen:** Joints, skin - 10-20g daily
 
 ## Compliance & Safety
 
@@ -68,13 +68,13 @@ export const ZYNAVA_FAQ_CONTENT = `
 
 **Z-SCORE™?** Our algorithm ranks supplements by ingredient quality, dosage effectiveness, and how well they match your profile.
 
-**Do you sell?** No—we link to iHerb, Amazon, and trusted retailers. No signup needed.
+**Do you sell?** No - we link to iHerb, Amazon, and trusted retailers. No signup needed.
 
 **Is this medical?** No. We educate, not diagnose. Always consult your healthcare provider.
 
 **Safe?** Our algorithm prioritizes brands with third-party testing. Consult your doctor if you have medical conditions.
 
-**How long to see results?** Varies—days for sleep support, weeks/months for skin/joints.
+**How long to see results?** Varies - days for sleep support, weeks/months for skin/joints.
 
 **Take multiple?** Generally yes, but check with your doctor, especially if on medications.
 `;

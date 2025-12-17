@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next'
 import { DualNavbar } from '@/src/components/Navigation/DualNavbar'
 import { Footer } from './components/Footer'
+import { CookieConsent } from '@/src/components/CookieConsent/CookieConsent'
 import { PromoOverlay } from '@/src/components/PromoOverlay'
 import './globals.css'
 
@@ -33,6 +34,7 @@ export default function RootLayout({
         <DualNavbar />
         {children}
         <Footer />
+        <CookieConsent />
         {/* TESTING MODE: PromoOverlay temporarily disabled - see PromoOverlay/TESTING_MODE.md */}
         {/* <PromoOverlay 
           couponCode="WELCOME21" 

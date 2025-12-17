@@ -102,6 +102,8 @@ ZYNAVA intentionally avoids:
 ## Part 2: Platform Architecture
 - [Core Entities (Data Model)](#core-entities-data-model)
 - [Page Types & ISR Strategy](#page-types--isr-strategy)
+- [ISR Ingredient Library Implementation](#isr-ingredient-library-implementation) *(NEW)*
+- [Keyword-Driven Content Strategy](#-keyword-driven-content-strategy) *(NEW - SEMrush Data)*
 - [Supplement Advisor Architecture](#supplement-advisor-architecture)
 
 ## Part 3: Creator System
@@ -841,6 +843,761 @@ const creatorSitemapEntries = creatorPages.map(creator => ({
   priority: 0.7,
 }));
 ```
+
+---
+
+## ISR Ingredient Library Implementation
+
+> **Added: December 2025**
+> Scalable ingredient pages using ISR with content variation to avoid templated content detection.
+
+### Overview
+
+The Ingredient Library is a collection of ISR-powered pages at `/ingredients/[slug]` that provide educational, research-based information about supplement ingredients. Each page:
+
+- Is generated at request-time with 24-hour revalidation
+- Links to free, authoritative research sources (NIH, PubMed, etc.)
+- Uses original, paraphrased content (never copied verbatim)
+- Includes compliance-safe disclaimers
+- Employs content variation to avoid Google templated content detection
+
+### Content Variation System
+
+**Problem:** Google may penalize sites with templated content where every page follows the same rigid structure with only variable data swapped in.
+
+**Solution:** Deterministic content variation based on ingredient slug hash.
+
+| Component | Variation Strategy |
+|-----------|-------------------|
+| Tone | 4 tones: educational, practical, research-focused, user-friendly |
+| Opening phrases | Multiple phrasing options per tone |
+| Benefit descriptions | Varied phrasing patterns |
+| Research summaries | Different framing structures |
+| Safety notes | Multiple safe-language alternatives |
+| Section ordering | Slight structural variations |
+
+**Implementation:**
+
+```typescript
+// src/lib/content/variations.ts
+
+export type ContentTone = 'educational' | 'practical' | 'research-focused' | 'user-friendly'
+
+// Deterministic tone selection based on slug hash
+export function getContentTone(slug: string): ContentTone {
+  const tones: ContentTone[] = ['educational', 'practical', 'research-focused', 'user-friendly']
+  let hash = 0
+  for (let i = 0; i < slug.length; i++) {
+    hash = ((hash << 5) - hash) + slug.charCodeAt(i)
+    hash = hash & hash
+  }
+  return tones[Math.abs(hash) % tones.length]
+}
+```
+
+**Key Principle:** Same slug always gets same variation (deterministic). Content doesn't change on refresh, but different ingredients get different tones/structures.
+
+---
+
+### Free Research Sources
+
+**All ingredient pages link to free, authoritative sources. No paywalled content.**
+
+| Source ID | Name | Type | URL Pattern |
+|-----------|------|------|-------------|
+| `nih-ods` | NIH Office of Dietary Supplements | Government | `ods.od.nih.gov/factsheets/{ingredient}-healthprofessional/` |
+| `pubmed` | PubMed | Database | `pubmed.ncbi.nlm.nih.gov/?term={ingredient}+supplement` |
+| `nccih` | NCCIH (NIH) | Government | `nccih.nih.gov/health/{ingredient}` |
+| `cochrane` | Cochrane Reviews | Systematic Review | `cochranelibrary.com` (search) |
+| `examine` | Examine.com | Academic | `examine.com/supplements/{ingredient}/` (free tier) |
+
+**Source Management:**
+
+```typescript
+// src/lib/content/researchSources.ts
+
+export interface ResearchSource {
+  id: string
+  name: string
+  baseUrl: string
+  type: 'government' | 'academic' | 'systematic-review' | 'database'
+  isFree: boolean
+  attributionRequired: boolean
+}
+
+export const RESEARCH_SOURCES: Record<string, ResearchSource> = {
+  'nih-ods': {
+    id: 'nih-ods',
+    name: 'NIH Office of Dietary Supplements',
+    baseUrl: 'https://ods.od.nih.gov',
+    type: 'government',
+    isFree: true,
+    attributionRequired: true,
+  },
+  'pubmed': {
+    id: 'pubmed',
+    name: 'PubMed',
+    baseUrl: 'https://pubmed.ncbi.nlm.nih.gov',
+    type: 'database',
+    isFree: true,
+    attributionRequired: false,
+  },
+  // ... additional sources
+}
+```
+
+**Rules:**
+- Every ingredient MUST have at least one government source (NIH ODS preferred)
+- PubMed IDs are included for direct study links
+- Content is PARAPHRASED, never copied verbatim
+- Source attribution is visible on every page
+
+---
+
+### Ingredient Data Model (Enhanced)
+
+```typescript
+// data/ingredients.ts
+
+export interface IngredientSource {
+  sourceId: string           // 'nih-ods', 'pubmed', etc.
+  sourceName: string
+  sourceUrl: string
+  isPrimary: boolean
+}
+
+export interface Ingredient {
+  // Identity
+  slug: string               // URL-safe: "magnesium-glycinate"
+  name: string               // Display: "Magnesium Glycinate"
+  form: string               // "mineral chelate", "adaptogenic herb", etc.
+  
+  // Original Content (paraphrased, not copied)
+  summary: string            // 1-2 sentence overview
+  detailedDescription: string // 2-3 paragraph explanation
+  
+  // Benefits (compliance-safe language)
+  maySupport: string[]       // Full list of potential benefits
+  primaryBenefits: string[]  // Top 3-4 for display
+  
+  // Research (original summaries)
+  researchSummary: string    // Paraphrased research overview
+  pubmedIds?: string[]       // Direct PubMed links
+  
+  // Safety (original, compliance-safe)
+  safetyNote: string
+  contraindications: string[]
+  interactions: string[]
+  
+  // Usage (educational only)
+  typicalDose: string
+  timing?: string
+  
+  // Terrain Associations
+  primaryTerrain: string     // 'sleep', 'energy', 'cognition', etc.
+  secondaryTerrains?: string[]
+  
+  // Multiple Sources
+  sources: IngredientSource[]
+  primarySource: IngredientSource
+  
+  // Metadata
+  createdAt: string
+  updatedAt: string
+}
+```
+
+---
+
+### ISR Page Implementation
+
+**Route:** `app/ingredients/[slug]/page.tsx`
+
+**Revalidation:** 24 hours (86400 seconds)
+
+```typescript
+// app/ingredients/[slug]/page.tsx
+
+import { Metadata } from 'next'
+import { notFound } from 'next/navigation'
+import { getIngredientBySlug, getAllIngredientSlugs } from '@/data/ingredients'
+
+export const revalidate = 86400 // 24 hours
+
+export async function generateMetadata({ params }): Promise<Metadata> {
+  const ingredient = getIngredientBySlug(params.slug)
+  if (!ingredient) return { title: 'Not Found', robots: 'noindex' }
+  
+  return {
+    title: `${ingredient.name} | ZYNAVA Ingredients`,
+    description: ingredient.summary,
+    robots: { index: true, follow: true },
+    alternates: { canonical: `/ingredients/${ingredient.slug}` },
+  }
+}
+
+export async function generateStaticParams() {
+  return getAllIngredientSlugs().map(slug => ({ slug }))
+}
+
+export default function IngredientPage({ params }) {
+  const ingredient = getIngredientBySlug(params.slug)
+  if (!ingredient) notFound()
+  
+  // Content variation based on slug
+  const tone = getContentTone(ingredient.slug)
+  
+  return (
+    // Page content with varied structure based on tone
+  )
+}
+```
+
+---
+
+### Page Structure
+
+Each ingredient page includes:
+
+1. **Breadcrumb Navigation** — `/ingredients` → Ingredient Name
+2. **Title & Summary** — H1 + opening paragraph (tone-varied)
+3. **Detailed Description** — Research-informed explanation
+4. **May Support Section** — Bulleted benefits (compliance-safe)
+5. **Research & Evidence** — Original summary + source links
+6. **Primary Source Link** — Government source (NIH ODS)
+7. **Additional Sources** — PubMed, NCCIH, etc.
+8. **Direct Study Links** — PubMed IDs as clickable badges
+9. **Safety Section** — Contraindications, interactions
+10. **Typical Usage** — Educational dosage info
+11. **Source Attribution** — List of all sources used
+12. **Compliance Disclaimer** — FDA disclaimer (required)
+13. **CTA to Advisor** — "Find Your Personalized Stack"
+
+---
+
+### SEO Requirements
+
+| Requirement | Implementation |
+|-------------|----------------|
+| `generateMetadata()` | Dynamic title, description, canonical |
+| Canonical URL | `/ingredients/{slug}` |
+| robots | `index: true, follow: true` |
+| OpenGraph | Type: article |
+| Structured Data | Article schema (future) |
+| Internal Links | Back to /ingredients, CTA to /advisor |
+
+---
+
+### Compliance Requirements
+
+Every ingredient page MUST include:
+
+1. **FDA Disclaimer** (footer):
+   > "These statements have not been evaluated by the Food and Drug Administration. This information is not intended to diagnose, treat, cure, or prevent any disease."
+
+2. **Source Attribution**:
+   > "This content is based on information from free, authoritative research sources. ZYNAVA content is original and paraphrased for educational purposes. We do not copy verbatim from source materials."
+
+3. **Safe Language**:
+   - ✅ "May support", "Research suggests", "Appears to"
+   - ❌ "Treats", "Cures", "Prevents disease", "Clinically proven"
+
+---
+
+### 🔍 Keyword-Driven Content Strategy
+
+> **Added: December 2025**
+> SEMrush keyword analysis integrated to prioritize ingredient pages by search demand.
+
+#### Data Source
+
+- **File:** `Keyword2.txt` (30,001 keywords)
+- **Processed:** `data/keywords.ts` (TypeScript module)
+- **Analysis Date:** December 17, 2025
+
+#### Keyword Integration in Codebase
+
+```
+data/
+  └── keywords.ts           # Keyword clusters and priority tiers
+      ├── TIER1_INGREDIENTS # High-volume (10K+ monthly searches)
+      ├── TIER2_INGREDIENTS # Medium-volume (1K-10K)
+      └── TIER3_INGREDIENTS # Long-tail opportunities (100-1K)
+```
+
+#### Top Ingredients by Search Volume
+
+| Rank | Ingredient | Primary Keyword | Monthly Volume | KD |
+|------|------------|-----------------|----------------|-----|
+| 1 | Ashwagandha | "ashwagandha" | 673,000 | 98 |
+| 2 | Collagen | "collagen" | 201,000 | 100 |
+| 3 | Magnesium | "magnesium oxide" | 90,500 | 79 |
+| 4 | B12 | "b12" | 74,000 | 100 |
+| 5 | Zinc | "zinc supplement" | 49,500 | 75 |
+| 6 | Omega-3 | "omega 3 benefits" | 27,100 | 96 |
+| 7 | Magnesium Glycinate | "magnesium glycinate" | 22,200 | 55 |
+| 8 | Probiotics | "probiotic supplements" | 18,100 | 73 |
+| 9 | Collagen Peptides | "collagen peptides benefits" | 14,800 | 79 |
+| 10 | Vitamin D3 | "vitamin d3 supplement" | 12,100 | 92 |
+
+#### Keyword Intent Mapping
+
+| Intent | Description | Content Strategy |
+|--------|-------------|------------------|
+| **Informational** | "what is ashwagandha", "b12 benefits" | In-depth educational content |
+| **Commercial** | "best zinc supplement", "ashwagandha root supplement" | Comparison guides, buying considerations |
+| **Transactional** | "buy omega 3", "vitamin d3 shop" | NOT our focus (we don't sell) |
+
+#### How to Use Keyword Data
+
+1. **Page Prioritization:**
+   - Use `getIngredientsByVolume()` from `data/keywords.ts`
+   - Build Tier 1 ingredients first (highest traffic potential)
+
+2. **Content Topics:**
+   - Each ingredient has `contentTopics[]` array
+   - Use these as H2/H3 sections in ingredient pages
+
+3. **Related Keywords:**
+   - Include `relatedKeywords[]` naturally in content
+   - Target long-tail variations in subsections
+
+4. **SEO Title Patterns:**
+   - `{Ingredient Name}: Benefits, Dosage, and Research | ZYNAVA`
+   - Include primary keyword in title and first paragraph
+
+#### Complete Implementation Example
+
+**1. ISR Page with Keyword Integration:**
+
+```typescript
+// app/ingredients/[slug]/page.tsx
+import { getIngredientBySlug } from '@/data/keywords';
+import { getIngredientBySlug as getIngredientData } from '@/data/ingredients';
+import { notFound } from 'next/navigation';
+
+export const revalidate = 3600; // 1 hour ISR
+
+export async function generateMetadata({ params }) {
+  const keywordData = getIngredientBySlug(params.slug);
+  const ingredientData = getIngredientData(params.slug);
+  
+  if (!keywordData || !ingredientData) {
+    return { title: 'Not Found', robots: 'noindex' };
+  }
+  
+  return {
+    title: `${keywordData.primaryKeyword}: Benefits, Dosage & Research | ZYNAVA`,
+    description: `Learn about ${keywordData.primaryKeyword}. ${ingredientData.summary} Research-backed information from NIH ODS and PubMed.`,
+    keywords: [
+      keywordData.primaryKeyword,
+      ...keywordData.relatedKeywords.slice(0, 5).map(k => k.keyword)
+    ].join(', '),
+    alternates: {
+      canonical: `https://zynava.com/ingredients/${params.slug}`
+    },
+    openGraph: {
+      title: `${keywordData.primaryKeyword} - Supplement Guide`,
+      description: ingredientData.summary,
+      type: 'article',
+    },
+  };
+}
+
+export async function generateStaticParams() {
+  const { getAllIngredientClusters } = await import('@/data/keywords');
+  return getAllIngredientClusters().map(ing => ({ slug: ing.slug }));
+}
+
+export default async function IngredientPage({ params }) {
+  const keywordData = getIngredientBySlug(params.slug);
+  const ingredientData = getIngredientData(params.slug);
+  
+  if (!keywordData || !ingredientData) notFound();
+  
+  return (
+    <article>
+      <h1>{ingredientData.name}</h1>
+      
+      {/* Use contentTopics as H2 sections */}
+      {keywordData.contentTopics.map((topic, i) => (
+        <section key={i}>
+          <h2>{topic}</h2>
+          {/* Content here - naturally include related keywords */}
+        </section>
+      ))}
+      
+      {/* Related Keywords Section */}
+      <section>
+        <h2>Related Topics</h2>
+        <ul>
+          {keywordData.relatedKeywords
+            .filter(k => k.intent === 'informational')
+            .slice(0, 5)
+            .map((kw, i) => (
+              <li key={i}>
+                <a href={`/ingredients/${kw.keyword.toLowerCase().replace(/\s+/g, '-')}`}>
+                  {kw.keyword}
+                </a>
+              </li>
+            ))}
+        </ul>
+      </section>
+    </article>
+  );
+}
+```
+
+**2. Sitemap Generation with Keywords:**
+
+```typescript
+// app/sitemap.ts
+import { getAllIngredientClusters } from '@/data/keywords';
+
+export default async function sitemap() {
+  const ingredients = getAllIngredientClusters();
+  
+  const ingredientUrls = ingredients.map(ing => ({
+    url: `https://zynava.com/ingredients/${ing.slug}`,
+    lastModified: new Date(),
+    changeFrequency: 'weekly' as const,
+    priority: ing.priority === 'tier1' ? 0.9 : ing.priority === 'tier2' ? 0.7 : 0.5,
+  }));
+  
+  return [
+    { url: 'https://zynava.com', lastModified: new Date(), changeFrequency: 'daily', priority: 1 },
+    ...ingredientUrls,
+  ];
+}
+```
+
+**3. Content Writing Helper:**
+
+```typescript
+// src/lib/content/keywordHelper.ts
+import { getIngredientBySlug, type IngredientKeywordCluster } from '@/data/keywords';
+
+export function getContentOutline(slug: string): string[] {
+  const data = getIngredientBySlug(slug);
+  if (!data) return [];
+  
+  // Use contentTopics as section headings
+  return data.contentTopics;
+}
+
+export function getTargetKeywords(slug: string): string[] {
+  const data = getIngredientBySlug(slug);
+  if (!data) return [];
+  
+  return [
+    data.primaryKeyword,
+    ...data.relatedKeywords
+      .filter(k => k.intent === 'informational')
+      .slice(0, 10)
+      .map(k => k.keyword)
+  ];
+}
+
+export function getKeywordDensity(slug: string): { keyword: string; target: number }[] {
+  const data = getIngredientBySlug(slug);
+  if (!data) return [];
+  
+  return [
+    { keyword: data.primaryKeyword, target: 1.5 }, // 1.5% density
+    ...data.relatedKeywords
+      .slice(0, 5)
+      .map(k => ({ keyword: k.keyword, target: 0.5 }))
+  ];
+}
+```
+
+**4. Ingredient Index Page (List All):**
+
+```typescript
+// app/ingredients/page.tsx
+import { getIngredientsByVolume, getIngredientsByTier } from '@/data/keywords';
+import Link from 'next/link';
+
+export default function IngredientsIndexPage() {
+  const tier1 = getIngredientsByTier('tier1');
+  const tier2 = getIngredientsByTier('tier2');
+  const tier3 = getIngredientsByTier('tier3');
+  
+  return (
+    <div>
+      <h1>Supplement Ingredients Library</h1>
+      
+      <section>
+        <h2>Most Popular Ingredients</h2>
+        <ul>
+          {tier1.map(ing => (
+            <li key={ing.slug}>
+              <Link href={`/ingredients/${ing.slug}`}>
+                {ing.primaryKeyword} ({ing.searchVolume.toLocaleString()} monthly searches)
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </section>
+      
+      {/* Similar sections for tier2 and tier3 */}
+    </div>
+  );
+}
+```
+
+#### Traffic Projections (Conservative)
+
+| Phase | Pages | Est. Monthly Traffic |
+|-------|-------|---------------------|
+| Phase 1 | 50 | 15,000-25,000 |
+| Phase 2 | 500 | 50,000-100,000 |
+| Phase 3 | 2,000 | 150,000-300,000 |
+| Phase 4 | 10,000+ | 500,000+ |
+
+*Note: Traffic estimates assume 1-3% CTR based on ranking position and keyword difficulty.*
+
+---
+
+### Phase 1 MVP Ingredients (50-100 Pages)
+
+> **Target:** 50-100 high-quality ingredient pages at launch, manually written and reviewed.
+
+#### Tier 1: Core Ingredients (Launch Priority - 20 pages)
+
+| Slug | Name | Primary Terrain | Primary Source |
+|------|------|-----------------|----------------|
+| `magnesium-glycinate` | Magnesium Glycinate | Sleep | NIH ODS |
+| `ashwagandha` | Ashwagandha | Stress | NIH ODS |
+| `omega-3-fatty-acids` | Omega-3 Fatty Acids | Cardiovascular | NIH ODS |
+| `vitamin-d3` | Vitamin D3 | Bone/Immunity | NIH ODS |
+| `zinc` | Zinc | Immunity | NIH ODS |
+| `probiotics` | Probiotics | Gut | NIH ODS |
+| `coq10` | Coenzyme Q10 | Energy/Heart | NIH ODS |
+| `curcumin` | Curcumin (Turmeric) | Inflammation | NIH ODS |
+| `l-theanine` | L-Theanine | Focus/Calm | PubMed |
+| `vitamin-b12` | Vitamin B12 | Energy | NIH ODS |
+| `vitamin-c` | Vitamin C | Immunity | NIH ODS |
+| `iron` | Iron | Energy | NIH ODS |
+| `calcium` | Calcium | Bone | NIH ODS |
+| `melatonin` | Melatonin | Sleep | NIH ODS |
+| `fish-oil` | Fish Oil | Heart/Brain | NIH ODS |
+| `vitamin-b-complex` | Vitamin B Complex | Energy | NIH ODS |
+| `collagen` | Collagen | Skin/Joints | PubMed |
+| `creatine` | Creatine | Performance | NIH ODS |
+| `lions-mane` | Lion's Mane | Cognition | PubMed |
+| `rhodiola-rosea` | Rhodiola Rosea | Stress/Energy | NCCIH |
+
+#### Tier 2: Extended Ingredients (Week 3-4 - 30 pages)
+
+| Category | Ingredients |
+|----------|-------------|
+| **Minerals** | Magnesium Citrate, Magnesium Oxide, Potassium, Selenium, Copper, Manganese |
+| **Vitamins** | Vitamin A, Vitamin E, Vitamin K2, Folate, Biotin, Niacin |
+| **Herbs** | Valerian Root, Ginkgo Biloba, Milk Thistle, Elderberry, Echinacea, Ginger |
+| **Amino Acids** | L-Glutamine, GABA, 5-HTP, Tyrosine, Glycine, Taurine |
+| **Specialty** | NAD+, NMN, Resveratrol, Quercetin, Berberine, Alpha-GPC |
+
+#### Tier 3: Form Variations (Week 4-5 - 30 pages)
+
+| Base Ingredient | Form Variations |
+|-----------------|-----------------|
+| Magnesium | Glycinate, Citrate, Oxide, Threonate, Malate, Taurate |
+| Vitamin D | D2, D3, D3+K2 |
+| Zinc | Picolinate, Gluconate, Citrate |
+| Iron | Ferrous Sulfate, Ferrous Gluconate, Chelated Iron |
+| Calcium | Carbonate, Citrate, Hydroxyapatite |
+| CoQ10 | Ubiquinone, Ubiquinol |
+
+#### Tier 4: Additional Coverage (Week 5-6 - 20 pages)
+
+Remaining ingredients to reach 100 pages based on:
+- Advisor quiz coverage needs
+- Search volume data
+- NIH ODS fact sheet availability
+
+---
+
+### File Structure
+
+```
+data/
+├── ingredients.ts          # Ingredient data with sources
+└── keywords.ts             # SEMrush keyword data (30K+ analyzed) ✅ CREATED
+
+src/lib/content/
+├── variations.ts           # Content variation system
+└── researchSources.ts      # Source URL management
+
+app/
+├── ingredients/
+│   ├── page.tsx            # Ingredients index (list)
+│   └── [slug]/
+│       └── page.tsx        # ISR ingredient detail page
+├── sitemap.ts              # Includes ingredient slugs
+└── robots.ts               # Indexing rules
+
+Source Files:
+├── Keyword2.txt            # Raw SEMrush export (30,001 keywords)
+```
+
+---
+
+### ⚠️ Implementation Notes & Recommendations
+
+| Topic | Recommendation |
+|-------|----------------|
+| **Content Creation** | Write ALL ingredient content manually. Do not scrape or copy from NIH. Use NIH as reference, then paraphrase in original voice. |
+| **Variation Testing** | Test that different ingredients get different tones before deploying many pages. |
+| **Source URL Verification** | Verify all source URLs are valid before deployment. NIH pages occasionally change. |
+| **PubMed IDs** | Only include PubMed IDs for studies that are directly relevant and accessible. |
+| **Revalidation** | 24 hours is appropriate for educational content. Reduce if content changes frequently. |
+| **404 Handling** | `notFound()` for invalid slugs. Returns proper 404 status. |
+| **Compliance Review** | Have legal review all ingredient content before public launch. |
+
+---
+
+### 📈 Scaling Roadmap (Conservative Approach)
+
+> **Strategy:** Start small with high-quality content, validate performance, then scale programmatically.
+
+#### Phase 1: Foundation (Launch)
+
+| Metric | Target |
+|--------|--------|
+| **Pages** | 50-100 ingredients |
+| **Content** | Manually written, human-reviewed |
+| **Sources** | NIH ODS primary, PubMed secondary |
+| **Timeline** | Week 2-3 of build |
+
+**Focus:**
+- Core supplement ingredients only
+- High-quality, original content (500+ words each)
+- Test variation system across all pages
+- Validate ISR and SEO performance
+- Monitor Google Search Console indexing
+
+**Success Criteria Before Scaling:**
+- [ ] 90%+ pages indexed in Google within 2 weeks
+- [ ] Average time on page > 2 minutes
+- [ ] Bounce rate < 60%
+- [ ] No broken source links detected
+- [ ] Zero compliance issues flagged
+
+---
+
+#### Phase 2: Initial Scale (Month 2-3)
+
+| Metric | Target |
+|--------|--------|
+| **Pages** | 500 ingredients |
+| **Content** | Semi-automated with human oversight |
+| **New Types** | Ingredient forms (glycinate, citrate, etc.) |
+| **Timeline** | 4-6 weeks after Phase 1 validation |
+
+**New Additions:**
+- Ingredient form variations (e.g., "Magnesium Glycinate", "Magnesium Citrate")
+- Additional source integrations
+- Automated source URL validation script
+- SEMrush/Screaming Frog integration for link monitoring
+
+**Infrastructure Requirements:**
+- [ ] Move from TypeScript file to database (Firestore)
+- [ ] Build content generation templates
+- [ ] Implement automated broken link detection
+- [ ] Set up Google Search Console alerts
+
+---
+
+#### Phase 3: Growth (Month 4-6)
+
+| Metric | Target |
+|--------|--------|
+| **Pages** | 2,000-5,000 |
+| **Content** | Programmatic with guardrails |
+| **New Types** | Ingredient + Goal pages, Comparisons |
+| **Timeline** | 2-3 months after Phase 2 |
+
+**New Page Types:**
+- "Magnesium for Sleep" (ingredient + goal)
+- "Magnesium vs Zinc" (comparison pages)
+- FAQ/Question pages ("How much Vitamin D should I take?")
+
+**Quality Control:**
+- [ ] Content quality scoring system
+- [ ] Automated compliance checking
+- [ ] Real-time indexing monitoring
+- [ ] A/B testing page variations
+
+---
+
+#### Phase 4: Full Scale (Month 6+)
+
+| Metric | Target |
+|--------|--------|
+| **Pages** | 10,000-20,000 |
+| **Content** | Full automation with human oversight |
+| **New Types** | All content types |
+| **Timeline** | 3-6 months after Phase 3 |
+
+**Requirements Before Phase 4:**
+- Proven indexing rate > 95%
+- Organic traffic growing month-over-month
+- No Google penalties or manual actions
+- Content management system in place
+- Dedicated content review process
+
+---
+
+### 🛠️ Quality Control Tools
+
+| Tool | Purpose | When to Use |
+|------|---------|-------------|
+| **SEMrush** | Broken links, site audit, keyword tracking | Weekly audits |
+| **Google Search Console** | Indexing status, crawl errors, manual actions | Daily monitoring |
+| **Screaming Frog** | Deep crawl analysis, redirect chains | Monthly audits |
+| **Custom Validation Script** | Source URL validity, content checks | Before each deploy |
+| **Lighthouse CI** | Performance, accessibility, SEO scores | Every build |
+
+**Broken Link Monitoring:**
+```typescript
+// scripts/validate-sources.ts (to be built in Phase 2)
+// Validates all source URLs are still accessible
+// Runs before deployment and weekly via cron
+```
+
+---
+
+### ⚠️ Google Quality Guidelines Compliance
+
+| Risk | Mitigation |
+|------|------------|
+| **Thin Content** | Minimum 500 words per page, unique value proposition |
+| **Duplicate Content** | Variation system + unique angles per page |
+| **Programmatic Content** | Human oversight, authoritative sources, original voice |
+| **Doorway Pages** | Each page provides distinct, valuable content |
+| **AI Content Penalties** | Original paraphrasing, not AI-generated text dumps |
+
+**Quality Checklist (Every Page):**
+- [ ] 500+ words of unique content
+- [ ] At least 2 authoritative sources cited
+- [ ] Original paraphrasing (not copied)
+- [ ] Compliance-safe language
+- [ ] FDA disclaimer included
+- [ ] Internal links to advisor and related content
+
+---
+
+### Future Enhancements
+
+- **Firestore Migration:** Move ingredient data from TypeScript to Firestore (Phase 2)
+- **Related Ingredients:** "You might also like" section
+- **Terrain Cross-Links:** Link to terrain pages
+- **Structured Data:** Full Article schema for rich snippets
+- **Image Support:** Ingredient hero images
+- **Comparison Tool:** Compare multiple ingredients
+- **Content Management UI:** Admin interface for content updates
+- **Automated Content Generation:** With human review workflow
 
 ---
 
@@ -2410,11 +3167,16 @@ The dashboard comes **after proof**, not before. First creator = validation part
 ### Week 2: Content & Data
 
 - [ ] Create `data/terrains.json` (3 terrains)
-- [ ] Create `data/ingredients.json` (10-15 ingredients)
+- [x] Create `data/keywords.ts` (SEMrush keyword analysis - 30K keywords) ✅ DONE
+- [ ] Create `data/ingredients.ts` (50-100 ingredients with multi-source references)
 - [ ] Create `data/affiliateRefs.json` (iHerb product mappings)
+- [ ] Create `src/lib/content/variations.ts` (content variation system)
+- [ ] Create `src/lib/content/researchSources.ts` (free source URL management)
 - [ ] Create terrain pages (ISR, reads from JSON)
-- [ ] Create ingredient pages (ISR, reads from JSON)
-- [ ] Implement SEO (metadata, schemas, robots.txt, llms.txt)
+- [ ] Create ingredient pages (ISR with content variation)
+- [ ] Create `app/ingredients/page.tsx` (ingredient index/list page)
+- [ ] Create `app/ingredients/[slug]/page.tsx` (ISR detail pages)
+- [ ] Implement SEO (metadata, schemas, robots.txt, llms.txt, sitemap.ts)
 
 ### Week 3: Advisor
 

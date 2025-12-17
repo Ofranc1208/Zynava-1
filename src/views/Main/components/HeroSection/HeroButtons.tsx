@@ -11,7 +11,7 @@ export default function HeroButtons() {
       flexWrap: 'wrap',
       marginBottom: '1.5rem'
     }}>
-      <Link href="/products" style={{
+      <Link href="/advisor" style={{
         padding: '12px 24px',
         borderRadius: '8px',
         background: '#09b44d',
@@ -22,7 +22,7 @@ export default function HeroButtons() {
         transition: 'all 0.2s ease',
         boxShadow: '0 3px 13px rgba(9, 180, 77, 0.3)'
       }}>
-        Shop Products
+        Supplement Advisor
       </Link>
       <Link href="/about" style={{
         padding: '12px 24px',

@@ -11,8 +11,8 @@
   --card-height-mobile: 20rem; /* 320px */
   
   /* Colors */
-  --color-white: #fffff3;
-  --color-border: #e5e5e5;
+  --color-white: #ffffff;
+  --color-border: #6b7280;
   --color-border-light: #e2e8f0;
   --color-bg-light: #f8fafc;
   --color-primary: #ff6b35;
@@ -20,12 +20,12 @@
   --color-text: #475569;
   --color-text-dark: #1a202c;
   
-  /* Spacing */
+  /* Spacing - balanced for comfortable reading */
   --spacing-xs: 0.25rem; /* 4px */
   --spacing-sm: 0.5rem; /* 8px */
-  --spacing-md: 0.875rem; /* 14px */
-  --spacing-lg: 1.125rem; /* 18px */
-  --spacing-xl: 1.5rem; /* 24px */
+  --spacing-md: 0.85rem; /* 14px - increased ~20% for better message separation */
+  --spacing-lg: 1.1rem; /* 18px */
+  --spacing-xl: 1.4rem; /* 22px */
   
   /* Border radius */
   --radius-sm: 0.75rem; /* 12px */
@@ -35,24 +35,29 @@
   
   /* Shadows */
   --shadow-card: 0 0.125rem 0.75rem rgba(0, 0, 0, 0.06);
+  --shadow-card-glass: 0 0.5rem 2rem rgba(0, 0, 0, 0.1), 0 0.125rem 0.5rem rgba(0, 0, 0, 0.08);
   --shadow-button: 0 0.25rem 0.75rem rgba(255, 107, 53, 0.4);
   --shadow-button-hover: 0 0.375rem 1rem rgba(255, 107, 53, 0.5);
   
   /* Typography */
   --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   
-  /* Apply card styles */
-  background: var(--color-white);
-  border: 1px solid var(--color-border);
+  /* Apply card styles - Glassmorphism effect */
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(107, 114, 128, 0.3);
   border-radius: var(--radius-md);
-  margin-block: -0.5rem 0.5rem;
+  margin-block: -0.4rem 0.4rem;
   margin-inline: auto;
   width: 100%;
   max-width: 100%;
   /* Ensure minimum width to prevent shrinking with small content */
   min-width: 280px;
-  padding: var(--spacing-xl);
-  box-shadow: var(--shadow-card);
+  padding-block-start: 1rem;
+  padding-block-end: 0.75rem; /* Reduced bottom padding to bring button up */
+  padding-inline: 1rem;
+  box-shadow: var(--shadow-card-glass);
   font-family: var(--font-family);
   display: flex;
   flex-direction: column;
@@ -61,6 +66,7 @@
   max-height: var(--card-height-desktop);
   box-sizing: border-box;
   overflow: hidden;
+  position: relative;
   /* Prevent any height/width transitions */
   transition: none;
 }
@@ -75,8 +81,9 @@
     height: var(--card-height-desktop);
     min-height: var(--card-height-desktop);
     max-height: var(--card-height-desktop);
-    padding-block: 1.75rem; /* 28px */
-    padding-inline: 2rem; /* 32px */
+    padding-block-start: 1.5rem; /* 24px - reduced from 28px */
+    padding-block-end: 1rem; /* Reduced bottom padding to bring button up */
+    padding-inline: 1.65rem; /* 26px - reduced from 32px */
     border-radius: var(--radius-lg);
     box-sizing: border-box;
     overflow: hidden;
@@ -84,20 +91,20 @@
   }
   
   .messageBubble {
-    padding-block: 1rem; /* 16px */
-    padding-inline: 1.375rem; /* 22px */
+    padding-block: 0.85rem; /* 13px - reduced from 16px */
+    padding-inline: 1.15rem; /* 18px - reduced from 22px */
     font-size: 1.1rem;
   }
   
   .chatButton {
-    padding-block: 0.875rem; /* 14px */
-    padding-inline: 1.5rem; /* 24px */
+    padding-block: 0.7rem; /* 11px - reduced from 14px */
+    padding-inline: 1.25rem; /* 20px - reduced from 24px */
     font-size: 1rem;
   }
   
   .typingBubble {
-    padding-block: 1rem; /* 16px */
-    padding-inline: 1.25rem; /* 20px */
+    padding-block: 0.85rem; /* 13px - reduced from 16px */
+    padding-inline: 1rem; /* 16px - reduced from 20px */
   }
   
   .dots span {
@@ -109,12 +116,12 @@
 .chatMessages {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-md);
-  flex: 1;
+  gap: var(--spacing-md); /* ~14px gap between messages */
+  /* Removed flex: 1 - let messages take only the space they need */
   overflow-y: auto;
   overflow-x: hidden;
   padding-inline-end: var(--spacing-xs);
-  margin-block-end: var(--spacing-md);
+  margin-block-end: 1rem; /* Space between messages and button */
   /* Force full width from the start to prevent horizontal expansion */
   width: 100%;
   min-width: 100%;
@@ -140,8 +147,9 @@
 
 .chatActions {
   display: flex;
-  justify-content: flex-end;
-  margin-block-start: auto;
+  justify-content: center; /* Center the button horizontally */
+  /* Removed margin-block-start: auto - button now follows messages naturally */
+  margin-block-end: 0;
 }
 
 .typingBubble {
@@ -225,7 +233,7 @@
   font-weight: 500; /* Medium weight - balanced and readable */
   cursor: pointer;
   font-family: var(--font-family);
-  align-self: flex-end;
+  /* Removed align-self: flex-end to allow centering */
   transition: all 0.3s ease;
   animation: slideIn 0.3s ease, pulseOrange 2s ease-in-out infinite;
   box-shadow: var(--shadow-button);
@@ -380,7 +388,9 @@
     max-width: calc(100% - 2rem);
     /* Maintain minimum width on tablet */
     min-width: 280px;
-    padding: 1.25rem; /* 20px */
+    padding-block-start: 1.25rem; /* 20px */
+    padding-block-end: 0.875rem; /* Reduced bottom padding to bring button up */
+    padding-inline: 1.25rem; /* 20px */
     height: var(--card-height-tablet);
     min-height: var(--card-height-tablet);
     max-height: var(--card-height-tablet);
@@ -390,18 +400,18 @@
   }
   
   .chatMessages {
-    gap: 0.75rem; /* 12px */
+    gap: 0.9rem; /* ~14px - 20% increase */
   }
   
   .messageBubble {
-    padding-block: 0.75rem; /* 12px */
-    padding-inline: 1rem; /* 16px */
+    padding-block: 0.85rem; /* 14px */
+    padding-inline: 1.1rem; /* 18px */
     font-size: 0.95rem;
   }
   
   .chatButton {
-    padding-block: 0.625rem; /* 10px */
-    padding-inline: 1rem; /* 16px */
+    padding-block: 0.7rem; /* 11px */
+    padding-inline: 1.1rem; /* 18px */
     font-size: 0.9rem;
   }
 }
@@ -414,7 +424,9 @@
     max-width: calc(100% - 1rem);
     /* Maintain minimum width on mobile */
     min-width: 260px;
-    padding: 1.125rem; /* 18px */
+    padding-block-start: 1.125rem; /* 18px */
+    padding-block-end: 0.875rem; /* Reduced bottom padding to bring button up */
+    padding-inline: 1.125rem; /* 18px */
     border-radius: var(--radius-sm);
     height: var(--card-height-mobile);
     min-height: var(--card-height-mobile);
@@ -425,12 +437,12 @@
   }
   
   .chatMessages {
-    gap: 0.625rem; /* 10px */
+    gap: 0.75rem; /* 12px - 20% increase */
   }
   
   .messageBubble {
-    padding-block: 0.625rem; /* 10px */
-    padding-inline: 0.875rem; /* 14px */
+    padding-block: 0.7rem; /* 11px */
+    padding-inline: 0.95rem; /* 15px */
     font-size: 0.9rem;
     border-radius: var(--radius-sm) var(--radius-sm) var(--radius-sm) var(--radius-corner);
   }

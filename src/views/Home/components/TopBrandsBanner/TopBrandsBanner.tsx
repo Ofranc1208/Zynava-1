@@ -22,7 +22,7 @@ export default function TopBrandsBanner() {
   return (
     <section className={styles.bannerContainer}>
       <div className={styles.bannerContent}>
-        <h2 className={styles.bannerTitle}>Our Top Brands</h2>
+        <h2 className={styles.bannerTitle}>Top Brands</h2>
         
         {/* Ticker Container */}
         <div className={styles.tickerWrapper}>
@@ -32,8 +32,8 @@ export default function TopBrandsBanner() {
                 <Image
                   src={brand.src}
                   alt={brand.alt}
-                  width={43}
-                  height={43}
+                  width={44}
+                  height={44}
                   className={styles.logoImage}
                   style={{
                     objectFit: 'contain',
