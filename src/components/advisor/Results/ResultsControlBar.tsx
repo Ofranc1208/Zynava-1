@@ -74,6 +74,22 @@ export default function ResultsControlBar({
           </select>
         </div>
 
+        {/* Price Range dropdown - inline with label (moved after Show) */}
+        <div className={styles.inlineGroup}>
+          <label className={styles.inlineLabel}>Price</label>
+          <select
+            className={styles.inlineSelect}
+            value={filters.priceRange || 'all'}
+            onChange={e => onFiltersChange({ ...filters, priceRange: e.target.value as PriceRange })}
+          >
+            {PRICE_RANGE_OPTIONS.map(range => (
+              <option key={range.id} value={range.id}>
+                {range.label}
+              </option>
+            ))}
+          </select>
+        </div>
+
         {/* Brands dropdown - inline with label */}
         <div className={styles.inlineGroup}>
           <label className={styles.inlineLabel}>Brand</label>
@@ -85,22 +101,6 @@ export default function ResultsControlBar({
             {BRAND_OPTIONS.map((brand: string) => (
               <option key={brand} value={brand === 'All Brands' ? 'all' : brand}>
                 {brand}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        {/* Price Range dropdown - inline with label */}
-        <div className={styles.inlineGroup}>
-          <label className={styles.inlineLabel}>Price</label>
-          <select
-            className={styles.inlineSelect}
-            value={filters.priceRange || 'all'}
-            onChange={e => onFiltersChange({ ...filters, priceRange: e.target.value as PriceRange })}
-          >
-            {PRICE_RANGE_OPTIONS.map(range => (
-              <option key={range.id} value={range.id}>
-                {range.label}
               </option>
             ))}
           </select>

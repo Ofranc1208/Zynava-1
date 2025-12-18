@@ -17,53 +17,53 @@
   }
 }
 
-/* Header */
+/* Header - Compact design */
 .header {
-  margin-bottom: 0.75rem;
+  margin-bottom: 0.5rem;
   padding: 0;
   background: transparent;
   text-align: center;
 }
 
 .headerTop {
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.35rem;
 }
 
 .title {
-  font-size: 1.8rem;
-  font-weight: 900;
+  font-size: 1.5rem;
+  font-weight: 800;
   color: #1f2937;
   margin: 0;
-  line-height: 1.2;
-  letter-spacing: -0.5px;
+  line-height: 1.15;
+  letter-spacing: -0.3px;
 }
 
 .trustMessage {
-  font-size: 0.8rem;
+  font-size: 0.7rem;
   color: #ff6b35;
-  margin: 0.3rem 0 0 0;
+  margin: 0.2rem 0 0 0;
   font-weight: 600;
-  letter-spacing: 0.3px;
+  letter-spacing: 0.2px;
 }
 
 .preferencesChips {
   display: flex;
   flex-wrap: nowrap;
   justify-content: center;
-  gap: 0.3rem; /* Larger gap for desktop */
-  margin-bottom: 0.6rem;
+  gap: 0.25rem;
+  margin-bottom: 0.4rem;
   overflow: hidden;
 }
 
 .chip {
   display: inline-flex;
   align-items: center;
-  padding: 0.3rem 0.6rem; /* Larger padding for desktop */
+  padding: 0.2rem 0.5rem;
   background: #f0fdf4;
   color: #15803d;
-  font-size: 0.7rem; /* Larger font for desktop readability */
+  font-size: 0.6rem;
   font-weight: 600;
-  border-radius: 20px;
+  border-radius: 12px;
   border: 1px solid #bbf7d0;
   text-transform: capitalize;
   gap: 0.1rem;
