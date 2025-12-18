@@ -76,6 +76,7 @@
 .logoImage {
   width: 44px; /* Reduced 15% for compact banner */
   height: 44px;
+  object-fit: contain;
 }
 
 /* Seamless scrolling animation */

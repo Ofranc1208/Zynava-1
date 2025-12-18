@@ -1,0 +1,36 @@
+/**
+ * HomePage Styles
+ * Responsive layout styles using CSS instead of JS for better SSR compatibility.
+ */
+
+.main {
+  width: 100%;
+}
+
+.advisorSection {
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 1.5rem 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.advisorCard {
+  width: 100%;
+  max-width: 500px;
+}
+
+/* Desktop: Larger max-widths */
+@media (min-width: 768px) {
+  .advisorSection {
+    max-width: 700px;
+  }
+
+  .advisorCard {
+    max-width: 650px;
+  }
+}
+

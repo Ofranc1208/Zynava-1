@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from 'react'
 import styles from './AdvisorModal.module.css'
-import AdvisorChat from './AdvisorChat'
+import { AdvisorChat } from './AdvisorChat'
 
 interface AdvisorModalProps {
   isOpen: boolean

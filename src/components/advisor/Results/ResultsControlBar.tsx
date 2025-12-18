@@ -1,50 +1,50 @@
 'use client'
 
-import React, { useState } from 'react'
+import React from 'react'
 import styles from './ResultsControlBar.module.css'
+import type { SortBy, FilterState, PriceRange, RatingFilter } from './types'
+import {
+  RESULT_COUNTS,
+  SORT_OPTIONS,
+  BRAND_OPTIONS,
+  PRICE_RANGE_OPTIONS,
+  RATING_OPTIONS,
+} from './constants'
 
-type SortBy = 'relevance' | 'price-asc' | 'price-desc' | 'rating' | 'value'
-
-interface FilterState {
-  brand?: string
-  priceRange?: 'all' | 'under-15' | '15-30' | 'over-30'
-  rating?: 'all' | '4' | '4.5'
-}
-
+/**
+ * Props for the ResultsControlBar component.
+ */
 interface ResultsControlBarProps {
+  /** Current number of results to display */
   resultCount: number
+  /** Callback when result count changes */
   onResultCountChange: (count: number) => void
+  /** Current sort option */
   sortBy: SortBy
+  /** Callback when sort option changes */
   onSortChange: (sort: SortBy) => void
+  /** Current filter state */
   filters: FilterState
+  /** Callback when filters change */
   onFiltersChange: (filters: FilterState) => void
 }
 
-const RESULT_COUNTS = [5, 10, 20, 50]
-
-const SORT_OPTIONS = [
-  { id: 'relevance', label: 'Relevance' },
-  { id: 'price-asc', label: 'Price: Low to High' },
-  { id: 'price-desc', label: 'Price: High to Low' },
-  { id: 'rating', label: 'Top Rated' },
-  { id: 'value', label: 'Best Value' },
-]
-
-const BRANDS = ['All Brands', 'NatureMade', 'NOW Foods', "Doctor's Best", 'Jarrow Formulas', 'Garden of Life']
-
-const PRICE_RANGES = [
-  { id: 'all', label: 'All Prices' },
-  { id: 'under-15', label: 'Under $15' },
-  { id: '15-30', label: '$15 - $30' },
-  { id: 'over-30', label: 'Over $30' },
-]
-
-const RATING_OPTIONS = [
-  { id: 'all', label: 'All Ratings' },
-  { id: '4', label: '4+ Stars' },
-  { id: '4.5', label: '4.5+ Stars' },
-]
-
+/**
+ * ResultsControlBar - Filter and sort controls
+ * 
+ * Provides UI controls for filtering and sorting the results grid.
+ * All controls are inline dropdowns for compact display.
+ * 
+ * Features:
+ * - Result count selector (5, 10, 20, 50)
+ * - Brand filter dropdown
+ * - Price range filter dropdown
+ * - Rating filter dropdown
+ * - Sort order dropdown
+ * 
+ * @param props - Component props
+ * @returns The ResultsControlBar component
+ */
 export default function ResultsControlBar({
   resultCount,
   onResultCountChange,
@@ -66,7 +66,7 @@ export default function ResultsControlBar({
             value={resultCount}
             onChange={e => onResultCountChange(parseInt(e.target.value))}
           >
-            {RESULT_COUNTS.map(count => (
+            {RESULT_COUNTS.map((count: number) => (
               <option key={count} value={count}>
                 {count}
               </option>
@@ -82,7 +82,7 @@ export default function ResultsControlBar({
             value={filters.brand || 'all'}
             onChange={e => onFiltersChange({ ...filters, brand: e.target.value === 'all' ? undefined : e.target.value })}
           >
-            {BRANDS.map(brand => (
+            {BRAND_OPTIONS.map((brand: string) => (
               <option key={brand} value={brand === 'All Brands' ? 'all' : brand}>
                 {brand}
               </option>
@@ -96,9 +96,9 @@ export default function ResultsControlBar({
           <select
             className={styles.inlineSelect}
             value={filters.priceRange || 'all'}
-            onChange={e => onFiltersChange({ ...filters, priceRange: e.target.value as any })}
+            onChange={e => onFiltersChange({ ...filters, priceRange: e.target.value as PriceRange })}
           >
-            {PRICE_RANGES.map(range => (
+            {PRICE_RANGE_OPTIONS.map(range => (
               <option key={range.id} value={range.id}>
                 {range.label}
               </option>
@@ -112,7 +112,7 @@ export default function ResultsControlBar({
           <select
             className={styles.inlineSelect}
             value={filters.rating || 'all'}
-            onChange={e => onFiltersChange({ ...filters, rating: e.target.value as any })}
+            onChange={e => onFiltersChange({ ...filters, rating: e.target.value as RatingFilter })}
           >
             {RATING_OPTIONS.map(opt => (
               <option key={opt.id} value={opt.id}>

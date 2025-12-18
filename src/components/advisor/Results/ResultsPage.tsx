@@ -5,31 +5,37 @@ import styles from './ResultsPage.module.css'
 import ResultsControlBar from './ResultsControlBar'
 import ResultCard from './ResultCard'
 import { ComplianceBadge } from '@/src/components/shared/ComplianceBadge'
-import { ALL_PRODUCTS, type MockResult } from './mockData'
-import { rankProductsByZScore, type QuizInput, type ScoredProduct } from './zScoreAlgorithm'
+import { ALL_PRODUCTS } from './mockData'
+import { rankProductsByZScore } from './zScoreAlgorithm'
+import type { QuizParams, FilterState, SortBy, QuizInput, ScoredProduct } from './types'
+import { DEFAULT_RESULT_COUNT, DEFAULT_SORT } from './constants'
 
-interface QuizParams {
-  goals: string
-  demographic: string
-  activity: string
-  diet: string
-  concerns: string
-  preferences: string
-}
-
+/**
+ * Props for the ResultsPage component.
+ */
 interface ResultsPageProps {
   quizParams: QuizParams
 }
 
-interface FilterState {
-  brand?: string
-  priceRange?: 'all' | 'under-15' | '15-30' | 'over-30'
-  rating?: 'all' | '4' | '4.5'
-}
-
+/**
+ * ResultsPage - Main results display component
+ * 
+ * Displays personalized supplement recommendations based on the Z-SCORE™ algorithm.
+ * Handles filtering, sorting, and pagination of results.
+ * 
+ * Features:
+ * - Z-SCORE ranked product grid
+ * - Filter by brand, price range, rating
+ * - Sort by relevance, price, rating, or value
+ * - Responsive 2-4 column grid layout
+ * - Preference chips showing user selections
+ * 
+ * @param props - Component props containing quiz parameters
+ * @returns The ResultsPage component
+ */
 export default function ResultsPage({ quizParams }: ResultsPageProps) {
-  const [resultCount, setResultCount] = useState(5)
-  const [sortBy, setSortBy] = useState<'relevance' | 'price-asc' | 'price-desc' | 'rating' | 'value'>('relevance')
+  const [resultCount, setResultCount] = useState(DEFAULT_RESULT_COUNT)
+  const [sortBy, setSortBy] = useState<SortBy>(DEFAULT_SORT)
   const [filters, setFilters] = useState<FilterState>({})
   
   // Convert quiz params to algorithm input format

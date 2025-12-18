@@ -1,0 +1,253 @@
+'use client'
+
+import { useState, useCallback } from 'react'
+import { QUIZ_STEPS, STEP_ORDER } from './quizData'
+import type { 
+  AdvisorInput, 
+  GoalId,
+  DemographicId,
+  ActivityLevel,
+  DietType,
+  ConcernId,
+  ShoppingPreference
+} from '../../types'
+
+/**
+ * Return type for the useAdvisorQuiz hook
+ */
+export interface UseAdvisorQuizReturn {
+  /** Current step ID in the quiz flow */
+  currentStep: string
+  /** All quiz step definitions */
+  steps: typeof QUIZ_STEPS
+  /** Current user input/selections */
+  input: AdvisorInput
+  /** Handler for selecting a wellness goal */
+  handleGoalSelect: (goalId: GoalId) => void
+  /** Handler for selecting demographics */
+  handleDemographicSelect: (value: string) => void
+  /** Handler for selecting activity level */
+  handleLifestyleSelect: (value: string) => void
+  /** Handler for selecting diet preference */
+  handleDietSelect: (value: string) => void
+  /** Handler for selecting health concerns (multi-select) */
+  handleConcernSelect: (concernId: ConcernId) => void
+  /** Handler for selecting shopping preferences (max 3) */
+  handleBudgetSelect: (value: string) => void
+  /** Navigate to next step or complete quiz */
+  handleNext: () => void
+  /** Navigate to previous step */
+  handlePrevious: () => void
+  /** Jump to a specific step by ID */
+  goToStep: (stepId: string) => void
+  /** Check if current step has valid selection to proceed */
+  canProceed: () => boolean
+  /** Reset quiz to initial state */
+  resetQuiz: () => void
+}
+
+/**
+ * Main quiz controller hook for the Supplement Advisor.
+ * 
+ * Manages the complete quiz flow including:
+ * - Step navigation (forward, backward, jump to step)
+ * - User input collection for all quiz questions
+ * - Validation of selections per step
+ * - Quiz completion callback
+ * 
+ * @param onComplete - Callback fired when user completes all quiz steps
+ * @returns Quiz state and handler functions
+ * 
+ * @example
+ * ```tsx
+ * const {
+ *   currentStep,
+ *   input,
+ *   handleGoalSelect,
+ *   handleNext,
+ *   canProceed
+ * } = useAdvisorQuiz((input) => {
+ *   console.log('Quiz completed:', input)
+ * })
+ * ```
+ */
+export function useAdvisorQuiz(onComplete: (input: AdvisorInput) => void): UseAdvisorQuizReturn {
+  const [currentStep, setCurrentStep] = useState<string>('welcome')
+  const [input, setInput] = useState<AdvisorInput>({
+    goals: [],
+    concerns: [],
+    shoppingPreferences: [],
+  })
+
+  const steps = QUIZ_STEPS
+
+  /**
+   * Select a primary wellness goal (single selection, replaces previous)
+   */
+  const handleGoalSelect = useCallback((goalId: GoalId) => {
+    setInput(prev => ({ ...prev, goals: [goalId] }))
+  }, [])
+
+  /**
+   * Select demographic profile (gender + age bracket)
+   */
+  const handleDemographicSelect = useCallback((value: string) => {
+    const validDemographics: DemographicId[] = [
+      'male-18-35', 'male-36-50', 'male-51-65', 'male-65-plus',
+      'female-18-35', 'female-36-50', 'female-51-65', 'female-65-plus'
+    ]
+    if (validDemographics.includes(value as DemographicId)) {
+      setInput(prev => ({ ...prev, demographic: value as DemographicId }))
+    }
+  }, [])
+
+  /**
+   * Select activity level (single selection)
+   */
+  const handleLifestyleSelect = useCallback((value: string) => {
+    const validActivityLevels: ActivityLevel[] = [
+      'power-lifter', 'endurance-athlete', 'regular-gym-goer', 'active-lifestyle',
+      'light-exercise', 'desk-worker', 'low-activity', 'recovery-injury'
+    ]
+    if (validActivityLevels.includes(value as ActivityLevel)) {
+      setInput(prev => ({ ...prev, activityLevel: value as ActivityLevel }))
+    }
+  }, [])
+
+  /**
+   * Select dietary preference (single selection)
+   */
+  const handleDietSelect = useCallback((value: string) => {
+    const validDietTypes: DietType[] = [
+      'no-preference', 'vegan', 'vegetarian', 'gluten-free',
+      'sugar-free', 'kosher', 'halal', 'non-gmo-organic'
+    ]
+    if (validDietTypes.includes(value as DietType)) {
+      setInput(prev => ({ ...prev, diet: value as DietType }))
+    }
+  }, [])
+
+  /**
+   * Toggle a health concern selection (multi-select).
+   * Selecting 'none' clears all other selections.
+   */
+  const handleConcernSelect = useCallback((concernId: ConcernId) => {
+    setInput(prev => {
+      const currentConcerns = prev.concerns
+      if (concernId === 'none') {
+        return { ...prev, concerns: ['none'] }
+      } else if (currentConcerns.includes(concernId)) {
+        return { ...prev, concerns: currentConcerns.filter(c => c !== concernId && c !== 'none') }
+      } else {
+        return { ...prev, concerns: [...currentConcerns.filter(c => c !== 'none'), concernId] }
+      }
+    })
+  }, [])
+
+  /**
+   * Toggle a shopping preference (max 3 selections allowed)
+   */
+  const handleBudgetSelect = useCallback((value: string) => {
+    const validPreferences: ShoppingPreference[] = [
+      'budget-friendly', 'premium-quality', 'free-shipping',
+      'new-arrivals', 'on-sale', 'bundle-deals', 'subscribe-save'
+    ]
+    if (validPreferences.includes(value as ShoppingPreference)) {
+      setInput(prev => {
+        const currentPrefs = prev.shoppingPreferences
+        if (currentPrefs.includes(value as ShoppingPreference)) {
+          return { ...prev, shoppingPreferences: currentPrefs.filter(p => p !== value) }
+        }
+        if (currentPrefs.length >= 3) {
+          return prev
+        }
+        return { ...prev, shoppingPreferences: [...currentPrefs, value as ShoppingPreference] }
+      })
+    }
+  }, [])
+
+  /**
+   * Navigate to the next step, or trigger onComplete if at the end
+   */
+  const handleNext = useCallback(() => {
+    const currentIndex = STEP_ORDER.indexOf(currentStep as typeof STEP_ORDER[number])
+    
+    if (currentIndex < STEP_ORDER.length - 1) {
+      setCurrentStep(STEP_ORDER[currentIndex + 1])
+    } else {
+      onComplete(input)
+    }
+  }, [currentStep, input, onComplete])
+
+  /**
+   * Navigate to the previous step
+   */
+  const handlePrevious = useCallback(() => {
+    const currentIndex = STEP_ORDER.indexOf(currentStep as typeof STEP_ORDER[number])
+    
+    if (currentIndex > 0) {
+      setCurrentStep(STEP_ORDER[currentIndex - 1])
+    }
+  }, [currentStep])
+
+  /**
+   * Jump directly to a specific step by ID
+   */
+  const goToStep = useCallback((stepId: string) => {
+    if (STEP_ORDER.includes(stepId as typeof STEP_ORDER[number])) {
+      setCurrentStep(stepId)
+    }
+  }, [])
+
+  /**
+   * Check if the current step has a valid selection to allow proceeding.
+   * Budget step always returns false (requires manual button click).
+   */
+  const canProceed = useCallback(() => {
+    switch (currentStep) {
+      case 'goals':
+        return input.goals.length === 1
+      case 'demographics':
+        return !!input.demographic
+      case 'lifestyle':
+        return !!input.activityLevel
+      case 'diet':
+        return !!input.diet
+      case 'concerns':
+        return input.concerns.length > 0
+      case 'budget':
+        return false // Manual proceed required
+      default:
+        return false
+    }
+  }, [currentStep, input])
+
+  /**
+   * Reset the quiz to its initial state
+   */
+  const resetQuiz = useCallback(() => {
+    setCurrentStep('welcome')
+    setInput({
+      goals: [],
+      concerns: [],
+      shoppingPreferences: [],
+    })
+  }, [])
+
+  return {
+    currentStep,
+    steps,
+    input,
+    handleGoalSelect,
+    handleDemographicSelect,
+    handleLifestyleSelect,
+    handleDietSelect,
+    handleConcernSelect,
+    handleBudgetSelect,
+    handleNext,
+    handlePrevious,
+    goToStep,
+    canProceed,
+    resetQuiz,
+  }
+}

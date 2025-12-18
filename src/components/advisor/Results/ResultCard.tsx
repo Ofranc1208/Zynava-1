@@ -2,13 +2,36 @@
 
 import React from 'react'
 import styles from './ResultCard.module.css'
-import type { ScoredProduct } from './zScoreAlgorithm'
+import type { ScoredProduct } from './types'
 
+/**
+ * Props for the ResultCard component.
+ */
 interface ResultCardProps {
+  /** The scored product to display */
   product: ScoredProduct
+  /** Whether this is the top-ranked result */
   isTopMatch?: boolean
 }
 
+/**
+ * ResultCard - Individual product card component
+ * 
+ * Displays a single supplement product with its Z-SCORE, details, and CTA.
+ * 
+ * Features:
+ * - Z-SCORE badge (top right corner)
+ * - Top Match badge for first result
+ * - Sale badge when applicable
+ * - Star rating with review count
+ * - Match reasons (why this product fits the user)
+ * - Product badges (e.g., "Vegan", "Non-GMO")
+ * - Price with original price strikethrough for sales
+ * - CTA button to view on vendor site
+ * 
+ * @param props - Component props
+ * @returns The ResultCard component
+ */
 export default function ResultCard({ product, isTopMatch = false }: ResultCardProps) {
   const {
     title,

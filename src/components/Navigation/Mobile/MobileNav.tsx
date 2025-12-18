@@ -4,7 +4,19 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { usePathname } from 'next/navigation'
+import { NAV_LINKS, CTA_LINK, LOGO_CONFIG, NAV_COLORS } from '../constants'
+import type { NavLink } from '../types'
 
+/**
+ * MobileNav - Mobile Navigation with Hamburger Menu
+ * 
+ * Displays on screens <768px. Features:
+ * - Hamburger menu toggle
+ * - Full-screen slide-out menu
+ * - Backdrop overlay when open
+ * - Body scroll lock when menu is open
+ * - Touch-friendly interactions
+ */
 export function MobileNav() {
   const [isOpen, setIsOpen] = useState(false)
   const pathname = usePathname()
@@ -31,16 +43,17 @@ export function MobileNav() {
     setIsOpen(false)
   }
 
-  const navLinks = [
-    { href: '/', label: 'Home' },
-    { href: '/advisor', label: 'Supplement Advisor', isButton: true },
-    { href: '/how-it-works', label: 'How It Works' },
-    { href: '/ingredients', label: 'Ingredients' },
-    { href: '/about', label: 'About' },
+  // Combine regular links with CTA for mobile menu
+  // CTA appears after Home for prominence
+  const mobileLinks: NavLink[] = [
+    NAV_LINKS[0], // Home
+    CTA_LINK,     // Supplement Advisor (prominent position)
+    ...NAV_LINKS.slice(1), // Rest of the links
   ]
 
   return (
     <>
+      {/* Mobile Header Bar */}
       <div
         style={{
           width: '100%',
@@ -59,22 +72,25 @@ export function MobileNav() {
             display: 'flex',
             alignItems: 'center',
             textDecoration: 'none',
+            marginLeft: '-0.75rem',
           }}
         >
           <Image
-            src="/assets/images/Logo.png"
-            alt="ZYNAVA Logo"
-            width={257}
-            height={86}
+            src={LOGO_CONFIG.src}
+            alt={LOGO_CONFIG.alt}
+            width={LOGO_CONFIG.mobile.width}
+            height={LOGO_CONFIG.mobile.height}
             style={{
               height: 'auto',
               width: 'auto',
-              maxHeight: '86px',
-              maxWidth: '257px',
-          }}
+              maxHeight: LOGO_CONFIG.mobile.maxHeight,
+              maxWidth: LOGO_CONFIG.mobile.maxWidth,
+            }}
             priority
           />
         </Link>
+
+        {/* Hamburger Button */}
         <button
           onClick={toggleMenu}
           style={{
@@ -116,7 +132,7 @@ export function MobileNav() {
         />
       )}
 
-      {/* Mobile Menu */}
+      {/* Slide-out Menu */}
       <div
         style={{
           position: 'fixed',
@@ -125,7 +141,7 @@ export function MobileNav() {
           bottom: 0,
           width: '85%',
           maxWidth: '400px',
-          background: '#ffffff',
+          background: NAV_COLORS.background,
           zIndex: 1000,
           padding: '2rem 1.5rem',
           display: 'flex',
@@ -138,7 +154,7 @@ export function MobileNav() {
           visibility: isOpen ? 'visible' : 'hidden',
         }}
       >
-        {/* Header with Logo and Close Button */}
+        {/* Menu Header */}
         <div
           style={{
             display: 'flex',
@@ -146,7 +162,7 @@ export function MobileNav() {
             alignItems: 'center',
             marginBottom: '2.5rem',
             paddingBottom: '1.5rem',
-            borderBottom: '1px solid #e5e7eb',
+            borderBottom: `1px solid ${NAV_COLORS.border}`,
           }}
         >
           <Link
@@ -159,18 +175,20 @@ export function MobileNav() {
             }}
           >
             <Image
-              src="/assets/images/Logo.png"
-              alt="ZYNAVA Logo"
-              width={257}
-              height={86}
+              src={LOGO_CONFIG.src}
+              alt={LOGO_CONFIG.alt}
+              width={LOGO_CONFIG.mobile.width}
+              height={LOGO_CONFIG.mobile.height}
               style={{
                 height: 'auto',
                 width: 'auto',
-                maxHeight: '86px',
-                maxWidth: '257px',
-            }}
+                maxHeight: LOGO_CONFIG.mobile.maxHeight,
+                maxWidth: LOGO_CONFIG.mobile.maxWidth,
+              }}
             />
           </Link>
+
+          {/* Close Button */}
           <button
             onClick={closeMenu}
             style={{
@@ -190,7 +208,7 @@ export function MobileNav() {
             }}
             aria-label="Close menu"
             onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = '#f3f4f6'
+              e.currentTarget.style.backgroundColor = NAV_COLORS.backgroundHover
             }}
             onMouseLeave={(e) => {
               e.currentTarget.style.backgroundColor = 'transparent'
@@ -208,10 +226,10 @@ export function MobileNav() {
             gap: '0.75rem',
           }}
         >
-          {navLinks.map((link, index) => {
+          {mobileLinks.map((link, index) => {
             const isActive = pathname === link.href
             const isButton = link.isButton || false
-            
+
             if (isButton) {
               return (
                 <Link
@@ -225,8 +243,8 @@ export function MobileNav() {
                     color: '#ffffff',
                     padding: '1rem 1.5rem',
                     borderRadius: '8px',
-                    backgroundColor: '#ff6b35',
-                    border: '2px solid #ff6b35',
+                    backgroundColor: NAV_COLORS.primary,
+                    border: `2px solid ${NAV_COLORS.primary}`,
                     minHeight: '48px',
                     display: 'flex',
                     alignItems: 'center',
@@ -236,66 +254,66 @@ export function MobileNav() {
                     textAlign: 'center',
                   }}
                   onMouseEnter={(e) => {
-                    e.currentTarget.style.backgroundColor = '#e55a2b'
-                    e.currentTarget.style.borderColor = '#e55a2b'
+                    e.currentTarget.style.backgroundColor = NAV_COLORS.primaryHover
+                    e.currentTarget.style.borderColor = NAV_COLORS.primaryHover
                     e.currentTarget.style.transform = 'translateX(4px)'
                   }}
                   onMouseLeave={(e) => {
-                    e.currentTarget.style.backgroundColor = '#ff6b35'
-                    e.currentTarget.style.borderColor = '#ff6b35'
+                    e.currentTarget.style.backgroundColor = NAV_COLORS.primary
+                    e.currentTarget.style.borderColor = NAV_COLORS.primary
                     e.currentTarget.style.transform = 'translateX(0)'
                   }}
                   onTouchStart={(e) => {
-                    e.currentTarget.style.backgroundColor = '#e55a2b'
+                    e.currentTarget.style.backgroundColor = NAV_COLORS.primaryHover
                   }}
                   onTouchEnd={(e) => {
-                    e.currentTarget.style.backgroundColor = '#ff6b35'
+                    e.currentTarget.style.backgroundColor = NAV_COLORS.primary
                   }}
                 >
                   {link.label}
                 </Link>
               )
             }
-            
+
             return (
-            <Link
-              key={link.href}
-              href={link.href}
-              onClick={closeMenu}
-              style={{
-                fontSize: '1.1rem',
+              <Link
+                key={link.href}
+                href={link.href}
+                onClick={closeMenu}
+                style={{
+                  fontSize: '1.1rem',
                   fontWeight: isActive ? '600' : '500',
-                textDecoration: 'none',
-                  color: isActive ? '#ff6b35' : '#1a1a1a',
-                padding: '1rem 1.5rem',
-                borderRadius: '8px',
-                  backgroundColor: isActive ? '#fff5f0' : '#ffffff',
-                  border: isActive ? '1px solid #ff6b35' : '1px solid #e5e7eb',
-                minHeight: '48px',
-                display: 'flex',
-                alignItems: 'center',
-                transition: 'all 0.2s ease',
-                animation: isOpen ? `slideInRight 0.3s ease ${index * 0.05}s both` : 'none',
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.backgroundColor = '#f9fafb'
-                e.currentTarget.style.borderColor = '#d1d5db'
-                e.currentTarget.style.transform = 'translateX(4px)'
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.backgroundColor = '#ffffff'
-                e.currentTarget.style.borderColor = '#e5e7eb'
-                e.currentTarget.style.transform = 'translateX(0)'
-              }}
-              onTouchStart={(e) => {
-                e.currentTarget.style.backgroundColor = '#f3f4f6'
-              }}
-              onTouchEnd={(e) => {
-                e.currentTarget.style.backgroundColor = '#ffffff'
-              }}
-            >
-              {link.label}
-            </Link>
+                  textDecoration: 'none',
+                  color: isActive ? NAV_COLORS.textActive : NAV_COLORS.textDark,
+                  padding: '1rem 1.5rem',
+                  borderRadius: '8px',
+                  backgroundColor: isActive ? NAV_COLORS.backgroundActive : NAV_COLORS.background,
+                  border: isActive ? `1px solid ${NAV_COLORS.primary}` : `1px solid ${NAV_COLORS.border}`,
+                  minHeight: '48px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  transition: 'all 0.2s ease',
+                  animation: isOpen ? `slideInRight 0.3s ease ${index * 0.05}s both` : 'none',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = NAV_COLORS.backgroundHover
+                  e.currentTarget.style.borderColor = NAV_COLORS.borderHover
+                  e.currentTarget.style.transform = 'translateX(4px)'
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = isActive ? NAV_COLORS.backgroundActive : NAV_COLORS.background
+                  e.currentTarget.style.borderColor = isActive ? NAV_COLORS.primary : NAV_COLORS.border
+                  e.currentTarget.style.transform = 'translateX(0)'
+                }}
+                onTouchStart={(e) => {
+                  e.currentTarget.style.backgroundColor = '#f3f4f6'
+                }}
+                onTouchEnd={(e) => {
+                  e.currentTarget.style.backgroundColor = isActive ? NAV_COLORS.backgroundActive : NAV_COLORS.background
+                }}
+              >
+                {link.label}
+              </Link>
             )
           })}
         </nav>
@@ -303,4 +321,3 @@ export function MobileNav() {
     </>
   )
 }
-

@@ -1,50 +1,34 @@
 'use client'
 
-import { useState, useEffect } from 'react'
 import HeroSection from './components/Hero'
 import TopBrandsBanner from './components/TopBrandsBanner'
 import SupplementAdvisorCard from './components/SupplementAdvisor'
 import HomepageContent from './components/HomepageContent'
+import styles from './HomePage.module.css'
 
+/**
+ * HomePage - Main landing page component
+ * 
+ * Renders the complete home page with:
+ * - Hero section with video background
+ * - Top brands banner ticker
+ * - Supplement Advisor chat card
+ * - Long-form homepage content
+ * 
+ * Uses CSS modules for responsive behavior (SSR-safe).
+ */
 export function HomePage() {
-  const [isDesktop, setIsDesktop] = useState(false)
-
-  useEffect(() => {
-    const checkIsDesktop = () => {
-      setIsDesktop(window.innerWidth >= 768)
-    }
-
-    checkIsDesktop()
-    window.addEventListener('resize', checkIsDesktop)
-
-    return () => {
-      window.removeEventListener('resize', checkIsDesktop)
-    }
-  }, [])
-
   return (
-    <main>
+    <main className={styles.main}>
+      {/* Hero Section */}
       <HeroSection />
       
       {/* Top Brands Banner */}
       <TopBrandsBanner />
       
-      {/* Stacked layout: Chat card - vertical on all screen sizes */}
-      <div style={{
-        width: '100%',
-        maxWidth: isDesktop ? '700px' : '600px',
-        margin: '0 auto',
-        padding: '1.5rem 16px',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        gap: '1.25rem'
-      }}>
-        {/* Chat section - larger on desktop */}
-        <div style={{ 
-          width: '100%',
-          maxWidth: isDesktop ? '650px' : '500px'
-        }}>
+      {/* Supplement Advisor Card */}
+      <div className={styles.advisorSection}>
+        <div className={styles.advisorCard}>
           <SupplementAdvisorCard />
         </div>
       </div>

@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import ProcessingAnimation from '@/src/components/advisor/AdvisorChat/ProcessingAnimation'
+import { ProcessingAnimation } from '@/src/components/advisor/AdvisorChat'
 
 export default function TestAnimationPage() {
   const [hasCompleted, setHasCompleted] = useState(false)
