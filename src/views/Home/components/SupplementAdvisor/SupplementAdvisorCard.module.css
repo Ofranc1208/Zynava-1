@@ -174,15 +174,15 @@
   height: 0.5rem; /* 8px */
   background: var(--color-primary);
   border-radius: 50%;
-  animation: bounce 1.4s infinite ease-in-out both;
+  animation: bounce 0.98s infinite ease-in-out both; /* 30% faster (was 1.4s) */
 }
 
 .dots span:nth-child(1) {
-  animation-delay: -0.32s;
+  animation-delay: -0.11s; /* 30% faster than previous (was -0.15s) */
 }
 
 .dots span:nth-child(2) {
-  animation-delay: -0.16s;
+  animation-delay: -0.11s; /* 30% faster (was -0.16s) */
 }
 
 .dots span:nth-child(3) {

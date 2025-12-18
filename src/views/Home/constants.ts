@@ -64,12 +64,12 @@ export const BASE_CARD_STYLE = {
  * Animation timing configuration for SupplementAdvisorCard.
  */
 export const ANIMATION_TIMINGS = {
-  GREETING: 1440,
-  TYPING_1: 2560,
-  FIRST_MESSAGE: 3840,
-  TYPING_2: 4960,
-  SECOND_MESSAGE: 6240,
-  BUTTON: 7200,
+  GREETING: 806,       // 30% faster (was 1152)
+  TYPING_1: 1434,      // 30% faster (was 2048)
+  FIRST_MESSAGE: 2150, // 30% faster (was 3072)
+  TYPING_2: 2778,      // 30% faster (was 3968)
+  SECOND_MESSAGE: 3494, // 30% faster (was 4992)
+  BUTTON: 4032,        // 30% faster (was 5760)
 } as const
 
 /**
