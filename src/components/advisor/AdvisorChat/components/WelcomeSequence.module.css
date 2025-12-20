@@ -1,3 +1,11 @@
+/* Prominent "Z" letter styling */
+.zLetter {
+  color: #ff6b35;
+  font-weight: 700;
+  font-size: 1.1em;
+  letter-spacing: 0.02em;
+}
+
 .getStartedContainer {
   display: flex;
   flex-direction: column;

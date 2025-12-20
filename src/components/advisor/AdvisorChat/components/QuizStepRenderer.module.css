@@ -385,7 +385,7 @@
 
 :global(.dark-mode) .questionText {
   color: #f1f5f9;
-}
+  }
 
 :global(.dark-mode) .questionText strong {
   color: #f1f5f9;
