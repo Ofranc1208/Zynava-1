@@ -5,11 +5,15 @@ import styles from '../HomepageContent.module.css'
 import expandStyles from './ExpandableContent.module.css'
 import ExploreButton from '@/src/components/shared/ExploreButton'
 
+interface TrustSafetySectionProps {
+  onOpenAdvisor?: () => void
+}
+
 /**
  * TrustSafetySection - Trust, transparency, and non-sponsored commitment
  * SEO-optimized with 200+ words
  */
-export default function TrustSafetySection() {
+export default function TrustSafetySection({ onOpenAdvisor }: TrustSafetySectionProps) {
   const [isExpanded, setIsExpanded] = useState(false)
 
   const preview = 'Non-sponsored recommendations. No medical claims. Education so you can make informed supplement decisions.'
@@ -61,7 +65,7 @@ What We Commit To:
             {isExpanded ? 'Read less' : 'Read more'}
             <span className={expandStyles.chevron}>{isExpanded ? '↑' : '↓'}</span>
           </button>
-          <ExploreButton text="Learn more" />
+          <ExploreButton text="Learn more" onClick={onOpenAdvisor} />
         </div>
       </div>
     </section>

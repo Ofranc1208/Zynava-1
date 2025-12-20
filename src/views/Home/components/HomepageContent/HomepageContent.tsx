@@ -1,5 +1,6 @@
 'use client'
 
+import { useState } from 'react'
 import styles from './HomepageContent.module.css'
 import {
   WhyZynavaSection,
@@ -11,6 +12,7 @@ import {
   WhoWeServeSection,
   CTASection,
 } from './sections'
+import { AdvisorModal } from '@/src/components/advisor'
 
 /**
  * HomepageContent - Long-form content sections for the home page
@@ -26,16 +28,23 @@ import {
  * 8. CTA - Call to Action
  */
 export default function HomepageContent() {
+  const [isModalOpen, setIsModalOpen] = useState(false)
+
+  const openModal = () => setIsModalOpen(true)
+  const closeModal = () => setIsModalOpen(false)
+
   return (
     <div className={styles.container}>
-      <WhyZynavaSection />
-      <ResearchSection />
-      <HowItWorksSection />
-      <IngredientFocusSection />
-      <UserExperienceSection />
-      <TrustSafetySection />
-      <WhoWeServeSection />
-      <CTASection />
+      <WhyZynavaSection onOpenAdvisor={openModal} />
+      <ResearchSection onOpenAdvisor={openModal} />
+      <HowItWorksSection onOpenAdvisor={openModal} />
+      <IngredientFocusSection onOpenAdvisor={openModal} />
+      <UserExperienceSection onOpenAdvisor={openModal} />
+      <TrustSafetySection onOpenAdvisor={openModal} />
+      <WhoWeServeSection onOpenAdvisor={openModal} />
+      <CTASection onOpenAdvisor={openModal} />
+      
+      <AdvisorModal isOpen={isModalOpen} onClose={closeModal} />
     </div>
   )
 }

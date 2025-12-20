@@ -1,11 +1,15 @@
 import styles from '../HomepageContent.module.css'
 import ExploreButton from '@/src/components/shared/ExploreButton'
 
+interface CTASectionProps {
+  onOpenAdvisor?: () => void
+}
+
 /**
  * CTASection - Final call-to-action with disclaimer
  * Concise, action-oriented with legal compliance
  */
-export default function CTASection() {
+export default function CTASection({ onOpenAdvisor }: CTASectionProps) {
   return (
     <section className={styles.ctaSection}>
       <h2 className={styles.sectionTitle}>Ready to Find Your Match?</h2>
@@ -15,7 +19,7 @@ export default function CTASection() {
       </p>
 
       <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '2rem' }}>
-        <ExploreButton text="Start now" />
+        <ExploreButton text="Start now" onClick={onOpenAdvisor} />
       </div>
 
       <div className={styles.disclaimerBox}>

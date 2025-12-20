@@ -5,11 +5,15 @@ import styles from '../HomepageContent.module.css'
 import expandStyles from './ExpandableContent.module.css'
 import ExploreButton from '@/src/components/shared/ExploreButton'
 
+interface IngredientFocusSectionProps {
+  onOpenAdvisor?: () => void
+}
+
 /**
  * IngredientFocusSection - Why ingredients matter more than brands
  * SEO-optimized with 250+ words
  */
-export default function IngredientFocusSection() {
+export default function IngredientFocusSection({ onOpenAdvisor }: IngredientFocusSectionProps) {
   const [isExpanded, setIsExpanded] = useState(false)
 
   const preview = 'Not all ingredients are equal. Methylcobalamin vs Cyanocobalamin. D3 vs D2. Glycinate vs Oxide. The form matters for absorption and efficacy.'
@@ -69,7 +73,7 @@ ZYNAVA provides this ingredient-level education for every recommendation. You se
             {isExpanded ? 'Read less' : 'Read more'}
             <span className={expandStyles.chevron}>{isExpanded ? '↑' : '↓'}</span>
           </button>
-          <ExploreButton text="Compare ingredients" />
+          <ExploreButton text="Compare ingredients" onClick={onOpenAdvisor} />
         </div>
       </div>
     </section>

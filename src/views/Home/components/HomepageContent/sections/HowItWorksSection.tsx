@@ -57,11 +57,15 @@ There's no rush and no pressure. Research at your own pace. Save your results. C
   },
 ]
 
+interface HowItWorksSectionProps {
+  onOpenAdvisor?: () => void
+}
+
 /**
  * HowItWorksSection - The 3-step process
  * SEO-optimized with 350+ words
  */
-export default function HowItWorksSection() {
+export default function HowItWorksSection({ onOpenAdvisor }: HowItWorksSectionProps) {
   const [expandedSteps, setExpandedSteps] = useState<Set<number>>(new Set())
 
   const toggleStep = (step: number) => {
@@ -114,7 +118,7 @@ export default function HowItWorksSection() {
                   {isExpanded ? 'Read less' : 'Read more'}
                   <span className={expandStyles.chevron}>{isExpanded ? '↑' : '↓'}</span>
                 </button>
-                <ExploreButton text={item.ctaText} />
+                <ExploreButton text={item.ctaText} onClick={onOpenAdvisor} />
               </div>
             </article>
           )

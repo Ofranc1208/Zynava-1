@@ -5,11 +5,15 @@ import styles from '../HomepageContent.module.css'
 import expandStyles from './ExpandableContent.module.css'
 import ExploreButton from '@/src/components/shared/ExploreButton'
 
+interface ResearchSectionProps {
+  onOpenAdvisor?: () => void
+}
+
 /**
  * ResearchSection - Public research made accessible
  * Unique focus: How we curate and simplify supplement research
  */
-export default function ResearchSection() {
+export default function ResearchSection({ onOpenAdvisor }: ResearchSectionProps) {
   const [isExpanded, setIsExpanded] = useState(false)
 
   const preview = 'We curate public research on vitamins, minerals, and supplements—then break it down into bite-sized, easy-to-understand insights.'
@@ -62,7 +66,7 @@ This means when you see a recommendation for a specific vitamin B12 form or a pa
             {isExpanded ? 'Read less' : 'Read more'}
             <span className={expandStyles.chevron}>{isExpanded ? '↑' : '↓'}</span>
           </button>
-          <ExploreButton text="See the research" />
+          <ExploreButton text="See how it works" onClick={onOpenAdvisor} />
         </div>
       </div>
     </section>

@@ -47,11 +47,15 @@ Every ZYNAVA recommendation comes with clear reasoning based on publicly availab
   },
 ]
 
+interface WhoWeServeSectionProps {
+  onOpenAdvisor?: () => void
+}
+
 /**
  * WhoWeServeSection - Target audiences
  * SEO-optimized with 350+ words
  */
-export default function WhoWeServeSection() {
+export default function WhoWeServeSection({ onOpenAdvisor }: WhoWeServeSectionProps) {
   const [expandedCards, setExpandedCards] = useState<Set<number>>(new Set())
 
   const toggleCard = (index: number) => {
@@ -102,7 +106,7 @@ export default function WhoWeServeSection() {
                   {isExpanded ? 'Read less' : 'Read more'}
                   <span className={expandStyles.chevron}>{isExpanded ? '↑' : '↓'}</span>
                 </button>
-                <ExploreButton text={audience.ctaText} />
+                <ExploreButton text={audience.ctaText} onClick={onOpenAdvisor} />
               </div>
             </article>
           )

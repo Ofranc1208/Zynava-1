@@ -45,11 +45,15 @@ No more guessing. No more confusion. Just clarity.`,
   },
 ]
 
+interface WhyZynavaSectionProps {
+  onOpenAdvisor?: () => void
+}
+
 /**
  * WhyZynavaSection - The problem and our solution
  * SEO-optimized with 400+ words
  */
-export default function WhyZynavaSection() {
+export default function WhyZynavaSection({ onOpenAdvisor }: WhyZynavaSectionProps) {
   const [expandedCards, setExpandedCards] = useState<Set<number>>(new Set())
 
   const toggleCard = (index: number) => {
@@ -100,7 +104,7 @@ export default function WhyZynavaSection() {
                   {isExpanded ? 'Read less' : 'Read more'}
                   <span className={expandStyles.chevron}>{isExpanded ? '↑' : '↓'}</span>
                 </button>
-                <ExploreButton text={card.ctaText} />
+                <ExploreButton text={card.ctaText} onClick={onOpenAdvisor} />
               </div>
             </article>
           )

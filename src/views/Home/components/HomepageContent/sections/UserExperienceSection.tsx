@@ -49,11 +49,15 @@ Take your time. Save your results. Come back later. Discuss with your healthcare
   },
 ]
 
+interface UserExperienceSectionProps {
+  onOpenAdvisor?: () => void
+}
+
 /**
  * UserExperienceSection - Privacy, no pressure, user control
  * SEO-optimized with 300+ words
  */
-export default function UserExperienceSection() {
+export default function UserExperienceSection({ onOpenAdvisor }: UserExperienceSectionProps) {
   const [expandedCards, setExpandedCards] = useState<Set<number>>(new Set())
 
   const toggleCard = (index: number) => {
@@ -104,7 +108,7 @@ export default function UserExperienceSection() {
                   {isExpanded ? 'Read less' : 'Read more'}
                   <span className={expandStyles.chevron}>{isExpanded ? '↑' : '↓'}</span>
                 </button>
-                <ExploreButton text={feature.ctaText} />
+                <ExploreButton text={feature.ctaText} onClick={onOpenAdvisor} />
               </div>
             </article>
           )

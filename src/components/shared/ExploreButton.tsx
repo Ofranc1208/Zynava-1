@@ -1,26 +1,30 @@
 'use client'
 
-import Link from 'next/link'
 import styles from './ExploreButton.module.css'
 
 interface ExploreButtonProps {
-  href?: string
+  onClick?: () => void
   text?: string
 }
 
 /**
  * ExploreButton - Reusable CTA button for homepage sections
- * Links to the Supplement Advisor by default
+ * Opens the Supplement Advisor modal when clicked
  */
 export default function ExploreButton({ 
-  href = '/supplement-advisor',
-  text = 'Ready to explore'
+  onClick,
+  text = 'Try the Advisor'
 }: ExploreButtonProps) {
   return (
-    <Link href={href} className={styles.exploreButton}>
+    <button 
+      type="button"
+      onClick={onClick}
+      className={styles.exploreButton}
+      aria-label={text}
+    >
       <span>{text}</span>
       <span className={styles.arrow}>→</span>
-    </Link>
+    </button>
   )
 }
 
