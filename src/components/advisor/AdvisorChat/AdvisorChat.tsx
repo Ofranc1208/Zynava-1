@@ -28,9 +28,15 @@ export default function AdvisorChat({ onClose }: AdvisorChatProps) {
   const [isProcessing, setIsProcessing] = useState(false)
   const [chatMessages, setChatMessages] = useState<Array<{role: 'user' | 'assistant', content: string}>>([])
   const [isChatLoading, setIsChatLoading] = useState(false)
+  const [isDarkMode, setIsDarkMode] = useState(false)
   const messagesContainerRef = useRef<HTMLDivElement>(null)
   const autoScrollTimeoutRef = useRef<NodeJS.Timeout | null>(null)
   const previousStepRef = useRef<string>('welcome')
+
+  // Toggle dark mode
+  const toggleDarkMode = () => {
+    setIsDarkMode(prev => !prev)
+  }
 
   const handleComplete = async (input: AdvisorInput) => {
     console.log('Quiz completed with input:', input)
@@ -72,8 +78,8 @@ export default function AdvisorChat({ onClose }: AdvisorChatProps) {
     if (input.activityLevel) {
       params.set('activity', input.activityLevel)
     }
-    if (input.diet) {
-      params.set('diet', input.diet)
+    if (input.dietPreferences.length > 0) {
+      params.set('diet', input.dietPreferences.join(','))
     }
     if (input.concerns.length > 0) {
       params.set('concerns', input.concerns.join(','))
@@ -157,9 +163,9 @@ export default function AdvisorChat({ onClose }: AdvisorChatProps) {
 
   // Auto-advance to next question when selection is made
   // BUT NOT when navigating backwards - user should be able to stay on the step they went back to
-  // ALSO NOT for budget step - requires manual "Proceed" button
+  // ALSO NOT for diet or budget steps - require manual "Continue" button (multi-select)
   useEffect(() => {
-    if (!showQuiz || isNavigatingBack || currentStep === 'budget') return
+    if (!showQuiz || isNavigatingBack || currentStep === 'diet' || currentStep === 'budget') return
     
     if (canProceed()) {
       // Auto-advance after a short delay for better UX
@@ -213,7 +219,7 @@ export default function AdvisorChat({ onClose }: AdvisorChatProps) {
         goals: input.goals,
         demographic: input.demographic,
         activity: input.activityLevel,
-        diet: input.diet,
+        dietPreferences: input.dietPreferences,
         concerns: input.concerns,
       } : undefined
 
@@ -253,13 +259,22 @@ export default function AdvisorChat({ onClose }: AdvisorChatProps) {
   const currentStepData = steps[currentStep]
 
   return (
-    <div className={styles.chatContainer}>
+    <div className={`${styles.chatContainer} ${isDarkMode ? 'dark-mode' : ''}`}>
       <div className={styles.chatHeader}>
         <div className={styles.headerContent}>
           <h2 className={styles.headerTitle}>Supplement Advisor</h2>
           <p className={styles.headerSubtitle}>Your personal supplement decision guide.</p>
         </div>
         <div className={styles.headerButtons}>
+          {/* Dark mode toggle */}
+          <button 
+            className={styles.themeButton}
+            onClick={toggleDarkMode}
+            title={isDarkMode ? 'Switch to light mode' : 'Switch to dark mode'}
+            aria-label={isDarkMode ? 'Switch to light mode' : 'Switch to dark mode'}
+          >
+            {isDarkMode ? '☀️' : '🌙'}
+          </button>
           {/* Close button - always visible */}
           <button 
             className={styles.closeButton}

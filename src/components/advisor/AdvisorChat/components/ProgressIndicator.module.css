@@ -28,6 +28,13 @@
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 }
 
+.subtitleText {
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: #6b7280;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
 .progressBar {
   width: 60%;
   height: 6px;
@@ -70,9 +77,32 @@
     font-size: 0.78rem;
   }
   
+  .subtitleText {
+    font-size: 0.78rem;
+  }
+  
   .progressBar {
     width: 80%;
     height: 5px;
   }
+}
+
+/* ========================================
+   DARK MODE SUPPORT
+   ======================================== */
+:global(.dark-mode) .stepText {
+  color: #94a3b8;
+}
+
+:global(.dark-mode) .percentageText {
+  color: #fb923c;
+}
+
+:global(.dark-mode) .subtitleText {
+  color: #94a3b8;
+}
+
+:global(.dark-mode) .progressBar {
+  background: #334155;
 }
 

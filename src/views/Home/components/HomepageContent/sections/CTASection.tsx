@@ -1,25 +1,28 @@
-'use client'
-
 import styles from '../HomepageContent.module.css'
+import ExploreButton from '@/src/components/shared/ExploreButton'
 
 /**
  * CTASection - Final call-to-action with disclaimer
+ * Concise, action-oriented with legal compliance
  */
 export default function CTASection() {
   return (
     <section className={styles.ctaSection}>
-      <h2 className={styles.sectionTitle}>Start Your Guided Exploration</h2>
+      <h2 className={styles.sectionTitle}>Ready to Find Your Match?</h2>
 
       <p className={styles.ctaText}>
-        Your journey to clarity begins with straightforward questions about your wellness goals. ZYNAVA matches you with supplements that may align with those goals, giving you ingredient information and connections to trusted retailers for further research.
+        Answer a few questions about your wellness goals. Get non-sponsored supplement recommendations based on ingredients and research—not marketing hype.
       </p>
+
+      <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '2rem' }}>
+        <ExploreButton text="Start now" />
+      </div>
 
       <div className={styles.disclaimerBox}>
         <p className={styles.disclaimerText}>
-          <strong>Important Disclaimer:</strong> ZYNAVA provides educational and informational guidance only. These statements have not been evaluated by the Food and Drug Administration. ZYNAVA recommendations are not intended to diagnose, treat, cure, or prevent disease. Before using supplements, especially with existing health conditions, medications, pregnancy, or medical concerns, consult a qualified healthcare professional. Supplements never replace professional medical advice. Individual experiences vary.
+          <strong>Disclaimer:</strong> ZYNAVA provides educational guidance only—not medical advice. These statements have not been evaluated by the Food and Drug Administration. Our recommendations for vitamins, minerals, probiotics, omega-3s, collagen, and other supplements are not intended to diagnose, treat, cure, or prevent any disease. Consult a qualified healthcare professional before using supplements, especially if you have health conditions or take medications. All recommendations are non-sponsored and based on ingredient analysis and publicly available research.
         </p>
       </div>
     </section>
   )
 }
-

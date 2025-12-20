@@ -75,6 +75,7 @@ export function useAdvisorQuiz(onComplete: (input: AdvisorInput) => void): UseAd
   const [currentStep, setCurrentStep] = useState<string>('welcome')
   const [input, setInput] = useState<AdvisorInput>({
     goals: [],
+    dietPreferences: [],
     concerns: [],
     shoppingPreferences: [],
   })
@@ -115,15 +116,32 @@ export function useAdvisorQuiz(onComplete: (input: AdvisorInput) => void): UseAd
   }, [])
 
   /**
-   * Select dietary preference (single selection)
+   * Toggle a dietary preference (multi-select).
+   * Selecting 'no-preference' clears all other selections.
    */
   const handleDietSelect = useCallback((value: string) => {
     const validDietTypes: DietType[] = [
-      'no-preference', 'vegan', 'vegetarian', 'gluten-free',
+      'no-preference', 'vegan', 'gluten-free',
       'sugar-free', 'kosher', 'halal', 'non-gmo-organic'
     ]
     if (validDietTypes.includes(value as DietType)) {
-      setInput(prev => ({ ...prev, diet: value as DietType }))
+      setInput(prev => {
+        const currentPrefs = prev.dietPreferences
+        const dietValue = value as DietType
+        
+        // If selecting "no-preference", clear all and set only that
+        if (dietValue === 'no-preference') {
+          return { ...prev, dietPreferences: ['no-preference'] }
+        }
+        
+        // If already selected, remove it
+        if (currentPrefs.includes(dietValue)) {
+          return { ...prev, dietPreferences: currentPrefs.filter(d => d !== dietValue && d !== 'no-preference') }
+        }
+        
+        // Add the new selection (remove 'no-preference' if present)
+        return { ...prev, dietPreferences: [...currentPrefs.filter(d => d !== 'no-preference'), dietValue] }
+      })
     }
   }, [])
 
@@ -201,7 +219,7 @@ export function useAdvisorQuiz(onComplete: (input: AdvisorInput) => void): UseAd
 
   /**
    * Check if the current step has a valid selection to allow proceeding.
-   * Budget step always returns false (requires manual button click).
+   * Diet and Budget steps return false (requires manual "Continue" button click).
    */
   const canProceed = useCallback(() => {
     switch (currentStep) {
@@ -212,7 +230,7 @@ export function useAdvisorQuiz(onComplete: (input: AdvisorInput) => void): UseAd
       case 'lifestyle':
         return !!input.activityLevel
       case 'diet':
-        return !!input.diet
+        return false // Manual proceed required (like budget)
       case 'concerns':
         return input.concerns.length > 0
       case 'budget':
@@ -229,6 +247,7 @@ export function useAdvisorQuiz(onComplete: (input: AdvisorInput) => void): UseAd
     setCurrentStep('welcome')
     setInput({
       goals: [],
+      dietPreferences: [],
       concerns: [],
       shoppingPreferences: [],
     })

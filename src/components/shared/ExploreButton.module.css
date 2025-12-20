@@ -1,0 +1,65 @@
+/**
+ * ExploreButton Styles
+ * Small, subtle orange CTA button with arrow animation
+ */
+
+.exploreButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.4rem 0.8rem;
+  background: #ff6b35;
+  color: #ffffff;
+  border: none;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background 0.2s ease, box-shadow 0.2s ease;
+}
+
+.exploreButton:hover {
+  background: #e55a2b;
+  box-shadow: 0 2px 8px rgba(255, 107, 53, 0.25);
+}
+
+.exploreButton:active {
+  transform: scale(0.98);
+}
+
+.arrow {
+  display: inline-block;
+  font-size: 0.8rem;
+  transition: transform 0.25s ease;
+  will-change: transform;
+}
+
+.exploreButton:hover .arrow {
+  animation: arrowSlide 0.4s ease forwards;
+}
+
+@keyframes arrowSlide {
+  0% {
+    transform: translateX(0);
+  }
+  50% {
+    transform: translateX(5px);
+  }
+  100% {
+    transform: translateX(3px);
+  }
+}
+
+/* Mobile - even smaller */
+@media (max-width: 768px) {
+  .exploreButton {
+    padding: 0.35rem 0.7rem;
+    font-size: 0.7rem;
+    gap: 0.3rem;
+  }
+
+  .arrow {
+    font-size: 0.75rem;
+  }
+}

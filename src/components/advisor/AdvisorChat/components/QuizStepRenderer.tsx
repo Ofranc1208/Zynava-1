@@ -79,6 +79,16 @@ export default function QuizStepRenderer({
     }
   }
 
+  // Determine if we should show percentage (hide for diet/budget multi-select steps)
+  const showPercentage = step.type !== 'diet' && step.type !== 'budget'
+  
+  // Determine inline subtitle for multi-select steps
+  const inlineSubtitle = step.type === 'diet' 
+    ? 'Select all that apply' 
+    : step.type === 'budget' 
+    ? 'Add up to 3' 
+    : undefined
+
   return (
     <div className={styles.quizStepContainer} data-quiz-card>
       {/* Question text with back button on same line */}
@@ -93,22 +103,17 @@ export default function QuizStepRenderer({
             ← Back
           </button>
         )}
-        <div>
-          <div className={styles.questionText}>
-            {dynamicTitle}
-          </div>
-          {step.type === 'budget' && (
-            <p className={styles.questionSubtitle}>
-              Add up to 3
-            </p>
-          )}
+        <div className={styles.questionText}>
+          {dynamicTitle}
         </div>
       </div>
       
-      {/* Progress Indicator */}
+      {/* Progress Indicator with inline subtitle */}
       <ProgressIndicator 
         currentStep={currentStepNumber} 
-        totalSteps={totalSteps} 
+        totalSteps={totalSteps}
+        showPercentage={showPercentage}
+        subtitle={inlineSubtitle}
       />
       
       <div className={styles.quizOptions}>
@@ -121,9 +126,21 @@ export default function QuizStepRenderer({
             description={option.description}
             isSelected={getIsSelected(option.value)}
             onClick={handleOptionClick}
-            multiSelect={step.type === 'concerns' || step.type === 'budget'}
+            multiSelect={step.type === 'diet' || step.type === 'concerns' || step.type === 'budget'}
           />
         ))}
+        
+        {/* Continue button in empty slot for diet step */}
+        {step.type === 'diet' && input.dietPreferences.length > 0 && (
+          <button 
+            className={styles.continueSlotButton}
+            onClick={onNext}
+            type="button"
+          >
+            <span className={styles.continueCount}>{input.dietPreferences.length} chosen</span>
+            <span className={styles.continueText}>Next →</span>
+          </button>
+        )}
         
         {/* Continue button in empty slot for budget step */}
         {step.type === 'budget' && input.shoppingPreferences.length > 0 && (
@@ -133,7 +150,7 @@ export default function QuizStepRenderer({
             type="button"
           >
             <span className={styles.continueCount}>{input.shoppingPreferences.length} of 3</span>
-            <span className={styles.continueText}>Continue →</span>
+            <span className={styles.continueText}>Next →</span>
           </button>
         )}
       </div>

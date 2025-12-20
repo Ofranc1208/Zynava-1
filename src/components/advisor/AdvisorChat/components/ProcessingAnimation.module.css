@@ -460,3 +460,70 @@
   }
 }
 
+/* ========================================
+   DARK MODE SUPPORT
+   ======================================== */
+:global(.dark-mode) .card {
+  background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+  border-color: #334155;
+  box-shadow: 
+    0 10px 40px rgba(0, 0, 0, 0.4),
+    0 4px 20px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+:global(.dark-mode) .card::before {
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.1),
+    transparent
+  );
+}
+
+:global(.dark-mode) .mainHeading {
+  filter: drop-shadow(0 2px 12px rgba(255, 107, 53, 0.4));
+}
+
+:global(.dark-mode) .processingTitle {
+  color: #94a3b8;
+}
+
+:global(.dark-mode) .stepText {
+  color: #64748b;
+}
+
+:global(.dark-mode) .stepText.active {
+  color: #fb923c;
+  text-shadow: 0 2px 12px rgba(251, 146, 60, 0.4);
+}
+
+:global(.dark-mode) .stepText.completed {
+  color: #34d399;
+}
+
+:global(.dark-mode) .checkmark {
+  color: #34d399;
+  text-shadow: 0 2px 6px rgba(52, 211, 153, 0.4);
+}
+
+:global(.dark-mode) .progressBar {
+  background: #334155;
+}
+
+:global(.dark-mode) .progressText {
+  color: #64748b;
+}
+
+:global(.dark-mode) .completionTitle {
+  color: #f1f5f9;
+}
+
+:global(.dark-mode) .completionMessage {
+  color: #94a3b8;
+}
+
+:global(.dark-mode) .loadingText {
+  color: #fb923c;
+}
+

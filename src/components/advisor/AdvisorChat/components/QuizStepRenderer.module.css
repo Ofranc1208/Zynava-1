@@ -3,26 +3,26 @@
 .quizStepContainer {
   display: flex;
   flex-direction: column;
-  gap: 12px; /* Reduced from 14px (-15%) */
+  gap: 14px; /* Increased by 20% from 12px */
   
   /* FIXED HEIGHT CARD - matches first step with 8 options (4 rows) */
   /* This ensures screen focus doesn't change when navigating between steps */
   background: #ffffff;
-  border-radius: 16px;
-  padding: 17px; /* Reduced from 20px (-15%) */
+  border-radius: 18px;
+  padding: 20px; /* Increased by 20% from 17px */
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
   border: 1px solid #e5e7eb;
   
-  /* Fixed height calculation (reduced by 15%):
-   * - Previous: 602px
-   * - Reduced: 602 × 0.85 = 511px
+  /* Fixed height calculation (increased by 20%):
+   * - Previous: 511px
+   * - Increased: 511 × 1.2 = 613px
    */
-  min-height: 511px;
-  height: 511px;
+  min-height: 613px;
+  height: 613px;
   
   /* Card width - full width on mobile, constrained on larger screens */
   width: 100%;
-  max-width: 420px; /* Constrain width for centering on larger screens */
+  max-width: 480px; /* Increased by 20% from 420px */
   
   /* Center the quiz card horizontally */
   align-self: center;
@@ -51,36 +51,38 @@
   min-height: 2rem;
 }
 
-/* Back link - on same line as heading */
+/* Back link - clear and visible */
 .backLink {
-  background: none;
-  border: none;
+  background: rgba(255, 107, 53, 0.1);
+  border: 1px solid #ff6b35;
+  border-radius: 6px;
   color: #ff6b35;
   cursor: pointer;
-  font-size: 1.1rem;
-  font-weight: 700;
+  font-size: 0.85rem;
+  font-weight: 600;
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  padding: 0;
+  padding: 6px 10px;
   margin: 0;
   transition: all 0.2s ease;
   display: flex;
-  align-items: baseline;
+  align-items: center;
   gap: 4px;
   position: absolute;
   left: 0;
-  top: 52%;
+  top: 50%;
   transform: translateY(-50%);
   white-space: nowrap;
-  line-height: 1.3;
+  line-height: 1;
 }
 
 .backLink:hover {
-  color: #e55a2b;
-  transform: translateX(-3px);
+  background: #ff6b35;
+  color: #ffffff;
+  transform: translateY(-50%) translateX(-2px);
 }
 
 .backLink:active {
-  transform: translateX(0);
+  transform: translateY(-50%) translateX(0);
 }
 
 /* Question text - CENTER ALIGNED - 30% LARGER & PROMINENT */
@@ -103,11 +105,11 @@
 
 .questionSubtitle {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  font-size: 0.95rem;
-  font-weight: 600;
-  color: #ff6b35;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #6b7280;
   text-align: center;
-  margin: 6px 0 0 0;
+  margin: 0 0 6px 0;
   line-height: 1.3;
 }
 
@@ -156,11 +158,11 @@
 /* Responsive - Tablet and Below */
 @media (max-width: 768px) {
   .quizStepContainer {
-    gap: 10px; /* Reduced from 12px */
-    padding: 14px; /* Reduced from 16px */
-    /* Adjusted fixed height for tablet - reduced by 15% */
-    min-height: 484px; /* Reduced from 570px (570 × 0.85 = 484px) */
-    height: 484px;
+    gap: 12px; /* Increased by 20% */
+    padding: 17px; /* Increased by 20% */
+    /* Adjusted fixed height for tablet (+20%) */
+    min-height: 580px;
+    height: 580px;
   }
   
   .backLink {
@@ -168,62 +170,60 @@
   }
   
   .questionText {
-    font-size: 0.81rem; /* Reduced from 0.95rem (-15%) */
+    font-size: 1rem;
   }
   
   .quizOptions {
-    gap: 7.5px; /* Increased from 7px (+7%) for cleaner spacing */
-    /* Adjusted for smaller buttons on tablet - reduced by 15% */
-    min-height: 314px; /* Reduced from 370px (370 × 0.85 = 314px) */
+    gap: 9px; /* Increased by 20% */
+    min-height: 377px; /* Increased by 20% */
   }
   
   .nextButton {
-    padding: 10px 18px; /* Reduced from 12px 22px */
-    font-size: 0.81rem; /* Reduced from 0.95rem */
+    padding: 12px 22px;
+    font-size: 0.95rem;
   }
 }
 
 /* Responsive - Mobile Phones (iPhone 16 Pro, iPhone 14/15, etc.) */
 @media (max-width: 480px) {
   .quizStepContainer {
-    gap: 8px; /* Reduced from 10px */
-    padding: 12px; /* Reduced from 14px */
-    border-radius: 12px;
-    /* Adjusted fixed height for mobile - reduced by 15% */
-    min-height: 442px; /* Reduced from 520px (520 × 0.85 = 442px) */
-    height: 442px;
+    gap: 10px; /* Increased by 20% */
+    padding: 14px; /* Increased by 20% */
+    border-radius: 14px;
+    /* Adjusted fixed height for mobile (+20%) */
+    min-height: 530px;
+    height: 530px;
   }
   
   .backLink {
-    font-size: 0.85rem;
-    padding: 8px 6px;
-    min-height: 44px;
+    font-size: 0.8rem;
+    padding: 5px 8px;
+    min-height: 36px;
     touch-action: manipulation;
     -webkit-tap-highlight-color: rgba(255, 107, 53, 0.1);
   }
   
   .questionHeader {
-    gap: 8px;
+    gap: 10px;
   }
   
   .questionText {
-    font-size: 1.02rem; /* Reduced from 1.2rem (-15%) */
+    font-size: 1.15rem;
     font-weight: 700;
   }
   
   .quizOptions {
-    gap: 6.5px; /* Increased from 6px (+8%) for cleaner spacing */
+    gap: 8px; /* Increased by 20% */
     grid-template-columns: repeat(2, 1fr);
-    /* Adjusted for mobile buttons - reduced by 15% */
-    min-height: 289px; /* Reduced from 340px (340 × 0.85 = 289px) */
+    min-height: 347px; /* Increased by 20% */
   }
   
   .nextButton {
-    padding: 12px 20px; /* Reduced from 14px 24px */
-    font-size: 0.85rem; /* Reduced from 1rem (-15%) */
+    padding: 14px 24px;
+    font-size: 1rem;
     width: 100%;
     align-self: stretch;
-    min-height: 44px;
+    min-height: 48px;
     touch-action: manipulation;
     -webkit-tap-highlight-color: rgba(255, 107, 53, 0.1);
   }
@@ -232,51 +232,105 @@
 /* Responsive - Small iPhones (SE, 13 mini, etc.) */
 @media (max-width: 390px) {
   .quizStepContainer {
-    padding: 10px; /* Reduced from 12px */
-    /* Adjusted fixed height for small phones - reduced by 15% */
-    min-height: 416px; /* Reduced from 490px (490 × 0.85 = 416px) */
-    height: 416px;
+    padding: 8px;
+    min-height: 380px;
+    height: auto; /* Allow flexible height on small devices */
+    max-height: 420px;
   }
   
   .backLink {
-    font-size: 0.8rem;
-    padding: 6px 4px;
+    font-size: 0.75rem;
+    padding: 4px 6px;
   }
   
   .questionHeader {
-    gap: 6px;
+    gap: 5px;
+    margin-bottom: 8px;
+    min-height: 1.5rem;
   }
   
   .questionText {
-    font-size: 0.94rem; /* Reduced from 1.1rem (-15%) */
+    font-size: 0.9rem;
     font-weight: 700;
   }
   
   .quizOptions {
-    gap: 5.3px; /* Increased from 5px (+6%) for cleaner spacing */
-    /* Adjusted for small phone buttons - reduced by 15% */
-    min-height: 270px; /* Reduced from 318px (318 × 0.85 = 270px) */
+    gap: 5px;
+    min-height: auto;
   }
   
   .nextButton {
-    padding: 10px 16px; /* Reduced from 12px 20px */
-    font-size: 0.81rem; /* Reduced from 0.95rem */
+    padding: 8px 14px;
+    font-size: 0.8rem;
+    min-height: 40px;
   }
 }
 
-/* Continue button that fits in the grid slot */
+/* Very small devices (iPhone SE, Galaxy A8, etc.) */
+@media (max-width: 360px) {
+  .quizStepContainer {
+    padding: 6px;
+    min-height: 340px;
+    height: auto;
+    max-height: 380px;
+    border-radius: 10px;
+  }
+  
+  .backLink {
+    font-size: 0.7rem;
+  }
+  
+  .questionHeader {
+    gap: 4px;
+    margin-bottom: 6px;
+    min-height: 1.2rem;
+  }
+  
+  .questionText {
+    font-size: 0.85rem;
+  }
+  
+  .questionSubtitle {
+    font-size: 0.8rem;
+  }
+  
+  .quizOptions {
+    gap: 4px;
+  }
+  
+  .nextButton {
+    padding: 7px 12px;
+    font-size: 0.75rem;
+    min-height: 36px;
+  }
+  
+  .continueSlotButton {
+    min-height: 70px;
+    padding: 8px 5px;
+  }
+  
+  .continueCount {
+    font-size: 0.8rem;
+  }
+  
+  .continueText {
+    font-size: 0.9rem;
+  }
+}
+
+/* Continue button that fits in the grid slot - matches QuizButton size */
 .continueSlotButton {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 4px;
-  min-height: 90px;
+  gap: 3px;
+  min-height: 84px; /* Match QuizButton (increased by 20%) */
   background: linear-gradient(135deg, #ff6b35 0%, #e55a2b 100%);
   color: #ffffff;
   border: none;
-  border-radius: 10px;
-  padding: 12px 8px;
+  border-radius: 14px; /* Match QuizButton */
+  padding: 14px 12px; /* Match QuizButton */
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -295,28 +349,72 @@
 }
 
 .continueCount {
-  font-size: 1rem;
-  font-weight: 600;
-  opacity: 0.95;
+  font-size: 0.9rem; /* Increased by 20% */
+  font-weight: 500;
+  opacity: 0.9;
 }
 
 .continueText {
-  font-size: 1.1rem;
-  font-weight: 700;
+  font-size: 1rem; /* Increased by 20% */
+  font-weight: 600;
 }
 
 @media (max-width: 480px) {
   .continueSlotButton {
-    min-height: 85px;
-    padding: 10px 6px;
+    min-height: 78px;
+    padding: 10px 12px;
   }
   
   .continueCount {
-    font-size: 0.9rem;
+    font-size: 0.85rem; /* Increased by 20% */
   }
   
   .continueText {
-    font-size: 1rem;
+    font-size: 0.95rem; /* Increased by 20% */
   }
+}
+
+/* ========================================
+   DARK MODE SUPPORT
+   ======================================== */
+:global(.dark-mode) .quizStepContainer {
+  background: #1e293b;
+  border-color: #334155;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+:global(.dark-mode) .questionText {
+  color: #f1f5f9;
+}
+
+:global(.dark-mode) .questionText strong {
+  color: #f1f5f9;
+}
+
+:global(.dark-mode) .questionSubtitle {
+  color: #94a3b8;
+}
+
+:global(.dark-mode) .questionSubtitle strong {
+  color: #94a3b8;
+}
+
+:global(.dark-mode) .backLink {
+  background: rgba(251, 146, 60, 0.15);
+  border-color: #fb923c;
+  color: #fb923c;
+}
+
+:global(.dark-mode) .backLink:hover {
+  background: #fb923c;
+  color: #ffffff;
+}
+
+:global(.dark-mode) .nextButton {
+  background: #ff6b35;
+}
+
+:global(.dark-mode) .nextButton:hover {
+  background: #e55a2b;
 }
 

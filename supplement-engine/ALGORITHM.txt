@@ -1,6 +1,6 @@
 ================================================================================
                     ZYNAVA FITSCORE™ ALGORITHM
-                    Version 1.2.1 (MVP-Ready) - December 2024
+                    Version 1.2.2 (MVP-Ready) - December 2024
 ================================================================================
 
 TABLE OF CONTENTS
@@ -26,6 +26,20 @@ SINGLE SOURCES OF TRUTH:
 - Ingredient→Category:  Section 6 (INGREDIENT CATEGORY DEFINITIONS)
 - Concern→Ingredient:   Section 11 (CONCERN TO INGREDIENT MAPPING)
 - Starter Stacks:       Section 12 (goal-based default stacks)
+
+VERSION 1.2.2 CHANGELOG:
+- BREAKING CHANGE: diet → dietPreferences (multi-select support)
+  - Changed from single DietType to DietType[] array
+  - Users can now select multiple dietary preferences (e.g., vegan + gluten-free + kosher)
+  - 'no-preference' clears all other selections and bypasses filters
+  - Removed 'vegetarian' option (subsumed by 'vegan' for supplements)
+- UPDATED: Dietary hard filters now check ALL selected preferences (AND logic)
+- UPDATED: Dietary bonus scoring now awards points per matched preference
+  - Vegan match: +2 pts
+  - Gluten-free match: +1.5 pts
+  - Non-GMO/Organic: +1.5 pts organic, +1 pt non-gmo additional
+  - Other preferences: +1 pt each
+- UPDATED: Worked example in Section 8 to reflect multi-select
 
 VERSION 1.2.1 CHANGELOG:
 - CLEANUP: Caution flag logic now consistent (Section 2 ↔ Section 14)
@@ -100,10 +114,12 @@ The quiz produces this data structure:
 │             'active-lifestyle', 'light-exercise', 'desk-worker',            │
 │             'low-activity', 'recovery-injury'                               │
 │                                                                             │
-│ diet: DietType                                                              │
-│   - 8 dietary preferences                                                   │
-│   - Values: 'no-preference', 'vegan', 'vegetarian', 'gluten-free',          │
-│             'sugar-free', 'kosher', 'halal', 'non-gmo-organic'              │
+│ dietPreferences: DietType[]                                                 │
+│   - MULTI-SELECT (up to all 7 options, or 'no-preference' alone)           │
+│   - Values: 'no-preference', 'vegan', 'gluten-free', 'sugar-free',          │
+│             'kosher', 'halal', 'non-gmo-organic'                            │
+│   - NOTE: 'vegetarian' removed (subsumed by 'vegan')                        │
+│   - If 'no-preference' selected, array contains only ['no-preference']     │
 │                                                                             │
 │ concerns: ConcernId[]                                                       │
 │   - Multi-select from goal-specific options (7 per goal + 'none')           │
@@ -176,19 +192,32 @@ Logic:
 FILTER 2: DIETARY COMPLIANCE (Required)
 ---------------------------------------
 These are HARD DISQUALIFICATIONS - no exceptions:
+Multi-select: Product must satisfy ALL selected dietary preferences.
 
 ┌──────────────────────┬────────────────────────────────────────────────────┐
-│ User Diet            │ Product Requirement                                │
+│ User Diet Preference │ Product Requirement                                │
 ├──────────────────────┼────────────────────────────────────────────────────┤
 │ vegan                │ product.isVegan === true                           │
-│ vegetarian           │ product.isVegetarian === true                      │
 │ gluten-free          │ product.isGlutenFree === true                      │
 │ kosher               │ product.isKosher === true                          │
 │ halal                │ product.isHalal === true                           │
 │ sugar-free           │ product.isSugarFree === true                       │
-│ no-preference        │ No filter applied                                  │
+│ no-preference        │ No filter applied (skip all dietary filters)       │
 │ non-gmo-organic      │ Soft preference (handled in Phase 2)               │
 └──────────────────────┴────────────────────────────────────────────────────┘
+
+MULTI-SELECT LOGIC:
+  IF dietPreferences includes 'no-preference':
+    // Skip all dietary hard filters
+    PASS
+  ELSE:
+    FOR EACH preference IN dietPreferences:
+      IF preference requires hard filter (see table above):
+        IF product does NOT meet requirement:
+          EXCLUDE product
+    
+Example: User selects ['vegan', 'gluten-free', 'kosher']
+  → Product must be: isVegan=true AND isGlutenFree=true AND isKosher=true
 
 
 FILTER 3: CAUTION TAG SAFETY (Required)
@@ -462,19 +491,46 @@ Sub-calculations:
 COMPONENT F: DIETARY BONUS SCORE (0-10 points)
 ----------------------------------------------
 Bonus for exceeding dietary requirements (not just meeting them)
+Updated for MULTI-SELECT dietary preferences.
 
 Calculation:
-  baseScore = 5  // Passed hard filter in Phase 1
+  baseScore = 5  // Passed hard filters in Phase 1
   
-  IF user.diet === 'non-gmo-organic':
-    IF product.isOrganic: baseScore += 3
-    IF product.isNonGMO: baseScore += 2
+  // Skip if no preference selected
+  IF dietPreferences includes 'no-preference' OR dietPreferences is empty:
+    RETURN baseScore (no bonus applied)
   
-  IF product.allergenFree === true: baseScore += 2
-  IF product.cleanLabel === true: baseScore += 1
-  IF product.noArtificialColors === true: baseScore += 1
+  // Award bonus points for each matched preference
+  FOR EACH preference IN dietPreferences:
+    SWITCH preference:
+      CASE 'vegan':
+        IF product.isVegan: baseScore += 2
+      CASE 'gluten-free':
+        IF product.isGlutenFree: baseScore += 1.5
+      CASE 'non-gmo-organic':
+        IF product.isOrganic: baseScore += 1.5
+        IF product.isNonGMO: baseScore += 1 (additional)
+      CASE 'sugar-free':
+        IF product.isSugarFree: baseScore += 1
+      CASE 'kosher':
+        IF product.isKosher: baseScore += 1
+      CASE 'halal':
+        IF product.isHalal: baseScore += 1
+  
+  // Additional quality bonuses (apply if product has these, regardless of request)
+  IF product.allergenFree === true: baseScore += 1
+  IF product.cleanLabel === true: baseScore += 0.5
+  IF product.noArtificialColors === true: baseScore += 0.5
+  
+  // General organic bonus if not already counted
+  IF product.isOrganic AND 'non-gmo-organic' NOT IN dietPreferences:
+    baseScore += 0.5
   
   DietaryBonusScore = min(10, baseScore)
+
+NOTE: Points are awarded for MATCHING preferences, not just having them.
+      Multi-select allows users like vegans who also need kosher+gluten-free
+      to get full credit for products meeting all their requirements.
 
 
 COMPONENT G: CAUTION PENALTY (0-20 points deduction)
@@ -930,7 +986,7 @@ USER INPUT:
   goals: ['sleep-stress']
   demographic: 'female-36-50'
   activityLevel: 'desk-worker'
-  diet: 'vegan'
+  dietPreferences: ['vegan', 'gluten-free']  // Multi-select example
   concerns: ['sleep-magnesium', 'stress-adaptogens']
   shoppingPreferences: ['budget-friendly', 'subscribe-save']
   
@@ -938,9 +994,9 @@ USER INPUT:
 
 PHASE 1 - SIEVE:
   Target ingredients: ['magnesium-glycinate', 'ashwagandha']
-  Diet filter: isVegan === true
+  Diet filter: isVegan === true AND isGlutenFree === true (both required)
   Caution filter: None applied
-  Result: 47 products pass
+  Result: 31 products pass (fewer due to stricter dietary requirements)
 
 PHASE 2 - SCORING:
 
@@ -972,13 +1028,15 @@ PHASE 2 - SCORING:
     - Score: 4 + 2.82 + 3 + 1 = 10.82 points
   
   Dietary Bonus:
-    - Passed vegan filter = 5 pts
-    - Clean label = 1 pt
-    - Score: 6 points
+    - Passed hard filters = 5 pts base
+    - Vegan match bonus = +2 pts
+    - Gluten-free match bonus = +1.5 pts
+    - Clean label = +0.5 pts
+    - Score: min(10, 9) = 9 points
   
   Caution Penalty: 0 points
   
-  ProductFitScore: 17.5 + 15 + 12.75 + 9.5 + 10.82 + 6 - 0 = 71.57
+  ProductFitScore: 17.5 + 15 + 12.75 + 9.5 + 10.82 + 9 - 0 = 74.57
 
 
   PRODUCT B: Thorne Magnesium Bisglycinate 60ct (Vegan, 200mg/serving)
@@ -999,11 +1057,11 @@ PHASE 2 - SCORING:
     - Certifications: GMP + NSF = 2 pts
     - Score: 6 + 2.76 + 2.93 + 2 = 13.69 points
   
-  Dietary Bonus: 5 + 3 (organic) = 8 points
+  Dietary Bonus: 5 (base) + 2 (vegan) + 1.5 (gluten-free) + 0.5 (organic bonus) = 9 points
   
   Caution Penalty: 0 points
   
-  ProductFitScore: 12.25 + 15 + 13.5 + 9 + 13.69 + 8 - 0 = 71.44
+  ProductFitScore: 12.25 + 15 + 13.5 + 9 + 13.69 + 9 - 0 = 72.44
 
 
 PHASE 3 - VENDOR OPTIMIZER:
@@ -1054,10 +1112,10 @@ PHASE 3 - VENDOR OPTIMIZER:
 
 FINAL COMBINED SCORES:
   Product A (NOW + iHerb): 
-    (71.57 × 0.6) + (54.95 × 0.4) = 42.94 + 21.98 = 64.92
+    (74.57 × 0.6) + (54.95 × 0.4) = 44.74 + 21.98 = 66.72
   
   Product B (Thorne + best vendor):
-    (71.44 × 0.6) + (48.0 × 0.4) = 42.86 + 19.2 = 62.06
+    (72.44 × 0.6) + (48.0 × 0.4) = 43.46 + 19.2 = 62.66
 
 
 DIVERSITY CHECK:
@@ -1248,13 +1306,13 @@ Each product needs these fields:
     
     // Dietary compliance
     isVegan: boolean,
-    isVegetarian: boolean,
     isGlutenFree: boolean,
     isKosher: boolean,
     isHalal: boolean,
     isSugarFree: boolean,
     isOrganic: boolean,
     isNonGMO: boolean,
+    // NOTE: isVegetarian removed - for supplements, vegan covers vegetarian needs
     
     // NEW: Additional dietary fields
     allergenFree: boolean,          // No common allergens (soy, dairy, nuts, etc.)

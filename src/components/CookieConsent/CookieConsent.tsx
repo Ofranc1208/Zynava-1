@@ -52,13 +52,9 @@ export function CookieConsent() {
         right: 0,
         backgroundColor: '#ffffff',
         borderTop: '1px solid #e5e7eb',
-        boxShadow: '0 -4px 6px rgba(0, 0, 0, 0.1)',
-        padding: '1.25rem 1.5rem',
+        boxShadow: '0 -2px 4px rgba(0, 0, 0, 0.06)',
+        padding: '0.75rem 1rem',
         zIndex: 9999,
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '1rem',
-        maxWidth: '100%',
       }}
     >
       <div
@@ -67,87 +63,67 @@ export function CookieConsent() {
           margin: '0 auto',
           width: '100%',
           display: 'flex',
-          flexDirection: 'column',
-          gap: '1rem',
           alignItems: 'center',
+          justifyContent: 'center',
+          gap: '1rem',
+          flexWrap: 'wrap',
         }}
       >
         <p
           style={{
-            fontSize: '0.9rem',
-            color: '#374151',
-            lineHeight: '1.6',
+            fontSize: '0.8rem',
+            color: '#4b5563',
+            lineHeight: '1.4',
             margin: 0,
             textAlign: 'center',
           }}
         >
-          We use cookies to improve your experience and track affiliate referrals. By using Zynava, you agree to our{' '}
+          We use cookies to improve your experience.{' '}
           <Link
             href="/privacy"
             style={{
               color: '#ff6b35',
               textDecoration: 'none',
-              fontWeight: '500',
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.textDecoration = 'underline'
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.textDecoration = 'none'
             }}
           >
-            Privacy Policy
+            Privacy
           </Link>
-          {' '}and{' '}
+          {' '}·{' '}
           <Link
             href="/terms"
             style={{
               color: '#ff6b35',
               textDecoration: 'none',
-              fontWeight: '500',
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.textDecoration = 'underline'
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.textDecoration = 'none'
             }}
           >
             Terms
           </Link>
-          .
         </p>
         
         <div
           style={{
             display: 'flex',
-            gap: '1rem',
-            flexWrap: 'wrap',
-            justifyContent: 'center',
+            gap: '0.5rem',
           }}
         >
           <button
             onClick={handleAccept}
             style={{
-              padding: '0.625rem 1.5rem',
-              fontSize: '0.9rem',
+              padding: '0.4rem 1rem',
+              fontSize: '0.8rem',
               fontWeight: '600',
               color: '#ffffff',
               backgroundColor: '#ff6b35',
-              border: '2px solid #ff6b35',
-              borderRadius: '6px',
+              border: 'none',
+              borderRadius: '4px',
               cursor: 'pointer',
-              transition: 'all 0.2s ease',
-              minHeight: '44px',
-              minWidth: '120px',
+              transition: 'background 0.2s ease',
             }}
             onMouseEnter={(e) => {
               e.currentTarget.style.backgroundColor = '#e55a2b'
-              e.currentTarget.style.borderColor = '#e55a2b'
             }}
             onMouseLeave={(e) => {
               e.currentTarget.style.backgroundColor = '#ff6b35'
-              e.currentTarget.style.borderColor = '#ff6b35'
             }}
           >
             Accept
@@ -156,25 +132,21 @@ export function CookieConsent() {
           <button
             onClick={handleDecline}
             style={{
-              padding: '0.625rem 1.5rem',
-              fontSize: '0.9rem',
+              padding: '0.4rem 1rem',
+              fontSize: '0.8rem',
               fontWeight: '500',
-              color: '#4b5563',
+              color: '#6b7280',
               backgroundColor: 'transparent',
-              border: '2px solid #d1d5db',
-              borderRadius: '6px',
+              border: '1px solid #d1d5db',
+              borderRadius: '4px',
               cursor: 'pointer',
               transition: 'all 0.2s ease',
-              minHeight: '44px',
-              minWidth: '120px',
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = '#f9fafb'
-              e.currentTarget.style.borderColor = '#9ca3af'
+              e.currentTarget.style.backgroundColor = '#f3f4f6'
             }}
             onMouseLeave={(e) => {
               e.currentTarget.style.backgroundColor = 'transparent'
-              e.currentTarget.style.borderColor = '#d1d5db'
             }}
           >
             Decline

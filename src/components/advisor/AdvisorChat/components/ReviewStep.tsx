@@ -24,8 +24,12 @@ export default function ReviewStep({ input, onNext, onPrevious, onEdit }: Review
   // Get activity level label
   const activityLabel = steps.lifestyle.options?.find(o => o.value === input.activityLevel)?.label || ''
 
-  // Get diet label
-  const dietLabel = steps.diet.options?.find(o => o.value === input.diet)?.label || ''
+  // Get diet labels (multi-select)
+  const dietLabels = input.dietPreferences.length > 0
+    ? input.dietPreferences
+        .map(d => steps.diet.options?.find(o => o.value === d)?.label)
+        .filter(Boolean)
+    : ['No Preference']
 
   // Get concerns labels using dynamic mapping
   const concernLabels = input.concerns.length > 0
@@ -112,7 +116,7 @@ export default function ReviewStep({ input, onNext, onPrevious, onEdit }: Review
               Edit
             </button>
           </div>
-          <span className={styles.reviewValue}>{dietLabel}</span>
+          <span className={styles.reviewValue}>{dietLabels.join(', ')}</span>
         </div>
 
         <div className={styles.reviewItem}>

@@ -166,7 +166,7 @@ import { ResultsPage } from '@/src/components/advisor/Results'
   goals: 'sleep-stress',
   demographic: 'female-36-50',
   activity: 'active-lifestyle',
-  diet: 'vegetarian',
+  diet: 'vegan,gluten-free',  // Comma-separated for multi-select
   concerns: 'sleep-quality',
   preferences: 'budget-friendly',
 }} />

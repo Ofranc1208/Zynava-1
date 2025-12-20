@@ -13,7 +13,7 @@ interface AdvisorInputBarProps {
 export default function AdvisorInputBar({ 
   onSend, 
   disabled = false,
-  placeholder = 'Ask anything about supplements...',
+  placeholder = 'Ask a question...',
   isLoading = false
 }: AdvisorInputBarProps) {
   const [input, setInput] = useState('')

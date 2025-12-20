@@ -1,0 +1,150 @@
+/**
+ * ExpandableSection Styles
+ * Shared styles for all collapsible content sections
+ */
+
+/* Wrapper container */
+.expandableWrapper {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Content Wrapper - Initially collapsed */
+.contentWrapper {
+  max-height: 380px;
+  overflow: hidden;
+  transition: max-height 0.4s ease-in-out;
+  position: relative;
+}
+
+/* When expanded, allow full height */
+.contentWrapper.expanded {
+  max-height: 3000px;
+}
+
+/* Fade overlay (only visible when collapsed) */
+.contentWrapper::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 100px;
+  background: linear-gradient(to bottom, transparent 0%, rgba(255, 255, 255, 0.9) 100%);
+  pointer-events: none;
+  transition: opacity 0.4s ease-in-out;
+  opacity: 1;
+}
+
+.contentWrapper.expanded::after {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Button Wrapper */
+.buttonWrapper {
+  display: flex;
+  justify-content: center;
+  margin-top: 1.5rem;
+}
+
+/* Read More Button */
+.readMoreButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.65rem 1.4rem;
+  background: #ffffff;
+  border: 1.5px solid #ff6b35;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #ff6b35;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+.readMoreButton:hover {
+  background: #fff5f0;
+  border-color: #e55a2b;
+  color: #e55a2b;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(255, 107, 53, 0.15);
+}
+
+.readMoreButton:active {
+  transform: translateY(0);
+}
+
+.readMoreButton:focus-visible {
+  outline: 2px solid #ff6b35;
+  outline-offset: 2px;
+}
+
+/* Button Text */
+.buttonText {
+  font-weight: 600;
+}
+
+/* Chevron Icon */
+.chevron {
+  display: inline-flex;
+  font-size: 0.85rem;
+  transition: transform 0.3s ease;
+  font-weight: 500;
+}
+
+.readMoreButton:hover .chevron {
+  transform: scale(1.2);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .contentWrapper {
+    max-height: 320px;
+  }
+
+  .contentWrapper.expanded {
+    max-height: 2800px;
+  }
+
+  .contentWrapper::after {
+    height: 80px;
+  }
+
+  .readMoreButton {
+    padding: 0.6rem 1.2rem;
+    font-size: 0.85rem;
+  }
+
+  .buttonWrapper {
+    margin-top: 1.2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .contentWrapper {
+    max-height: 280px;
+  }
+
+  .contentWrapper.expanded {
+    max-height: 2600px;
+  }
+
+  .contentWrapper::after {
+    height: 60px;
+  }
+
+  .readMoreButton {
+    padding: 0.55rem 1rem;
+    font-size: 0.8rem;
+    gap: 0.5rem;
+  }
+
+  .chevron {
+    font-size: 0.75rem;
+  }
+}
+

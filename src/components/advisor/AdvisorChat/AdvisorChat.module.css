@@ -102,6 +102,28 @@
   transform: rotate(-180deg);
 }
 
+/* Dark mode toggle button */
+.themeButton {
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  color: white;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 4px;
+}
+
+.themeButton:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: scale(1.1);
+}
+
 .headerTitle {
   font-size: 1.265rem; /* Increased by 15% from 1.1rem (1.1 * 1.15 = 1.265) */
   font-weight: 600; /* Semi-bold instead of 700 - cleaner look */
@@ -132,14 +154,14 @@
   display: flex;
   flex-direction: column;
   align-items: flex-start; /* Left-align chat bubbles and typing indicators */
-  gap: 12px; /* Reduced from 16px */
-  padding: 16px; /* Reduced from 20px */
-  padding-bottom: 37px; /* Increased by 15% for more space between card and input bar */
+  gap: 10px; /* Reduced for tighter spacing */
+  padding: 12px; /* Reduced padding for more content space */
+  padding-bottom: 16px; /* Reduced bottom padding */
   min-height: 100%; /* Ensure content fills container */
 }
 
 .bottomSpacer {
-  height: 28px; /* Increased by 15% for proper spacing between card and input bar */
+  height: 8px; /* Minimal spacer */
   flex-shrink: 0;
 }
 
@@ -200,32 +222,7 @@
   }
   
   .chatHeader {
-    padding: 10px 14px 8px 14px; /* Reduced by 20% */
-  }
-  
-  .headerTitle {
-    font-size: 1.15rem;
-  }
-  
-  .headerSubtitle {
-    font-size: 0.9rem;
-  }
-  
-  .messagesContent {
-    padding: 14px;
-    padding-bottom: 32px; /* Increased by 15% for more space between card and input bar */
-    gap: 12px;
-  }
-}
-
-/* Responsive - Mobile Phones (iPhone 16 Pro, iPhone 14/15, etc.) */
-@media (max-width: 480px) {
-  .chatHeader {
-    padding: 8px 11px 6px 11px; /* Reduced by 20% */
-  }
-  
-  .headerIcon {
-    font-size: 1.5rem;
+    padding: 8px 12px 6px 12px; /* Compact header */
   }
   
   .headerTitle {
@@ -234,54 +231,23 @@
   
   .headerSubtitle {
     font-size: 0.85rem;
-    line-height: 1.3;
-  }
-  
-  .closeButton,
-  .resetButton {
-    min-width: 44px; /* iOS minimum touch target */
-    min-height: 44px;
-    width: 44px;
-    height: 44px;
-    font-size: 1.3rem;
-  }
-  
-  .messagesContent {
-    padding: 12px;
-    padding-bottom: 28px; /* Increased by 15% for more space between card and input bar */
-    gap: 10px;
-  }
-}
-
-/* Responsive - Small iPhones (SE, 13 mini, etc.) */
-@media (max-width: 390px) {
-  .chatHeader {
-    padding: 6px 10px 5px 10px; /* Reduced by 20% */
-  }
-  
-  .headerTitle {
-    font-size: 1.05rem;
-  }
-  
-  .headerSubtitle {
-    font-size: 0.8rem;
   }
   
   .messagesContent {
     padding: 10px;
-    padding-bottom: 23px; /* Increased by 15% for more space between card and input bar */
-    gap: 9px;
+    padding-bottom: 12px;
+    gap: 10px;
   }
 }
 
-/* Responsive - Landscape Mode (short height) */
-@media (max-height: 700px) {
+/* Responsive - Mobile Phones (iPhone 16 Pro, iPhone 14/15, etc.) */
+@media (max-width: 480px) {
   .chatHeader {
-    padding: 6px 13px 5px 13px; /* Reduced by 20% */
+    padding: 6px 10px 5px 10px; /* Compact for mobile */
   }
   
   .headerIcon {
-    font-size: 1.3rem;
+    font-size: 1.4rem;
   }
   
   .headerTitle {
@@ -289,13 +255,163 @@
   }
   
   .headerSubtitle {
-    font-size: 0.75rem;
+    font-size: 0.8rem;
+    line-height: 1.3;
+  }
+  
+  .closeButton,
+  .resetButton,
+  .themeButton {
+    min-width: 40px;
+    min-height: 40px;
+    width: 40px;
+    height: 40px;
+    font-size: 1.2rem;
   }
   
   .messagesContent {
-    padding: 10px;
-    padding-bottom: 23px; /* Increased by 15% for more space between card and input bar */
-    gap: 9px;
+    padding: 8px;
+    padding-bottom: 8px;
+    gap: 8px;
   }
+}
+
+/* Responsive - Small iPhones (SE, 13 mini) and Galaxy A8 */
+@media (max-width: 390px) {
+  .chatHeader {
+    padding: 5px 8px 4px 8px; /* Very compact */
+  }
+  
+  .headerIcon {
+    font-size: 1.2rem;
+  }
+  
+  .headerTitle {
+    font-size: 0.95rem;
+  }
+  
+  .headerSubtitle {
+    font-size: 0.75rem;
+  }
+  
+  .closeButton,
+  .resetButton,
+  .themeButton {
+    min-width: 36px;
+    min-height: 36px;
+    width: 36px;
+    height: 36px;
+    font-size: 1.1rem;
+  }
+  
+  .messagesContent {
+    padding: 6px;
+    padding-bottom: 6px;
+    gap: 6px;
+  }
+}
+
+/* Responsive - Very Small Devices (iPhone SE, older Androids) */
+@media (max-width: 360px) {
+  .chatHeader {
+    padding: 4px 6px 3px 6px;
+  }
+  
+  .headerIcon {
+    font-size: 1.1rem;
+  }
+  
+  .headerTitle {
+    font-size: 0.9rem;
+  }
+  
+  .headerSubtitle {
+    font-size: 0.7rem;
+  }
+  
+  .messagesContent {
+    padding: 5px;
+    padding-bottom: 5px;
+    gap: 5px;
+  }
+}
+
+/* Responsive - Landscape Mode (short height) */
+@media (max-height: 700px) {
+  .chatHeader {
+    padding: 4px 10px 3px 10px;
+  }
+  
+  .headerIcon {
+    font-size: 1.2rem;
+  }
+  
+  .headerTitle {
+    font-size: 0.95rem;
+  }
+  
+  .headerSubtitle {
+    font-size: 0.7rem;
+  }
+  
+  .messagesContent {
+    padding: 6px;
+    padding-bottom: 6px;
+    gap: 6px;
+  }
+}
+
+/* Very short screens (landscape phones, small tablets) */
+@media (max-height: 550px) {
+  .chatHeader {
+    padding: 3px 8px 2px 8px;
+  }
+  
+  .headerIcon {
+    display: none; /* Hide icon on very short screens */
+  }
+  
+  .headerTitle {
+    font-size: 0.9rem;
+  }
+  
+  .headerSubtitle {
+    font-size: 0.65rem;
+  }
+  
+  .messagesContent {
+    padding: 4px;
+    padding-bottom: 4px;
+    gap: 4px;
+  }
+}
+
+/* ========================================
+   DARK MODE SUPPORT
+   ======================================== */
+:global(.dark-mode) .chatContainer {
+  background: #0f172a;
+}
+
+:global(.dark-mode) .chatHeader {
+  background: linear-gradient(135deg, #c2410c 0%, #9a3412 100%);
+  border-bottom-color: rgba(0, 0, 0, 0.2);
+}
+
+:global(.dark-mode) .messagesContainer {
+  background: #0f172a;
+}
+
+:global(.dark-mode) .resultsPlaceholder {
+  background: #1e293b;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+}
+
+:global(.dark-mode) .resultsPlaceholder h3 {
+  color: #fb923c;
+}
+
+:global(.dark-mode) .resultsPlaceholder p {
+  color: #94a3b8;
 }
 

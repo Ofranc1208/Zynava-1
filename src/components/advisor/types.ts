@@ -65,7 +65,6 @@ export type ActivityLevel =
 export type DietType = 
   | 'no-preference' 
   | 'vegan' 
-  | 'vegetarian' 
   | 'gluten-free' 
   | 'sugar-free' 
   | 'kosher' 
@@ -189,8 +188,8 @@ export interface AdvisorInput {
   ageRange?: AgeRange
   /** Physical activity level */
   activityLevel?: ActivityLevel
-  /** Dietary restriction/preference */
-  diet?: DietType
+  /** Dietary preferences - multi-select (e.g., vegan + sugar-free + kosher) */
+  dietPreferences: DietType[]
   /** Health concerns to address */
   concerns: ConcernId[]
   /** Buying preferences (max 3) */

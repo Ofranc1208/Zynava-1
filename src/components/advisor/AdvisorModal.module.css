@@ -16,7 +16,7 @@
   -webkit-box-pack: center;
   -ms-flex-pack: center;
   justify-content: center;
-  z-index: 1000;
+  z-index: 10000; /* Higher than cookie banner (9999) */
   padding: 0.25rem; /* Minimal padding - more edge-to-edge look */
   /* Animation with vendor prefixes */
   -webkit-animation: fadeIn 0.2s ease;

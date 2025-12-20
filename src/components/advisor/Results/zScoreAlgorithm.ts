@@ -62,7 +62,7 @@ export function calculateZScore(
   const demographic = calculateDemographicScore(product, quizInput.demographic)
   const activity = calculateActivityScore(product, quizInput.activity)
   const quality = calculateQualityScore(product)
-  const dietary = calculateDietaryScore(product, quizInput.diet)
+  const dietary = calculateDietaryScore(product, quizInput.dietPreferences)
   
   // Step 3: Sum all scores
   const totalScore = 

@@ -104,7 +104,7 @@ interface AdvisorInput {
   goals: GoalId[]
   demographic?: DemographicId
   activityLevel?: ActivityLevel
-  diet?: DietType
+  dietPreferences: DietType[]  // Multi-select diet preferences
   concerns: ConcernId[]
   shoppingPreferences: ShoppingPreference[]
 }

@@ -67,12 +67,11 @@ export const QUIZ_STEPS: Record<string, AdvisorStep> = {
     options: [
       { id: 'diet-no-preference', label: '🍽️ No Preference', value: 'no-preference' },
       { id: 'diet-vegan', label: '🌱 Vegan', value: 'vegan' },
-      { id: 'diet-vegetarian', label: '🥗 Vegetarian', value: 'vegetarian' },
       { id: 'diet-gluten-free', label: '🌾 Gluten-Free', value: 'gluten-free' },
       { id: 'diet-sugar-free', label: '🚫 Sugar-Free', value: 'sugar-free' },
       { id: 'diet-kosher', label: '✡️ Kosher', value: 'kosher' },
       { id: 'diet-halal', label: '☪️ Halal', value: 'halal' },
-      { id: 'diet-non-gmo', label: '🌿 Non-GMO/Organic', value: 'non-gmo-organic' },
+      { id: 'diet-non-gmo', label: '🌿 Non-GMO', value: 'non-gmo-organic' },
     ],
     isComplete: false,
   },

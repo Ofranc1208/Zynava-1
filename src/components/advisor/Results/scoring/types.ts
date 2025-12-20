@@ -10,7 +10,7 @@ export interface QuizInput {
   goals: string
   demographic: string
   activity: string
-  diet: string
+  dietPreferences: string[] // Changed to array for multi-select
   concerns: string
   preferences: string
 }
@@ -42,9 +42,19 @@ export interface ScoredProduct {
   demographicScores: Record<string, number>
   activityScores: Record<string, number>
   brandTier: 'A' | 'B' | 'C'
+  
+  // Dietary compliance flags
   isVegan?: boolean
   isGlutenFree?: boolean
   isOrganic?: boolean
+  isNonGMO?: boolean
+  isSugarFree?: boolean
+  isKosher?: boolean
+  isHalal?: boolean
+  allergenFree?: boolean
+  cleanLabel?: boolean
+  
+  // Quality certifications
   thirdPartyTested?: boolean
   
   // Calculated scores (filled by algorithm)

@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import type { AdvisorInput, AdvisorStep, GoalId, ConcernId, ShoppingPreference } from '../../types'
+import type { AdvisorInput, AdvisorStep, GoalId, ConcernId, ShoppingPreference, DietType } from '../../types'
 
 interface UseQuizSelectionProps {
   step: AdvisorStep
@@ -16,6 +16,9 @@ export function useQuizSelection({ step, input }: UseQuizSelectionProps) {
         case 'demographics':
           return optionValue === input.demographic
         
+        case 'diet':
+          return input.dietPreferences.includes(optionValue as DietType)
+        
         case 'concerns':
           return input.concerns.includes(optionValue as ConcernId)
         
@@ -24,9 +27,6 @@ export function useQuizSelection({ step, input }: UseQuizSelectionProps) {
         
         case 'lifestyle':
           return optionValue === input.activityLevel
-        
-        case 'diet':
-          return optionValue === input.diet
         
         default:
           return false

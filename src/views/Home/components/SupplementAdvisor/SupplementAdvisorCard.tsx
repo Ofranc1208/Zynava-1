@@ -169,13 +169,20 @@ export default function SupplementAdvisorCard(): JSX.Element {
         
         {step >= AnimationStep.SHOW_BUTTON && (
           <div className={styles.chatActions}>
+            <a 
+              href="#how-it-works"
+              className={styles.secondaryButton}
+              aria-label="Learn about our process"
+            >
+              See our process
+            </a>
             <button 
               className={styles.chatButton}
               onClick={handleChatClick}
               aria-label="Open Supplement Advisor chat"
               type="button"
             >
-              Supplement Advisor
+              Try the Advisor
               <span className={styles.arrow} aria-hidden="true">→</span>
             </button>
           </div>

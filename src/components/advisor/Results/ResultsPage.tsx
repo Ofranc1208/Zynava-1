@@ -39,11 +39,16 @@ export default function ResultsPage({ quizParams }: ResultsPageProps) {
   const [filters, setFilters] = useState<FilterState>({})
   
   // Convert quiz params to algorithm input format
+  // Note: diet param is comma-separated string from URL, convert to array
+  const dietPreferencesArray = quizParams.diet 
+    ? quizParams.diet.split(',').filter(Boolean) 
+    : ['no-preference']
+  
   const quizInput: QuizInput = {
     goals: quizParams.goals || 'overall-health',
     demographic: quizParams.demographic || 'male-36-50',
     activity: quizParams.activity || 'active-lifestyle',
-    diet: quizParams.diet || 'no-preference',
+    dietPreferences: dietPreferencesArray,
     concerns: quizParams.concerns || 'none',
     preferences: quizParams.preferences || '',
   }
@@ -112,12 +117,15 @@ export default function ResultsPage({ quizParams }: ResultsPageProps) {
   
   // Parse preferences for display
   const preferencesList = quizParams.preferences.split(',').filter(Boolean)
-  const dietDisplay = quizParams.diet?.replace(/-/g, ' ') || ''
+  // Convert diet preferences array to display format
+  const dietDisplayList = dietPreferencesArray
+    .filter(d => d !== 'no-preference')
+    .map(d => d.replace(/-/g, ' '))
   const goalDisplay = quizParams.goals?.replace(/-/g, ' ') || 'Overall health'
   
   // Format preferences as chips
   const allPreferences: Array<{ label: string; icon: string }> = [
-    ...(dietDisplay ? [{ label: dietDisplay, icon: '✓' }] : []),
+    ...dietDisplayList.map(diet => ({ label: diet, icon: '✓' })),
     ...preferencesList.map(pref => ({ label: pref.replace(/-/g, ' '), icon: '✓' }))
   ]
 

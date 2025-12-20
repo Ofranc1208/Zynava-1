@@ -1,0 +1,51 @@
+/**
+ * WhyZynavaSection - Minimal expandable card styles
+ * SEO-friendly: full text hidden but in DOM for crawlers
+ */
+
+/* Hidden text for SEO - invisible but in DOM */
+.seoText {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Read More button - small, unobtrusive, inside card */
+.readMoreBtn {
+  display: inline-block;
+  margin-top: 0.75rem;
+  padding: 0.35rem 0.7rem;
+  background: transparent;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: #6b7280;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.readMoreBtn:hover {
+  border-color: #ff6b35;
+  color: #ff6b35;
+  background: #fff8f5;
+}
+
+.readMoreBtn:focus-visible {
+  outline: 2px solid #ff6b35;
+  outline-offset: 1px;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .readMoreBtn {
+    font-size: 0.7rem;
+    padding: 0.3rem 0.6rem;
+  }
+}

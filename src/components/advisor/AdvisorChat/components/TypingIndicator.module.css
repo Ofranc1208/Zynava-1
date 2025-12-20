@@ -53,3 +53,18 @@
   }
 }
 
+/* ========================================
+   DARK MODE SUPPORT
+   ======================================== */
+:global(.dark-mode) .typingIndicator {
+  background: #2d3a4d;
+}
+
+:global(.dark-mode) .typingText {
+  color: #94a3b8;
+}
+
+:global(.dark-mode) .typingDots span {
+  background: #fb923c;
+}
+
