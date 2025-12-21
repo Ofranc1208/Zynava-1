@@ -44,7 +44,7 @@ export default function IngredientsPage() {
           Educational Intent
         </h2>
         <p style={{ fontSize: '1rem', color: '#374151', marginBottom: '1rem' }}>
-          Our ingredient-focused approach is designed for educational purposes. We help you understand supplement formulations, ingredient forms, optimal dosages, and how different ingredients relate to various wellness goals.
+          Our ingredient-focused approach is designed for educational purposes. We help you understand supplement formulations, ingredient quality, purity standards, and how different ingredients relate to various wellness goals. For dosage guidance, please consult your healthcare provider.
         </p>
         <p style={{ fontSize: '1rem', color: '#374151', margin: 0 }}>
           This information empowers you to make informed decisions, but it does not constitute medical advice. Always consult with qualified healthcare professionals before using supplements.
@@ -59,7 +59,7 @@ export default function IngredientsPage() {
         border: '1px solid #e5e7eb'
       }}>
         <p style={{ fontSize: '0.9rem', color: '#6b7280', margin: 0 }}>
-          <strong>Note:</strong> A comprehensive ingredient directory will be available here in the future, providing detailed information about common supplement ingredients, their forms, typical dosages, and research-backed associations with wellness goals.
+          <strong>Note:</strong> A comprehensive ingredient directory will be available here in the future, providing detailed information about common supplement ingredients, their forms, quality indicators, and research-backed associations with wellness goals. For dosage information, consult your healthcare provider.
         </p>
       </div>
     </main>

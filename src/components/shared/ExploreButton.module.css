@@ -1,6 +1,7 @@
 /**
  * ExploreButton Styles
- * Small, subtle orange CTA button with arrow animation
+ * Small CTA button with arrow animation
+ * Primary color varies by context
  */
 
 .exploreButton {
@@ -16,16 +17,67 @@
   font-weight: 500;
   text-decoration: none;
   cursor: pointer;
-  transition: background 0.2s ease, box-shadow 0.2s ease;
+  transition: background 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
 }
 
 .exploreButton:hover {
   background: #e55a2b;
   box-shadow: 0 2px 8px rgba(255, 107, 53, 0.25);
+  transform: translateY(-1px);
 }
 
 .exploreButton:active {
   transform: scale(0.98);
+}
+
+/* Turquoise variant */
+.exploreButtonTurquoise {
+  composes: exploreButton;
+  background: #2ba39c;
+}
+
+.exploreButtonTurquoise:hover {
+  background: #1e847e;
+  box-shadow: 0 2px 8px rgba(43, 163, 156, 0.3);
+}
+
+/* Indigo variant */
+.exploreButtonIndigo {
+  composes: exploreButton;
+  background: #6366f1;
+}
+
+.exploreButtonIndigo:hover {
+  background: #4f46e5;
+  box-shadow: 0 2px 8px rgba(99, 102, 241, 0.3);
+}
+
+/* Emerald variant */
+.exploreButtonEmerald {
+  composes: exploreButton;
+  background: #10b981;
+}
+
+.exploreButtonEmerald:hover {
+  background: #059669;
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+}
+
+/* Emerald Outline variant - transparent bg, green border & text */
+.exploreButtonEmeraldOutline {
+  composes: exploreButton;
+  background: transparent;
+  color: #10b981;
+  border: 1.5px solid #10b981;
+}
+
+.exploreButtonEmeraldOutline:hover {
+  background: rgba(16, 185, 129, 0.1);
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.2);
+}
+
+.exploreButtonEmeraldOutline .arrow {
+  color: #10b981;
 }
 
 .arrow {

@@ -1,6 +1,8 @@
 # Results Module (`src/components/advisor/Results/`)
 
-This module displays personalized supplement recommendations based on the Z-SCORE™ algorithm. It processes quiz answers to rank and filter products from a curated database.
+This module displays personalized supplement recommendations based on the Z-SCORE™ Quality and Safety algorithm. It processes quiz answers to rank and filter products from a curated database.
+
+**COMPLIANCE NOTE**: This algorithm evaluates QUALITY and SAFETY only. We do NOT evaluate or recommend dosages - that is a medical decision for healthcare providers based on individual patient needs.
 
 ## 📁 Folder Structure
 
@@ -36,20 +38,21 @@ src/components/advisor/Results/
     └── diversityFilter.ts    # Result variety enforcement
 ```
 
-## 🧮 Z-SCORE™ Algorithm
+## 🧮 Z-SCORE™ Quality and Safety Algorithm
 
-The Z-SCORE™ algorithm ranks supplements based on personalized relevance. Each product receives a score from 0-100 points, calculated from six components:
+The Z-SCORE™ algorithm ranks supplements based on QUALITY and SAFETY. Each product receives a score from 0-100 points, calculated from six components:
 
 ### Score Components
 
 | Component | Points | Description |
 |-----------|--------|-------------|
-| **Ingredient Match** | 0-35 | How well product ingredients match user concerns |
+| **Ingredient Quality & Purity** | 0-45 | Third-party testing, clean label, organic, ingredient quality |
 | **Goal Alignment** | 0-15 | Relevance to user's primary wellness goal |
-| **Demographic Fit** | 0-15 | Suitability for user's age/gender |
-| **Activity Fit** | 0-10 | Match with user's activity level |
-| **Quality Score** | 0-15 | Brand tier + review ratings + third-party testing |
-| **Dietary Bonus** | 0-10 | Compliance with dietary preferences (vegan, gluten-free, etc.) |
+| **Demographic Appropriateness** | 0-10 | Suitability for user's age/gender |
+| **Activity Fit** | 0-5 | Match with user's activity level |
+| **Brand Quality** | 0-15 | Brand tier + review ratings |
+| **Dietary Compliance** | 0-10 | Compliance with dietary preferences (vegan, gluten-free, etc.) |
+| **Safety Penalties** | 0-30 (deducted) | Contraindications and safety concerns (future) |
 
 ### Algorithm Flow
 
@@ -98,19 +101,20 @@ The Z-SCORE™ algorithm ranks supplements based on personalized relevance. Each
 
 ## 🎯 Key Features
 
-### Ingredient Scoring
+### Ingredient Quality Scoring
 - Maps user concerns to target ingredients (e.g., "sleep-quality" → magnesium, l-theanine, melatonin)
 - Checks product's `masterIngredients` array for matches
-- Applies dosage multipliers when `ingredientStrength` data is available
-- Optimal dosage ranges defined in `scoring/constants.ts`
+- Evaluates quality indicators: third-party testing, clean label, organic, non-GMO
+- **Does NOT evaluate dosage** - that is a medical decision for healthcare providers
 
-### Dosage Validation
+### Quality Multipliers
 ```typescript
-// Example: Magnesium Glycinate
-{ min: 100, optimal: 300, max: 500 } // mg
-
-// Multipliers applied:
-// Below min: 0.4x, Below optimal: 0.7x, Optimal: 1.0x, Above max: 0.9x
+// Quality bonuses applied:
+BASE: 0.6           // Base score for any matched ingredient
+THIRD_PARTY_TESTED: +0.15  // Third-party testing certification
+CLEAN_LABEL: +0.10         // No fillers or unnecessary additives
+ORGANIC: +0.10             // Certified organic ingredients
+NON_GMO: +0.05             // Non-GMO verification
 ```
 
 ### Brand Quality Tiers
@@ -188,12 +192,12 @@ The `mockData.ts` file contains 1200+ mock products organized by category:
 Each product includes:
 - Basic info (title, brand, price, rating)
 - `masterIngredients` for matching
-- `ingredientStrength` for dosage validation
 - `goalTags` for goal alignment
-- `demographicScores` for age/gender fit
+- `demographicScores` for age/gender appropriateness
 - `activityScores` for lifestyle fit
 - `brandTier` for quality scoring
-- Dietary flags (isVegan, isGlutenFree, isOrganic)
+- Quality flags (thirdPartyTested, cleanLabel)
+- Dietary flags (isVegan, isGlutenFree, isOrganic, isNonGMO)
 
 ## ✅ Code Quality
 

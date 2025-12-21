@@ -77,10 +77,10 @@ export default function ResultCard({ product, isTopMatch = false }: ResultCardPr
         <div className={styles.imagePlaceholder}>
           <span className={styles.placeholderIcon}>💊</span>
         </div>
-        {/* Z-SCORE Badge */}
+        {/* Quality Score Badge */}
         {zScore !== undefined && (
           <span className={styles.zScoreBadge}>
-            <span className={styles.zScoreLabel}>Z-SCORE</span>
+            <span className={styles.zScoreLabel}>QUALITY</span>
             <span className={styles.zScoreValue}>{zScore}</span>
           </span>
         )}

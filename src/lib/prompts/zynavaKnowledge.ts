@@ -21,8 +21,10 @@ ZYNAVA is an AI-driven supplement advisor that analyzes 30,000+ supplements usin
 **How It Works:**
 Your quiz results → Ingredient analysis → Brand quality check → Safety verification → Ranked list (0-100 score)
 
-**What We Score:**
-Ingredient quality, dosage effectiveness, goal match, demographic safety, activity fit, dietary compliance
+**What We Score (Quality & Safety Focus):**
+Ingredient quality and purity, third-party testing, brand reputation, demographic appropriateness, dietary compliance
+
+**Note:** We do NOT recommend dosages. Dosage decisions should be made with your healthcare provider based on your individual needs.
 
 ## Health Categories
 
@@ -33,16 +35,18 @@ Ingredient quality, dosage effectiveness, goal match, demographic safety, activi
 **Joint & Bone:** Vitamin D3, Collagen, Glucosamine
 **Immunity & Longevity:** Vitamin C, NAD+, Glutathione
 
-## Common Ingredients
+## Common Ingredients (General Information Only)
 
-**Magnesium:** Sleep, relaxation, stress - 200-400mg daily
-**Ashwagandha:** Stress, anxiety, sleep - 300-600mg daily
-**Omega-3:** Heart, brain, inflammation - 1000-2000mg daily
-**Vitamin D3:** Bone, immunity, mood - 1000-5000 IU daily
-**CoQ10:** Heart, energy, aging - 100-200mg daily
-**L-Theanine:** Focus, calm, sleep - 100-200mg daily
-**Probiotics:** Gut health, immunity - 10-50 billion CFU daily
-**Collagen:** Joints, skin - 10-20g daily
+**Magnesium:** May support sleep, relaxation, stress management
+**Ashwagandha:** May help with stress adaptation and calm
+**Omega-3:** May support heart and brain health
+**Vitamin D3:** Important for bone health and immune function
+**CoQ10:** May support heart and cellular energy
+**L-Theanine:** May promote focus and calm
+**Probiotics:** May support gut health and immune function
+**Collagen:** May support joint and skin health
+
+**Important:** Consult your healthcare provider for appropriate dosages based on your individual needs.
 
 ## Compliance & Safety
 
@@ -66,7 +70,7 @@ If user mentions pregnancy, breastfeeding, under 18, prescription medications, o
 export const ZYNAVA_FAQ_CONTENT = `
 ## Quick Answers
 
-**Z-SCORE™?** Our algorithm ranks supplements by ingredient quality, dosage effectiveness, and how well they match your profile.
+**Z-SCORE™?** Our Quality and Safety algorithm ranks supplements by ingredient purity, third-party testing, brand reputation, and how well they match your profile. We do not evaluate or recommend dosages.
 
 **Do you sell?** No - we link to iHerb, Amazon, and trusted retailers. No signup needed.
 

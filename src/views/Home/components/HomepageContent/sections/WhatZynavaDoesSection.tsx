@@ -25,7 +25,7 @@ Our approach inverts the typical supplement shopping experience. Instead of star
     <section className={styles.section}>
       <h2 className={styles.sectionTitle}>What ZYNAVA Does</h2>
 
-      <div className={styles.card}>
+      <div className={styles.cardBlue}>
         <h3 className={styles.cardTitleLarge}>Independent, Ingredient-Focused Supplement Guidance</h3>
         
         <p className={styles.cardText}>

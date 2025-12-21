@@ -47,7 +47,7 @@ ZYNAVA provides this ingredient-level education for every recommendation. You se
     <section className={styles.section}>
       <h2 className={styles.sectionTitle}>Why Ingredients Matter</h2>
 
-      <div className={styles.cardAlt}>        
+      <div className={styles.cardTurquoise}>        
         <p className={styles.cardText}>
           <span className={isExpanded ? expandStyles.hidden : expandStyles.preview}>
             {preview}
@@ -73,7 +73,7 @@ ZYNAVA provides this ingredient-level education for every recommendation. You se
             {isExpanded ? 'Read less' : 'Read more'}
             <span className={expandStyles.chevron}>{isExpanded ? '↑' : '↓'}</span>
           </button>
-          <ExploreButton text="Compare ingredients" onClick={onOpenAdvisor} />
+          <ExploreButton text="Compare ingredients" onClick={onOpenAdvisor} variant="turquoise" />
         </div>
       </div>
     </section>

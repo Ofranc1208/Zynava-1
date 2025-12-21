@@ -32,27 +32,27 @@ The questionnaire takes about 3-5 minutes. No medical jargon. No confusing termi
     step: 2,
     title: 'Get Matches',
     preview: 'We analyze thousands of products and show you what fits your goals.',
-    fullText: `Our algorithm evaluates thousands of supplements from trusted retailers, analyzing ingredient profiles, formulations, and dosages to find products that align with your questionnaire responses.
+    fullText: `Our Quality and Safety algorithm evaluates thousands of supplements from trusted retailers, analyzing ingredient quality, purity standards, third-party testing, and brand reputation to find products that align with your questionnaire responses.
 
 For each recommendation, you'll see exactly why we matched it to your goals:
 
 • The specific ingredients and their forms (methylcobalamin B12 vs cyanocobalamin, vitamin D3 vs D2)
-• Dosages and how they compare to research-backed amounts
-• What public research suggests about efficacy
+• Quality indicators like third-party testing and clean labels
+• What public research suggests about ingredient benefits
 • Any relevant considerations for your dietary preferences
 
-This isn't vague marketing like "best seller" or "customer favorite." It's actual ingredient-based reasoning you can verify yourself. We show our work so you can understand—and question—our logic.`,
+This isn't vague marketing like "best seller" or "customer favorite." It's actual ingredient-quality reasoning you can verify yourself. We show our work so you can understand—and question—our logic. For dosage guidance, consult your healthcare provider.`,
     ctaText: 'Get my matches',
   },
   {
     step: 3,
     title: 'Decide & Shop',
     preview: 'Compare options side-by-side, then connect to trusted retailers when ready.',
-    fullText: `Review your matched supplements in detail. Compare ingredient lists, dosages, and formulations side-by-side. Learn about different forms of vitamins and minerals—why magnesium glycinate absorbs differently than oxide, why some probiotic strains target gut health while others support immunity.
+    fullText: `Review your matched supplements in detail. Compare ingredient quality, purity standards, and formulations side-by-side. Learn about different forms of vitamins and minerals—why magnesium glycinate absorbs differently than oxide, why some probiotic strains target gut health while others support immunity.
 
 When you're ready to purchase, we connect you directly to trusted retailers including health food stores, vitamin shops, and online supplement retailers. You choose where to buy and when to buy.
 
-There's no rush and no pressure. Research at your own pace. Save your results. Come back later if you need more time. ZYNAVA is a guidance platform, not a sales funnel. Whether you purchase something or not, we consider it a success if you leave more informed than when you arrived.`,
+There's no rush and no pressure. Research at your own pace. Save your results. Come back later if you need more time. ZYNAVA is a guidance platform, not a sales funnel. Whether you purchase something or not, we consider it a success if you leave more informed than when you arrived. Remember to consult your healthcare provider for personalized dosage recommendations.`,
     ctaText: 'Start shopping',
   },
 ]
@@ -87,9 +87,13 @@ export default function HowItWorksSection({ onOpenAdvisor }: HowItWorksSectionPr
       <div className={styles.grid3}>
         {steps.map((item) => {
           const isExpanded = expandedSteps.has(item.step)
+          // All steps use consistent Turquoise for "Process" theme
+          const cardClass = styles.cardTurquoise
+          const badgeClass = expandStyles.stepBadgeTurquoise
+          
           return (
-            <article key={item.step} className={styles.card}>
-              <div className={expandStyles.stepBadge}>Step {item.step}</div>
+            <article key={item.step} className={cardClass}>
+              <div className={badgeClass}>Step {item.step}</div>
               
               <h3 className={expandStyles.cardTitleCentered}>{item.title}</h3>
               
@@ -118,7 +122,11 @@ export default function HowItWorksSection({ onOpenAdvisor }: HowItWorksSectionPr
                   {isExpanded ? 'Read less' : 'Read more'}
                   <span className={expandStyles.chevron}>{isExpanded ? '↑' : '↓'}</span>
                 </button>
-                <ExploreButton text={item.ctaText} onClick={onOpenAdvisor} />
+                <ExploreButton 
+                  text={item.ctaText} 
+                  onClick={onOpenAdvisor}
+                  variant="turquoise"
+                />
               </div>
             </article>
           )

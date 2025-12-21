@@ -55,10 +55,20 @@ export function Footer() {
           fontSize: '0.85rem', 
           color: '#666', 
           lineHeight: '1.6',
-          marginBottom: '1rem',
+          marginBottom: '0.75rem',
           fontStyle: 'italic'
         }}>
           Zynava is a participant in the Amazon Services LLC Associates Program, iHerb Rewards, and other affiliate programs. We may earn a commission if you click a link and make a purchase, at no additional cost to you.
+        </p>
+        <p style={{ 
+          fontSize: '0.85rem', 
+          color: '#666', 
+          marginBottom: '0.75rem'
+        }}>
+          <strong>Contact:</strong>{' '}
+          <a href="mailto:info@zynava.com" style={{ color: '#ff6b35', textDecoration: 'none' }}>
+            info@zynava.com
+          </a>
         </p>
         <p style={{ 
           fontSize: '0.85rem', 

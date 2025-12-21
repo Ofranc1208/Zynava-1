@@ -36,7 +36,7 @@ export default function EditorialPolicyPage() {
           listStyleType: 'decimal'
         }}>
           <li style={{ marginBottom: '0.75rem' }}>
-            <strong>Ingredient Quality:</strong> Dosage transparency and bioavailability.
+            <strong>Ingredient Quality:</strong> Purity, third-party testing, and ingredient sourcing.
           </li>
           <li style={{ marginBottom: '0.75rem' }}>
             <strong>Safety:</strong> Filtering out contraindications for your specific demographic.

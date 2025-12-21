@@ -1,57 +1,40 @@
 /**
- * Z-SCORE™ Algorithm Constants & Reference Data
+ * Z-SCORE™ Quality and Safety Score Algorithm Constants
  * Single source of truth for all scoring parameters
+ * 
+ * COMPLIANCE NOTE: This algorithm focuses on QUALITY and SAFETY only.
+ * We do NOT evaluate or recommend dosages - that is a medical decision
+ * for healthcare providers based on individual patient needs.
  */
 
-import type { DosageRange, BrandTier } from './types'
+import type { BrandTier } from './types'
 
 // ============================================
 // SCORING WEIGHTS (out of 100 total)
+// Reweighted to emphasize Quality & Purity over Dosage
 // ============================================
 
 export const SCORE_WEIGHTS = {
-  INGREDIENT: 35,      // 0-35 points
-  GOAL: 15,            // 0-15 points
-  DEMOGRAPHIC: 15,     // 0-15 points
-  ACTIVITY: 10,        // 0-10 points
-  QUALITY: 15,         // 0-15 points
-  DIETARY: 10,         // 0-10 points
-  // CAUTION: -20,     // 0-20 points penalty (future)
+  INGREDIENT: 45,      // 0-45 points (Quality & Purity - increased from 35)
+  GOAL: 15,            // 0-15 points (Goal alignment)
+  DEMOGRAPHIC: 10,     // 0-10 points (Age/gender appropriateness)
+  ACTIVITY: 5,         // 0-5 points (Lifestyle fit)
+  QUALITY: 15,         // 0-15 points (Brand reputation & reviews)
+  DIETARY: 10,         // 0-10 points (Dietary compliance)
+  // SAFETY_PENALTY: -30, // 0-30 points deducted (contraindications - future)
 } as const
 
 // ============================================
-// OPTIMAL DOSAGE REFERENCE
+// QUALITY MULTIPLIERS (replaces dosage multipliers)
+// Focus on purity, testing, and ingredient quality
 // ============================================
 
-export const OPTIMAL_DOSAGE: Record<string, DosageRange> = {
-  'magnesium-glycinate': { min: 100, optimal: 300, max: 500 },
-  'vitamin-d3': { min: 1000, optimal: 2000, max: 5000 },
-  'omega-3': { min: 500, optimal: 1000, max: 3000 },
-  'ashwagandha': { min: 300, optimal: 600, max: 1200 },
-  'zinc': { min: 15, optimal: 30, max: 50 },
-  'vitamin-c': { min: 250, optimal: 500, max: 2000 },
-  'b12': { min: 500, optimal: 1000, max: 5000 },
-  'coq10': { min: 100, optimal: 200, max: 400 },
-  'iron': { min: 18, optimal: 27, max: 45 },
-  'collagen': { min: 5000, optimal: 10000, max: 20000 },
-  'probiotics': { min: 10, optimal: 30, max: 100 }, // Billion CFU
-  'melatonin': { min: 0.5, optimal: 3, max: 10 },
-  'l-theanine': { min: 100, optimal: 200, max: 400 },
-  'lions-mane': { min: 500, optimal: 1000, max: 3000 },
-  'curcumin': { min: 250, optimal: 500, max: 1500 },
-  'glucosamine': { min: 1000, optimal: 1500, max: 3000 },
-}
-
-// ============================================
-// DOSAGE MULTIPLIERS
-// ============================================
-
-export const DOSAGE_MULTIPLIERS = {
-  UNDERDOSED: 0.4,      // Below minimum
-  SUBOPTIMAL: 0.7,      // Below optimal but above minimum
-  OPTIMAL: 1.0,         // In optimal range
-  OVERDOSED: 0.9,       // Above max (wasteful but not harmful)
-  DEFAULT: 0.8,         // No dosage data available
+export const QUALITY_MULTIPLIERS = {
+  BASE: 0.6,                  // Base score for any matched ingredient
+  THIRD_PARTY_TESTED: 0.15,   // Bonus for third-party testing certification
+  CLEAN_LABEL: 0.10,          // Bonus for clean label (no fillers/additives)
+  ORGANIC: 0.10,              // Bonus for organic certification
+  NON_GMO: 0.05,              // Bonus for non-GMO verification
 } as const
 
 // ============================================

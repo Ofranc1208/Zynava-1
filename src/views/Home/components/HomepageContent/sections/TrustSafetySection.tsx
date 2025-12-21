@@ -39,7 +39,7 @@ What We Commit To:
     <section className={styles.section}>
       <h2 className={styles.sectionTitle}>Trust & Transparency</h2>
 
-      <div className={styles.card}>        
+      <div className={styles.cardTurquoise}>        
         <p className={styles.cardText}>
           <span className={isExpanded ? expandStyles.hidden : expandStyles.preview}>
             {preview}
@@ -65,7 +65,7 @@ What We Commit To:
             {isExpanded ? 'Read less' : 'Read more'}
             <span className={expandStyles.chevron}>{isExpanded ? '↑' : '↓'}</span>
           </button>
-          <ExploreButton text="Learn more" onClick={onOpenAdvisor} />
+          <ExploreButton text="Learn more" onClick={onOpenAdvisor} variant="turquoise" />
         </div>
       </div>
     </section>

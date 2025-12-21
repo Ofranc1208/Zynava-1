@@ -1,5 +1,59 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Poppins:wght@400;500;600;700;800;900&display=swap');
 
+/* ============================================
+   ZYNAVA COLOR PALETTE - 2025 Design System
+   Inspired by modern health/wellness brands
+   ============================================ */
+
+:root {
+  /* Primary Brand Colors */
+  --color-primary: #ff6b35;         /* Orange - Main CTA */
+  --color-primary-hover: #e55a2b;
+  --color-primary-light: #fff4f0;
+  
+  /* Secondary Accent Colors - Multi-color palette */
+  --color-turquoise: #2ba39c;       /* Teal/Turquoise - Trust, Health */
+  --color-turquoise-light: #f0fdfa;
+  --color-turquoise-dark: #1e847e;
+  
+  --color-coral: #ff7c6e;           /* Coral/Salmon - Warmth */
+  --color-coral-light: #fff5f4;
+  
+  --color-red: #ef4444;             /* Red - Problem, Danger, Urgency */
+  --color-red-light: #fef2f2;
+  --color-red-dark: #dc2626;
+  
+  --color-indigo: #6366f1;          /* Indigo - Premium, Smart */
+  --color-indigo-light: #eef2ff;
+  
+  --color-blue: #3b82f6;            /* Blue - Trust, Calm */
+  --color-blue-light: #eff6ff;
+  
+  --color-emerald: #10b981;         /* Green - Wellness, Nature */
+  --color-emerald-light: #ecfdf5;
+  
+  --color-amber: #f59e0b;           /* Amber - Energy, Attention */
+  --color-amber-light: #fffbeb;
+
+  /* Brand Identity - Zynava Logo Leaves */
+  --color-leaf-orange: #f7a825;     /* Logo orange-yellow leaf */
+  --color-leaf-orange-light: #fef9ec;
+  --color-leaf-orange-dark: #e09510;
+  --color-leaf-green: #4aba4a;      /* Logo green leaf */
+  --color-leaf-green-light: #edfaed;
+  --color-leaf-green-dark: #3a9a3a;
+  
+  /* Neutrals */
+  --color-white: #ffffff;
+  --color-bg: #fafbfc;              /* Cleaner than yellow-tinted */
+  --color-bg-warm: #fffff8;         /* Subtle warm white */
+  --color-text: #374151;
+  --color-text-dark: #1a202c;
+  --color-text-light: #6b7280;
+  --color-border: #e5e7eb;
+  --color-border-light: #f3f4f6;
+}
+
 * {
   box-sizing: border-box;
   padding: 0;
@@ -22,7 +76,7 @@ body {
   -moz-osx-font-smoothing: grayscale;
   /* iOS Safari: Improve rendering performance */
   -webkit-overflow-scrolling: touch;
-  background-color: #fffff2; /* Page background for all pages */
+  background-color: var(--color-bg-warm); /* Clean white with subtle warmth */
   min-height: 100vh;
 }
 

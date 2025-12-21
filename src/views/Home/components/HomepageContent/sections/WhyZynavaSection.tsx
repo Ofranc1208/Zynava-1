@@ -75,8 +75,11 @@ export default function WhyZynavaSection({ onOpenAdvisor }: WhyZynavaSectionProp
       <div className={styles.grid2}>
         {cards.map((card, index) => {
           const isExpanded = expandedCards.has(index)
+          // Red for Problem (index 0), Emerald for Solution (index 1)
+          const cardClass = index === 0 ? styles.cardRed : styles.cardEmerald
+          
           return (
-            <article key={index} className={styles.cardHighlight}>
+            <article key={index} className={cardClass}>
               <h3 className={styles.cardTitle}>{card.title}</h3>
               
               <p className={styles.cardText}>
@@ -104,7 +107,11 @@ export default function WhyZynavaSection({ onOpenAdvisor }: WhyZynavaSectionProp
                   {isExpanded ? 'Read less' : 'Read more'}
                   <span className={expandStyles.chevron}>{isExpanded ? '↑' : '↓'}</span>
                 </button>
-                <ExploreButton text={card.ctaText} onClick={onOpenAdvisor} />
+                <ExploreButton 
+                  text={card.ctaText} 
+                  onClick={onOpenAdvisor}
+                  variant={index === 0 ? 'emerald-outline' : 'emerald'}
+                />
               </div>
             </article>
           )

@@ -25,7 +25,7 @@ What We Curate:
 • Published clinical studies on vitamin efficacy and absorption rates
 • Research on probiotic strains and their specific health applications
 • Studies comparing different forms of supplements (methylcobalamin vs cyanocobalamin, D3 vs D2, magnesium glycinate vs oxide)
-• Safety data and recommended dosage ranges from peer-reviewed sources
+• Safety data and quality standards from peer-reviewed sources
 • Emerging research on collagen peptides, omega-3 fatty acids, curcumin bioavailability, and more
 
 How We Simplify It:
@@ -40,7 +40,7 @@ This means when you see a recommendation for a specific vitamin B12 form or a pa
     <section className={styles.section}>
       <h2 className={styles.sectionTitle}>Research You Can Actually Use</h2>
 
-      <div className={styles.cardAlt}>        
+      <div className={styles.cardIndigo}>        
         <p className={styles.cardText}>
           <span className={isExpanded ? expandStyles.hidden : expandStyles.preview}>
             {preview}
@@ -66,7 +66,7 @@ This means when you see a recommendation for a specific vitamin B12 form or a pa
             {isExpanded ? 'Read less' : 'Read more'}
             <span className={expandStyles.chevron}>{isExpanded ? '↑' : '↓'}</span>
           </button>
-          <ExploreButton text="See how it works" onClick={onOpenAdvisor} />
+          <ExploreButton text="See how it works" onClick={onOpenAdvisor} variant="indigo" />
         </div>
       </div>
     </section>

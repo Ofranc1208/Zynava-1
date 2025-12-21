@@ -77,8 +77,12 @@ export default function WhoWeServeSection({ onOpenAdvisor }: WhoWeServeSectionPr
       <div className={styles.grid2}>
         {audiences.map((audience, index) => {
           const isExpanded = expandedCards.has(index)
+          // All audience cards use consistent Blue for "Who We Serve" theme
+          const cardClass = styles.cardBlue
+          const buttonVariant = 'indigo' as const
+          
           return (
-            <article key={audience.title} className={styles.card}>
+            <article key={audience.title} className={cardClass}>
               <h3 className={styles.stepTitle}>{audience.title}</h3>
               
               <p className={styles.cardText}>
@@ -106,7 +110,7 @@ export default function WhoWeServeSection({ onOpenAdvisor }: WhoWeServeSectionPr
                   {isExpanded ? 'Read less' : 'Read more'}
                   <span className={expandStyles.chevron}>{isExpanded ? '↑' : '↓'}</span>
                 </button>
-                <ExploreButton text={audience.ctaText} onClick={onOpenAdvisor} />
+                <ExploreButton text={audience.ctaText} onClick={onOpenAdvisor} variant={buttonVariant} />
               </div>
             </article>
           )

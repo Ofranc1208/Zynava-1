@@ -72,6 +72,29 @@ export default function DisclaimerPage() {
         </p>
       </section>
 
+      <section style={{
+        marginBottom: '2rem',
+        padding: '1.5rem',
+        background: '#fef2f2',
+        borderRadius: '8px',
+        border: '1px solid #fecaca'
+      }}>
+        <h2 style={{
+          fontSize: '1.5rem',
+          fontWeight: 600,
+          marginBottom: '1rem',
+          color: '#991b1b'
+        }}>
+          FDA Disclaimer
+        </h2>
+        <p style={{ fontSize: '1rem', color: '#991b1b', marginBottom: '1rem', fontWeight: 500 }}>
+          The statements made regarding supplements on this website have not been evaluated by the Food and Drug Administration (FDA).
+        </p>
+        <p style={{ fontSize: '1rem', color: '#991b1b', margin: 0, fontWeight: 500 }}>
+          These products are not intended to diagnose, treat, cure, or prevent any disease. The information provided on this site is for informational purposes only and is not a substitute for professional medical advice.
+        </p>
+      </section>
+
       <section style={{ marginBottom: '2rem' }}>
         <h2 style={{
           fontSize: '1.5rem',

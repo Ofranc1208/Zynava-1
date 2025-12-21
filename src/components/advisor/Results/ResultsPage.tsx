@@ -5,6 +5,7 @@ import styles from './ResultsPage.module.css'
 import ResultsControlBar from './ResultsControlBar'
 import ResultCard from './ResultCard'
 import { ComplianceBadge } from '@/src/components/shared/ComplianceBadge'
+import { AffiliateDisclosure } from '@/src/components/shared/AffiliateDisclosure'
 import { ALL_PRODUCTS } from './mockData'
 import { rankProductsByZScore } from './zScoreAlgorithm'
 import type { QuizParams, FilterState, SortBy, QuizInput, ScoredProduct } from './types'
@@ -134,9 +135,9 @@ export default function ResultsPage({ quizParams }: ResultsPageProps) {
       {/* Header Section */}
       <div className={styles.header}>
         <div className={styles.headerTop}>
-          <h1 className={styles.title}>Z-SCORE™ Supplement Rankings</h1>
+          <h1 className={styles.title}>Z-SCORE™ Quality & Safety Rankings</h1>
           <p className={styles.trustMessage}>
-            Personalized from 30,000+ supplements just for you
+            Quality-filtered from 30,000+ supplements based on your profile
           </p>
         </div>
         
@@ -158,6 +159,9 @@ export default function ResultsPage({ quizParams }: ResultsPageProps) {
         filters={filters}
         onFiltersChange={setFilters}
       />
+
+      {/* Affiliate Disclosure */}
+      <AffiliateDisclosure />
 
       {/* Compliance Badge */}
       <ComplianceBadge />
@@ -186,9 +190,12 @@ export default function ResultsPage({ quizParams }: ResultsPageProps) {
       <div className={styles.whySection}>
         <h3>Why these picks?</h3>
         <p>
-          Our Z-SCORE™ algorithm matched these supplements to your profile based on:
-          ingredient quality, dosage effectiveness, demographic safety, dietary compliance,
-          and your shopping preferences.
+          Our Z-SCORE™ Quality and Safety algorithm matched these supplements to your profile based on:
+          ingredient purity, third-party testing, brand reputation, demographic appropriateness,
+          dietary compliance, and your wellness preferences.
+        </p>
+        <p style={{ fontSize: '0.85rem', color: '#6b7280', marginTop: '0.5rem', fontStyle: 'italic' }}>
+          Note: Consult a healthcare provider to determine appropriate dosages for your individual needs.
         </p>
       </div>
 

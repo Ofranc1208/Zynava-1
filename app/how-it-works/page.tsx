@@ -27,7 +27,7 @@ export default function HowItWorksPage() {
           Why Supplement Decisions Are Complex
         </h2>
         <p style={{ fontSize: '1rem', color: '#374151', marginBottom: '1rem' }}>
-          The supplement market offers thousands of products, each with different ingredients, dosages, and formulations. Conflicting information, marketing claims, and the challenge of comparing options make supplement decisions overwhelming for many people.
+          The supplement market offers thousands of products, each with different ingredients, quality standards, and formulations. Conflicting information, marketing claims, and the challenge of comparing options make supplement decisions overwhelming for many people.
         </p>
         <p style={{ fontSize: '1rem', color: '#374151', margin: 0 }}>
           ZYNAVA exists to simplify this process by providing ingredient-focused guidance based on your personal goals and preferences, not marketing narratives.
@@ -44,7 +44,7 @@ export default function HowItWorksPage() {
           How ZYNAVA Evaluates Thousands of Supplements
         </h2>
         <p style={{ fontSize: '1rem', color: '#374151', marginBottom: '1rem' }}>
-          Our platform analyzes supplements across trusted retailers, examining ingredient profiles, dosage information, formulation quality, and other factors that matter for informed decision-making.
+          Our platform analyzes supplements across trusted retailers, examining ingredient quality, purity standards, third-party testing, brand reputation, and other factors that matter for informed decision-making. We do not recommend dosages—please consult your healthcare provider for personalized guidance.
         </p>
         <p style={{ fontSize: '1rem', color: '#374151', margin: 0 }}>
           Rather than relying on brand recognition or marketing, we focus on what's actually inside each product and how those ingredients relate to your stated wellness goals.

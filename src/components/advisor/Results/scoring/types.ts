@@ -85,11 +85,8 @@ export interface IngredientScoreResult extends ScoreResult {
 // REFERENCE DATA TYPES
 // ============================================
 
-export interface DosageRange {
-  min: number
-  optimal: number
-  max: number
-}
+// NOTE: DosageRange type removed - we do not evaluate dosages
+// Dosage decisions should be made by healthcare providers
 
 export type BrandTier = 'A' | 'B' | 'C'
 

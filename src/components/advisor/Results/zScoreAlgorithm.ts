@@ -1,19 +1,23 @@
 /**
- * Z-SCORE™ Algorithm Orchestrator
+ * Z-SCORE™ Quality and Safety Score Algorithm Orchestrator
  * 
  * This is a thin orchestrator that coordinates all scoring components.
  * Individual scoring logic is in the ./scoring/ folder.
  * 
+ * COMPLIANCE NOTE: This algorithm evaluates QUALITY and SAFETY only.
+ * We do NOT evaluate or recommend dosages - that is a medical decision
+ * for healthcare providers based on individual patient needs.
+ * 
  * Full score range: 0-100 points
  * 
  * Components:
- * - IngredientScore (0-35) - Match quality + dosage
+ * - IngredientQualityScore (0-45) - Ingredient purity, testing, quality
  * - GoalAlignmentScore (0-15) - Goal relevance  
- * - DemographicScore (0-15) - Age/gender fit
- * - ActivityScore (0-10) - Lifestyle fit
- * - QualityScore (0-15) - Brand + reviews
+ * - DemographicScore (0-10) - Age/gender appropriateness
+ * - ActivityScore (0-5) - Lifestyle fit
+ * - QualityScore (0-15) - Brand reputation + reviews
  * - DietaryBonusScore (0-10) - Diet compliance bonus
- * - CautionPenalty (0-20) - Safety deductions (future)
+ * - SafetyPenalty (0-30) - Safety/contraindication deductions (future)
  */
 
 // Re-export types for external consumers

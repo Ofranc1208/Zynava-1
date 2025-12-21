@@ -33,7 +33,7 @@ export default function AdvisorPage() {
         border: '1px solid #e5e7eb'
       }}>
         <p style={{ fontSize: '0.9rem', color: '#6b7280', margin: 0 }}>
-          <strong>Note:</strong> The Supplement Advisor questionnaire will be available here. This page serves as a placeholder for the interactive advisor experience.
+          <strong>Get Started:</strong> To begin your personalized supplement recommendations, click the &quot;Supplement Advisor&quot; button on the homepage or use the chat widget. Our AI-powered quiz takes about 2 minutes to complete.
         </p>
       </div>
     </main>

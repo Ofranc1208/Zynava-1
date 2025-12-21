@@ -4,7 +4,7 @@
  * SEO-friendly: content in DOM, visibility toggled
  */
 
-/* Step badge - centered, prominent */
+/* Step badge - centered, prominent with color variants */
 .stepBadge {
   display: block;
   text-align: center;
@@ -14,6 +14,22 @@
   text-transform: uppercase;
   letter-spacing: 0.05em;
   margin-bottom: 0.75rem;
+}
+
+/* Color variants for step badges */
+.stepBadgeTurquoise {
+  composes: stepBadge;
+  color: #2ba39c;
+}
+
+.stepBadgeIndigo {
+  composes: stepBadge;
+  color: #6366f1;
+}
+
+.stepBadgeEmerald {
+  composes: stepBadge;
+  color: #10b981;
 }
 
 /* Preview text - visible when collapsed */
@@ -49,7 +65,7 @@
   border: 0;
 }
 
-/* Read More button - matches ExploreButton sizing with orange border */
+/* Read More button - subtle gray outline for less orange */
 .readMoreBtn {
   display: inline-flex;
   align-items: center;
@@ -57,22 +73,23 @@
   margin-top: 0;
   padding: 0.4rem 0.8rem;
   background: transparent;
-  border: 1px solid #ff6b35;
+  border: 1px solid #9ca3af;
   border-radius: 4px;
   font-size: 0.75rem;
   font-weight: 500;
-  color: #ff6b35;
+  color: #6b7280;
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .readMoreBtn:hover {
-  background: #ff6b35;
+  background: #374151;
+  border-color: #374151;
   color: #ffffff;
 }
 
 .readMoreBtn:focus-visible {
-  outline: 2px solid #ff6b35;
+  outline: 2px solid #374151;
   outline-offset: 1px;
 }
 

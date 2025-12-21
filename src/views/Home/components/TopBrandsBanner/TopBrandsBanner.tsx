@@ -16,12 +16,21 @@ import { BRAND_LOGOS } from '../../constants'
  * - Fade edges for visual polish
  * - Reduced motion support
  * - Responsive design (smaller logos on mobile)
+ * - TEST ONLY badge for development phase visibility
  * 
  * @returns The TopBrandsBanner component
  */
 export default function TopBrandsBanner() {
-  // Duplicate the logos for seamless loop
-  const duplicatedLogos = [...BRAND_LOGOS, ...BRAND_LOGOS]
+  // Duplicate the logos for seamless loop, inserting "TEST ONLY" badges
+  const logosWithTestBadge = BRAND_LOGOS.flatMap((brand, idx) => {
+    // Insert TEST ONLY badge after every 4th logo
+    if ((idx + 1) % 4 === 0) {
+      return [brand, { type: 'test-badge' as const }]
+    }
+    return [brand]
+  })
+  
+  const duplicatedLogos = [...logosWithTestBadge, ...logosWithTestBadge]
 
   return (
     <section className={styles.bannerContainer}>
@@ -31,17 +40,30 @@ export default function TopBrandsBanner() {
         {/* Ticker Container */}
         <div className={styles.tickerWrapper}>
           <div className={styles.ticker}>
-            {duplicatedLogos.map((brand, index) => (
-              <div key={`${brand.alt}-${index}`} className={styles.tickerItem}>
-                <Image
-                  src={brand.src}
-                  alt={brand.alt}
-                  width={44}
-                  height={44}
-                  className={styles.logoImage}
-                />
-              </div>
-            ))}
+            {duplicatedLogos.map((item, index) => {
+              // Check if this is a test badge or a logo
+              if ('type' in item && item.type === 'test-badge') {
+                return (
+                  <div key={`test-badge-${index}`} className={styles.testBadge}>
+                    TEST ONLY
+                  </div>
+                )
+              }
+              
+              // Regular brand logo
+              const brand = item as typeof BRAND_LOGOS[0]
+              return (
+                <div key={`${brand.alt}-${index}`} className={styles.tickerItem}>
+                  <Image
+                    src={brand.src}
+                    alt={brand.alt}
+                    width={44}
+                    height={44}
+                    className={styles.logoImage}
+                  />
+                </div>
+              )
+            })}
           </div>
         </div>
       </div>

@@ -1,16 +1,23 @@
 /**
- * Ingredient Score Calculator (0-35 points)
- * Measures how well a product matches user's selected concerns/ingredients
- * Includes dosage quality evaluation
+ * Ingredient Quality & Purity Score Calculator (0-45 points)
+ * 
+ * COMPLIANCE NOTE: This scorer focuses ONLY on ingredient quality and purity.
+ * We do NOT score or recommend dosages - that is a medical decision for healthcare providers.
+ * 
+ * Quality factors evaluated:
+ * - Ingredient match to user concerns
+ * - Brand tier (premium vs generic)
+ * - Third-party testing certification
+ * - Clean label / purity indicators
+ * - Patented or trademarked ingredient forms
  */
 
 import type { ScoredProduct, IngredientScoreResult } from './types'
 import { 
-  OPTIMAL_DOSAGE, 
-  DOSAGE_MULTIPLIERS, 
   SCORE_WEIGHTS,
   CONCERN_TO_INGREDIENTS,
-  STARTER_STACKS 
+  STARTER_STACKS,
+  QUALITY_MULTIPLIERS,
 } from './constants'
 
 /**
@@ -30,25 +37,34 @@ export function getTargetIngredients(concerns: string, goals: string): string[] 
 }
 
 /**
- * Calculate dosage quality multiplier for an ingredient
+ * Calculate quality multiplier based on product purity indicators
+ * (No dosage evaluation - that's a medical decision)
  */
-function getDosageMultiplier(ingredient: string, dosage: number): number {
-  const optimal = OPTIMAL_DOSAGE[ingredient]
+function getQualityMultiplier(product: ScoredProduct): number {
+  let multiplier = QUALITY_MULTIPLIERS.BASE
   
-  // No reference data - use default
-  if (!optimal || dosage <= 0) {
-    return DOSAGE_MULTIPLIERS.DEFAULT
+  // Third-party tested products get quality boost
+  if (product.thirdPartyTested) {
+    multiplier += QUALITY_MULTIPLIERS.THIRD_PARTY_TESTED
   }
   
-  if (dosage < optimal.min) {
-    return DOSAGE_MULTIPLIERS.UNDERDOSED
-  } else if (dosage < optimal.optimal) {
-    return DOSAGE_MULTIPLIERS.SUBOPTIMAL
-  } else if (dosage <= optimal.max) {
-    return DOSAGE_MULTIPLIERS.OPTIMAL
-  } else {
-    return DOSAGE_MULTIPLIERS.OVERDOSED
+  // Clean label products get quality boost
+  if (product.cleanLabel) {
+    multiplier += QUALITY_MULTIPLIERS.CLEAN_LABEL
   }
+  
+  // Organic products get quality boost
+  if (product.isOrganic) {
+    multiplier += QUALITY_MULTIPLIERS.ORGANIC
+  }
+  
+  // Non-GMO products get small boost
+  if (product.isNonGMO) {
+    multiplier += QUALITY_MULTIPLIERS.NON_GMO
+  }
+  
+  // Cap at 1.0 maximum
+  return Math.min(multiplier, 1.0)
 }
 
 /**
@@ -66,7 +82,10 @@ function findMatchedIngredients(
 }
 
 /**
- * Calculate Ingredient Score (0-35 points)
+ * Calculate Ingredient Quality & Purity Score (0-45 points)
+ * 
+ * NOTE: We do NOT evaluate dosage. Dosage decisions should be made
+ * by healthcare providers based on individual needs.
  */
 export function calculateIngredientScore(
   product: ScoredProduct,
@@ -90,37 +109,28 @@ export function calculateIngredientScore(
     return { score: 0, primaryIngredient: null, reasons }
   }
   
-  // Calculate dosage quality for each matched ingredient
-  let totalDosageQuality = 0
-  let bestIngredient = matchedIngredients[0]
-  let bestScore = 0
+  // Get quality multiplier based on purity indicators
+  const qualityMultiplier = getQualityMultiplier(product)
+  const bestIngredient = matchedIngredients[0]
   
-  for (const ingredient of matchedIngredients) {
-    const dosage = product.ingredientStrength?.[ingredient] || 0
-    const dosageMultiplier = getDosageMultiplier(ingredient, dosage)
-    
-    totalDosageQuality += dosageMultiplier
-    
-    // Track best ingredient for display
-    if (dosageMultiplier > bestScore) {
-      bestScore = dosageMultiplier
-      bestIngredient = ingredient
-    }
-    
-    // Add reason for optimal dosage
-    if (dosageMultiplier === DOSAGE_MULTIPLIERS.OPTIMAL) {
-      reasons.push(`Optimal ${ingredient.replace(/-/g, ' ')} dosage`)
-    }
+  // Add quality-based reasons
+  if (product.thirdPartyTested) {
+    reasons.push('Third-party tested for purity')
+  }
+  if (product.cleanLabel) {
+    reasons.push('Clean label formulation')
+  }
+  if (product.isOrganic) {
+    reasons.push('Certified organic ingredients')
   }
   
-  // Calculate final score
+  // Calculate final score based on match ratio and quality
   const matchRatio = matchedIngredients.length / targetIngredients.length
-  const avgDosageQuality = totalDosageQuality / matchedIngredients.length
-  const score = matchRatio * avgDosageQuality * SCORE_WEIGHTS.INGREDIENT
+  const score = matchRatio * qualityMultiplier * SCORE_WEIGHTS.INGREDIENT
   
   // Add match ratio reason
   if (matchRatio >= 0.5) {
-    reasons.push(`Matches ${Math.round(matchRatio * 100)}% of your selected concerns`)
+    reasons.push(`Contains ${Math.round(matchRatio * 100)}% of key ingredients for your goals`)
   }
   
   return { 
