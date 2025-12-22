@@ -1,0 +1,95 @@
+.studyCard {
+  display: block;
+  padding: 1rem;
+  border-radius: 8px;
+  background: #fafbfc;
+  border: 1px solid #e0e7ff;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.studyCard:hover {
+  background: #f3f4f9;
+  border-color: #c7d2fe;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+}
+
+.studyCard.compact {
+  padding: 0.5rem;
+}
+
+.studyHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: 0.7rem;
+}
+
+.sourceBadge {
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: #059669;
+  background: #d1fae5;
+  padding: 0.2rem 0.5rem;
+  border-radius: 3px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.studyType {
+  font-size: 0.65rem;
+  color: #5b6366;
+  text-transform: capitalize;
+  font-weight: 500;
+}
+
+.year {
+  font-size: 0.65rem;
+  color: #9ca3af;
+  margin-left: auto;
+  font-weight: 500;
+}
+
+.studyTitle {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin: 0 0 0.6rem 0;
+  line-height: 1.5;
+  letter-spacing: -0.3px;
+}
+
+.educationalNotes {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  margin-bottom: 0.7rem;
+}
+
+.note {
+  font-size: 0.75rem;
+  color: #4b5563;
+  line-height: 1.5;
+  font-weight: 500;
+}
+
+.abstract {
+  font-size: 0.75rem;
+  color: #4b5563;
+  line-height: 1.5;
+  margin: 0.5rem 0;
+}
+
+.externalLink {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #ff6b35;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  transition: color 0.2s ease;
+}
+
+.studyCard:hover .externalLink {
+  color: #e55a2b;
+}

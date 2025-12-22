@@ -1,8 +1,9 @@
 'use client'
 
-import React from 'react'
+import React, { useState } from 'react'
 import styles from './ResultCard.module.css'
 import type { ScoredProduct } from './types'
+import { getStudiesForProduct, getStudiesForIngredient } from '@/src/lib/utils/studyHelpers'
 
 /**
  * Props for the ResultCard component.
@@ -15,12 +16,49 @@ interface ResultCardProps {
 }
 
 /**
+ * Get the match level description based on Z-SCORE
+ */
+function getMatchLevel(score: number): { level: string; description: string; color: string } {
+  if (score >= 90) {
+    return { 
+      level: 'Excellent Match', 
+      description: 'This supplement is highly aligned with your profile and goals.',
+      color: '#059669'
+    }
+  } else if (score >= 80) {
+    return { 
+      level: 'Great Match', 
+      description: 'This supplement strongly matches your needs and preferences.',
+      color: '#0d9488'
+    }
+  } else if (score >= 70) {
+    return { 
+      level: 'Good Match', 
+      description: 'This supplement is a solid option for your profile.',
+      color: '#0369a1'
+    }
+  } else if (score >= 60) {
+    return { 
+      level: 'Moderate Match', 
+      description: 'This supplement partially aligns with your needs.',
+      color: '#ca8a04'
+    }
+  } else {
+    return { 
+      level: 'Basic Match', 
+      description: 'This supplement may work but isn\'t optimized for your profile.',
+      color: '#9ca3af'
+    }
+  }
+}
+
+/**
  * ResultCard - Individual product card component
  * 
  * Displays a single supplement product with its Z-SCORE, details, and CTA.
  * 
  * Features:
- * - Z-SCORE badge (top right corner)
+ * - Z-SCORE badge (top right corner) - clickable for explanation
  * - Top Match badge for first result
  * - Sale badge when applicable
  * - Star rating with review count
@@ -33,6 +71,8 @@ interface ResultCardProps {
  * @returns The ResultCard component
  */
 export default function ResultCard({ product, isTopMatch = false }: ResultCardProps) {
+  const [showZScorePopup, setShowZScorePopup] = useState(false)
+  
   const {
     title,
     brand,
@@ -45,7 +85,26 @@ export default function ResultCard({ product, isTopMatch = false }: ResultCardPr
     reviewCount,
     zScore,
     matchReasons,
+    masterIngredients,
   } = product
+  
+  const matchInfo = zScore ? getMatchLevel(zScore) : null
+
+  // Get relevant studies for this product
+  const productStudies = getStudiesForProduct(masterIngredients || [])
+
+  // Find the first ingredient that has studies for the "View All" link
+  const getFirstIngredientWithStudies = () => {
+    if (!masterIngredients) return ''
+    for (const ingredient of masterIngredients) {
+      if (getStudiesForIngredient(ingredient).length > 0) {
+        return ingredient
+      }
+    }
+    return masterIngredients[0] || '' // Fallback to first ingredient
+  }
+
+  const searchIngredient = getFirstIngredientWithStudies()
 
   // Render star rating
   const renderStars = (rating: number) => {
@@ -77,12 +136,16 @@ export default function ResultCard({ product, isTopMatch = false }: ResultCardPr
         <div className={styles.imagePlaceholder}>
           <span className={styles.placeholderIcon}>💊</span>
         </div>
-        {/* Quality Score Badge */}
+        {/* Z-SCORE Badge - Clickable, bottom-right */}
         {zScore !== undefined && (
-          <span className={styles.zScoreBadge}>
-            <span className={styles.zScoreLabel}>QUALITY</span>
+          <button 
+            className={styles.zScoreBadge}
+            onClick={() => setShowZScorePopup(true)}
+            aria-label="Learn about Z-SCORE"
+          >
+            <span className={styles.zScoreLabel}>Z-SCORE</span>
             <span className={styles.zScoreValue}>{zScore}</span>
-          </span>
+          </button>
         )}
         {isTopMatch && (
           <span className={styles.topMatchBadge}>🏆 Top Match</span>
@@ -91,6 +154,63 @@ export default function ResultCard({ product, isTopMatch = false }: ResultCardPr
           <span className={styles.saleBadge}>Sale</span>
         )}
       </div>
+      
+      {/* Z-SCORE Popup Modal */}
+      {showZScorePopup && zScore !== undefined && matchInfo && (
+        <div className={styles.zScoreOverlay} onClick={() => setShowZScorePopup(false)}>
+          <div className={styles.zScorePopup} onClick={(e) => e.stopPropagation()}>
+            <button 
+              className={styles.popupClose}
+              onClick={() => setShowZScorePopup(false)}
+              aria-label="Close"
+            >
+              ✕
+            </button>
+            
+            <div className={styles.popupHeader}>
+              <span className={styles.popupScoreBadge}>
+                <span className={styles.popupScoreLabel}>Z-SCORE</span>
+                <span className={styles.popupScoreValue}>{zScore}</span>
+              </span>
+              <span 
+                className={styles.popupMatchLevel}
+                style={{ color: matchInfo.color }}
+              >
+                {matchInfo.level}
+              </span>
+            </div>
+            
+            <p className={styles.popupDescription}>
+              {matchInfo.description}
+            </p>
+            
+            <div className={styles.popupDivider}></div>
+            
+            <h4 className={styles.popupTitle}>What is Z-SCORE?</h4>
+            <p className={styles.popupText}>
+              The Z-SCORE is Zynava&apos;s personalized matching algorithm. It calculates how well 
+              this supplement aligns with <strong>your unique profile</strong> based on:
+            </p>
+            <ul className={styles.popupList}>
+              <li>Your health goals and priorities</li>
+              <li>Your demographic information</li>
+              <li>Your dietary preferences</li>
+              <li>Ingredient quality and relevance</li>
+            </ul>
+            <p className={styles.popupNote}>
+              A higher Z-SCORE means this supplement is more tailored to your needs. 
+              The same product may score differently for different people.
+            </p>
+            
+            <button 
+              className={styles.popupButton}
+              onClick={() => setShowZScorePopup(false)}
+            >
+              Got it!
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Product Info */}
       <div className={styles.info}>
@@ -114,17 +234,29 @@ export default function ResultCard({ product, isTopMatch = false }: ResultCardPr
           </div>
         )}
 
-        {/* Badges - Filter out "Top Pick" as it conflicts with algorithm ranking */}
-        <div className={styles.badges}>
-          {badges
-            .filter(b => b !== 'Top Pick' && b !== 'Best Seller')
-            .slice(0, 2)
-            .map((badge, idx) => (
-              <span key={idx} className={styles.badge}>
-                {badge}
-              </span>
-            ))}
-        </div>
+        {/* Badges - Plain text style, not clickable */}
+        {badges.filter(b => b !== 'Top Pick' && b !== 'Best Seller').length > 0 && (
+          <div className={styles.badgeList}>
+            {badges
+              .filter(b => b !== 'Top Pick' && b !== 'Best Seller')
+              .slice(0, 3)
+              .map((badge, idx) => (
+                <span key={idx} className={styles.badgeText}>
+                  {badge}
+                </span>
+              ))}
+          </div>
+        )}
+
+        {/* Research Link - Above price, slim and subtle */}
+        {productStudies.length > 0 && (
+          <a
+            href={`/research?q=${encodeURIComponent(searchIngredient)}`}
+            className={styles.researchLink}
+          >
+            📖 Read Research
+          </a>
+        )}
 
         {/* Price */}
         <div className={styles.priceRow}>
@@ -138,7 +270,7 @@ export default function ResultCard({ product, isTopMatch = false }: ResultCardPr
         <p className={styles.vendor}>Available on {vendor}</p>
 
         {/* CTA */}
-        <button 
+        <button
           className={styles.ctaButton}
           onClick={handleViewProduct}
         >

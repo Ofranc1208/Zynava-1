@@ -1,0 +1,271 @@
+/* Research Page - Clean Compact Layout */
+.researchPage {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 1.5rem 1rem;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* Header Row */
+.headerRow {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 2rem;
+  position: relative;
+}
+
+.backButton {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  padding: 0.6rem 1rem;
+  background: linear-gradient(135deg, #ff6b35 0%, #e55a2b 100%);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(255, 107, 53, 0.3);
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.backButton:hover {
+  background: linear-gradient(135deg, #e55a2b 0%, #d04a1b 100%);
+  box-shadow: 0 4px 12px rgba(255, 107, 53, 0.4);
+  transform: translateY(-50%) translateX(-2px);
+}
+
+.pageTitle {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #1a202c;
+  margin: 0;
+  text-align: center;
+}
+
+/* 1. Filters Row - TOP */
+.filtersRow {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+  padding: 0.6rem 0.75rem;
+  background: #f9fafb;
+  border-radius: 6px;
+}
+
+.filtersContainer {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.filterGroup {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.filterGroup label {
+  font-size: 0.7rem;
+  color: #6b7280;
+  font-weight: 500;
+}
+
+.filterGroup select {
+  padding: 0.3rem 0.4rem;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  background: white;
+  font-size: 0.72rem;
+  min-width: 85px;
+}
+
+/* 2. Search Row - Below filters */
+.searchRow {
+  margin-bottom: 1.25rem;
+}
+
+.searchLabel {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.searchContainer {
+  width: 100%;
+}
+
+.searchInputContainer {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.searchInput {
+  flex: 1;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  outline: none;
+}
+
+.searchInput:focus {
+  border-color: #ff6b35;
+}
+
+.searchButton {
+  padding: 0.5rem 1rem;
+  background: #ff6b35;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+  white-space: nowrap;
+}
+
+.searchButton:hover {
+  background: #e55a2b;
+}
+
+.suggestions {
+  position: absolute;
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  max-height: 150px;
+  overflow-y: auto;
+  z-index: 10;
+  width: 100%;
+}
+
+.suggestionItem {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  border: none;
+  background: none;
+  text-align: left;
+  cursor: pointer;
+  font-size: 0.85rem;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.suggestionItem:hover {
+  background: #f9fafb;
+}
+
+.suggestionItem:last-child {
+  border-bottom: none;
+}
+
+/* Compact Disclaimer */
+.disclaimer {
+  font-size: 0.65rem;
+  color: #9ca3af;
+  text-align: center;
+  margin: 0.75rem 0 1rem 0;
+}
+
+.disclaimerLink {
+  color: #ff6b35;
+  text-decoration: none;
+}
+
+.disclaimerLink:hover {
+  text-decoration: underline;
+}
+
+/* Studies Container - This scrolls */
+.studiesContainer {
+  flex: 1;
+  overflow-y: auto;
+  margin-top: 0.25rem;
+  padding-top: 0.25rem;
+}
+
+/* Results Styling */
+.resultsContainer {
+  min-height: 100px;
+}
+
+.resultsHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.6rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.resultsHeader h2 {
+  font-size: 0.9rem;
+  color: #1a202c;
+  margin: 0;
+}
+
+.resultCount {
+  color: #6b7280;
+  font-size: 0.7rem;
+}
+
+.studiesGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.noResults {
+  text-align: center;
+  padding: 1.5rem;
+  color: #6b7280;
+}
+
+.noResults h3 {
+  color: #374151;
+  margin-bottom: 0.25rem;
+  font-size: 0.9rem;
+}
+
+.noResults p {
+  font-size: 0.8rem;
+}
+
+/* Mobile responsive */
+@media (max-width: 480px) {
+  .researchPage {
+    padding: 0.5rem;
+  }
+
+  .filtersContainer {
+    gap: 0.5rem;
+  }
+
+  .filterGroup select {
+    min-width: 75px;
+    font-size: 0.68rem;
+  }
+
+  .filterGroup label {
+    font-size: 0.65rem;
+  }
+}
