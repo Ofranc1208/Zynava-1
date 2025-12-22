@@ -156,12 +156,12 @@
   align-items: flex-start; /* Left-align chat bubbles and typing indicators */
   gap: 10px; /* Reduced for tighter spacing */
   padding: 12px; /* Reduced padding for more content space */
-  padding-bottom: 16px; /* Reduced bottom padding */
+  padding-bottom: 13px; /* Reduced by 20% from 16px */
   min-height: 100%; /* Ensure content fills container */
 }
 
 .bottomSpacer {
-  height: 8px; /* Minimal spacer */
+  height: 6px; /* Reduced by 20% from 8px */
   flex-shrink: 0;
 }
 
@@ -235,7 +235,7 @@
   
   .messagesContent {
     padding: 10px;
-    padding-bottom: 12px;
+    padding-bottom: 10px; /* Reduced by 20% from 12px */
     gap: 10px;
   }
 }
@@ -271,7 +271,7 @@
   
   .messagesContent {
     padding: 8px;
-    padding-bottom: 8px;
+    padding-bottom: 6px; /* Reduced by 20% from 8px */
     gap: 8px;
   }
 }
@@ -306,7 +306,7 @@
   
   .messagesContent {
     padding: 6px;
-    padding-bottom: 6px;
+    padding-bottom: 5px; /* Reduced by 20% from 6px */
     gap: 6px;
   }
 }
@@ -331,7 +331,7 @@
   
   .messagesContent {
     padding: 5px;
-    padding-bottom: 5px;
+    padding-bottom: 4px; /* Reduced by 20% from 5px */
     gap: 5px;
   }
 }
@@ -356,7 +356,7 @@
   
   .messagesContent {
     padding: 6px;
-    padding-bottom: 6px;
+    padding-bottom: 5px; /* Reduced by 20% from 6px */
     gap: 6px;
   }
 }
@@ -381,7 +381,7 @@
   
   .messagesContent {
     padding: 4px;
-    padding-bottom: 4px;
+    padding-bottom: 3px; /* Reduced by 20% from 4px */
     gap: 4px;
   }
 }
