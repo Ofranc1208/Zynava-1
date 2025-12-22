@@ -2,7 +2,8 @@
 
 import { useMemo } from 'react'
 import StudyCard from '@/src/components/shared/StudyCard'
-import { searchStudies, StudyFilters } from '@/src/lib/utils/studyHelpers'
+import { searchStudies } from '@/src/lib/utils/studyHelpers'
+import type { StudyFilters } from '@/src/lib/utils/studyHelpers'
 import styles from '../research.module.css'
 
 interface StudyResultsProps {

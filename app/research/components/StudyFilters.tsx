@@ -1,6 +1,6 @@
 'use client'
 
-import { StudyFilters } from '@/src/lib/utils/studyHelpers'
+import type { StudyFilters } from '@/src/lib/utils/studyHelpers'
 import styles from '../research.module.css'
 
 interface StudyFiltersProps {
