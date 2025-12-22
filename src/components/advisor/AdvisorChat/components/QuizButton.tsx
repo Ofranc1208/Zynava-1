@@ -8,10 +8,12 @@ export interface QuizButtonProps {
   label: string
   value: string
   description?: string
+  image?: string
   isSelected?: boolean
   onClick: (value: string) => void
   disabled?: boolean
   multiSelect?: boolean
+  rankNumber?: number // For showing preference order (1, 2, 3)
 }
 
 export default function QuizButton({
@@ -19,10 +21,12 @@ export default function QuizButton({
   label,
   value,
   description,
+  image,
   isSelected = false,
   onClick,
   disabled = false,
   multiSelect = false,
+  rankNumber,
 }: QuizButtonProps) {
   const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     if (!disabled) {
@@ -42,14 +46,26 @@ export default function QuizButton({
     e.currentTarget.blur()
   }
 
-  // Check if this is a demographics button
-  const isDemographic = value.startsWith('male-') || value.startsWith('female-')
+  // Demographics step values now use simple primitives (male/female + age ranges + skip)
+  // We use this to apply the right styling for Step 2.
+  const isAgeRangeValue =
+    /^\d{2}-\d{2}$/.test(value) || // e.g. 18-29, 30-39
+    /^\d{2}\+$/.test(value) // e.g. 70+
+  const isSexValue = value === 'male' || value === 'female'
+  const isSkipValue = value === 'skip'
+  const isDemographic = isSexValue || isAgeRangeValue || isSkipValue || value.startsWith('male-') || value.startsWith('female-')
+  const isDemographicAge = isAgeRangeValue
 
-  // Special handling for demographics buttons: split "Male 18-35" into "Male" (top) and "18-35" (bottom)
+  // If image is provided, use it directly (don't extract emoji)
   let icon: string | null = null
+  let imageUrl: string | null = image || null
   let displayLabel: string = label
   
-  if (isDemographic && (label.startsWith('Male ') || label.startsWith('Female '))) {
+  if (imageUrl) {
+    // Use image - don't parse emoji from label, only show label text
+    displayLabel = label
+    icon = null
+  } else if (isDemographic && (label.startsWith('Male ') || label.startsWith('Female '))) {
     // For demographics with "Male" or "Female" prefix, split them
     const spaceIndex = label.indexOf(' ')
     icon = spaceIndex > 0 ? label.substring(0, spaceIndex) : null // "Male" or "Female"
@@ -79,13 +95,24 @@ export default function QuizButton({
     <button
       id={id}
       type="button"
-      className={`${styles.quizButton} ${isSelected ? styles.selected : ''} ${disabled ? styles.disabled : ''} ${isDemographic ? styles.demographic : ''}`}
+      className={`${styles.quizButton} ${isSelected ? styles.selected : ''} ${disabled ? styles.disabled : ''} ${isDemographic ? styles.demographic : ''} ${isDemographicAge ? styles.demographicAge : ''} ${imageUrl ? styles.withImage : ''}`}
       onClick={handleClick}
       onTouchEnd={handleTouchEnd}
       disabled={disabled}
       aria-pressed={isSelected}
       tabIndex={0}
     >
+      {/* Rank badge for preference order */}
+      {rankNumber && isSelected && (
+        <span className={styles.rankBadge}>{rankNumber}</span>
+      )}
+      {imageUrl && (
+        <img 
+          src={imageUrl} 
+          alt={displayLabel}
+          className={styles.image}
+        />
+      )}
       {icon && (
         <span className={`${styles.icon} ${isDemographic && (icon === 'Male' || icon === 'Female') ? styles.demographicText : ''}`}>{icon}</span>
       )}

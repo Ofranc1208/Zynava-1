@@ -135,19 +135,21 @@ export default function ResultsPage({ quizParams }: ResultsPageProps) {
       {/* Header Section */}
       <div className={styles.header}>
         <div className={styles.headerTop}>
-          <h1 className={styles.title}>Z-SCORE™ Quality & Safety Rankings</h1>
+          <h1 className={styles.title}>Personalized Matches</h1>
           <p className={styles.trustMessage}>
-            Quality-filtered from 30,000+ supplements based on your profile
+            Searched 30,000+ supplements
           </p>
         </div>
         
-        <div className={styles.preferencesChips}>
-          {allPreferences.map((pref, idx) => (
-            <span key={idx} className={styles.chip}>
-              {pref.icon} {pref.label}
-            </span>
-          ))}
-        </div>
+        {allPreferences.length > 0 && (
+          <div className={styles.preferencesChips}>
+            {allPreferences.map((pref, idx) => (
+              <span key={idx} className={styles.chip}>
+                {pref.icon} {pref.label}
+              </span>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Compact Control Bar */}

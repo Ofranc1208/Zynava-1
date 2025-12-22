@@ -1,9 +1,15 @@
-/* Prominent "Z" letter styling */
+/* Prominent "Z" letter styling - bold and black */
 .zLetter {
-  color: #ff6b35;
-  font-weight: 700;
+  color: #000000;
+  font-weight: 800;
   font-size: 1.1em;
   letter-spacing: 0.02em;
+}
+
+/* Supplement Matchmaker text - bold and black */
+.matchmakerText {
+  color: #000000;
+  font-weight: 700;
 }
 
 .getStartedContainer {

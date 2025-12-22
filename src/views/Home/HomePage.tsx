@@ -39,13 +39,13 @@ export function HomePage() {
         maxWidth: '800px',
         margin: '0 auto',
         padding: '2rem 1.5rem',
-        textAlign: 'center',
       }}>
         <h2 style={{
           fontSize: '1.5rem',
           fontWeight: 700,
           color: '#1a202c',
           marginBottom: '1rem',
+          textAlign: 'left',
         }}>
           What is ZYNAVA?
         </h2>
@@ -53,16 +53,9 @@ export function HomePage() {
           fontSize: '1.1rem',
           color: '#374151',
           lineHeight: '1.7',
-          marginBottom: '0.75rem',
+          textAlign: 'left',
         }}>
-          ZYNAVA is an AI-powered supplement comparison tool. We analyze ingredients from 30,000+ products and match you with supplements that align with your wellness goals.
-        </p>
-        <p style={{
-          fontSize: '1rem',
-          color: '#6b7280',
-          lineHeight: '1.6',
-        }}>
-          We don&apos;t sell products ourselves—we route you to trusted retailers like Amazon, iHerb, and Vitamin Shoppe where you can make your own informed purchase decisions.
+          ZYNAVA is an AI-driven supplement finder that searches thousands of products from trusted retailers like Amazon, iHerb, and Vitamin Shoppe. We match you with options tailored to your goals like better sleep, more energy, immune support, or cleaner ingredients like organic and vegan. We also highlight top prices, sales, and subscription savings, so you can get what fits your needs and budget.
         </p>
       </section>
       

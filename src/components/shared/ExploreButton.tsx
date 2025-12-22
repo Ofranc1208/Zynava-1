@@ -17,7 +17,7 @@ interface ExploreButtonProps {
  */
 export default function ExploreButton({ 
   onClick,
-  text = 'Try the Advisor',
+  text = 'Start Matching',
   variant = 'primary'
 }: ExploreButtonProps) {
   const variantClasses: Record<ButtonVariant, string> = {

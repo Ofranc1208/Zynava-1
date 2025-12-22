@@ -11,14 +11,14 @@ interface CTASectionProps {
  */
 export default function CTASection({ onOpenAdvisor }: CTASectionProps) {
   return (
-    <section className={styles.ctaSection}>
+    <section className={styles.section}>
       <h2 className={styles.sectionTitle}>Ready to Find Your Match?</h2>
 
-      <p className={styles.ctaText}>
+      <p className={styles.ctaText} style={{ textAlign: 'left' }}>
         Answer a few questions about your wellness goals. Get non-sponsored supplement recommendations based on ingredients and research—not marketing hype.
       </p>
 
-      <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '2rem' }}>
+      <div style={{ display: 'flex', justifyContent: 'flex-start', marginBottom: '2rem' }}>
         <ExploreButton text="Start now" onClick={onOpenAdvisor} />
       </div>
 

@@ -16,6 +16,7 @@ interface QuizStepRendererProps {
   onLifestyleSelect: (value: string) => void
   onDietSelect: (value: string) => void
   onConcernSelect: (value: ConcernId) => void
+  onFormatSelect: (value: string) => void
   onBudgetSelect: (value: string) => void
   canProceed: boolean
   onNext: () => void
@@ -30,6 +31,7 @@ export default function QuizStepRenderer({
   onLifestyleSelect,
   onDietSelect,
   onConcernSelect,
+  onFormatSelect,
   onBudgetSelect,
   canProceed,
   onNext,
@@ -73,21 +75,29 @@ export default function QuizStepRenderer({
       case 'concerns':
         onConcernSelect(value as ConcernId)
         break
+      case 'format':
+        onFormatSelect(value)
+        break
       case 'budget':
         onBudgetSelect(value)
         break
     }
   }
 
-  // Determine if we should show percentage (hide for diet/budget multi-select steps)
-  const showPercentage = step.type !== 'diet' && step.type !== 'budget'
+  // Determine if we should show percentage (hide for diet/budget/format multi-select steps)
+  const showPercentage = step.type !== 'diet' && step.type !== 'budget' && step.type !== 'format'
   
   // Determine inline subtitle for multi-select steps
   const inlineSubtitle = step.type === 'diet' 
     ? 'Select all that apply' 
     : step.type === 'budget' 
     ? 'Add up to 3' 
+    : step.type === 'format'
+    ? 'Select 1st to 3rd'
     : undefined
+
+  // Check if this is a multi-select step
+  const isMultiSelect = step.type === 'diet' || step.type === 'concerns' || step.type === 'budget' || step.type === 'format'
 
   return (
     <div className={styles.quizStepContainer} data-quiz-card>
@@ -117,18 +127,27 @@ export default function QuizStepRenderer({
       />
       
       <div className={styles.quizOptions}>
-        {dynamicOptions.map((option) => (
-          <QuizButton
-            key={option.id}
-            id={option.id}
-            label={option.label}
-            value={option.value}
-            description={option.description}
-            isSelected={getIsSelected(option.value)}
-            onClick={handleOptionClick}
-            multiSelect={step.type === 'diet' || step.type === 'concerns' || step.type === 'budget'}
-          />
-        ))}
+        {dynamicOptions.map((option) => {
+          // Calculate rank number for format step (preference order)
+          const formatRank = step.type === 'format' 
+            ? input.formatPreferences.indexOf(option.value as any) + 1 
+            : undefined
+          
+          return (
+            <QuizButton
+              key={option.id}
+              id={option.id}
+              label={option.label}
+              value={option.value}
+              description={option.description}
+              image={option.image}
+              isSelected={getIsSelected(option.value)}
+              onClick={handleOptionClick}
+              multiSelect={isMultiSelect}
+              rankNumber={formatRank && formatRank > 0 ? formatRank : undefined}
+            />
+          )
+        })}
         
         {/* Continue button in empty slot for diet step */}
         {step.type === 'diet' && input.dietPreferences.length > 0 && (
@@ -138,6 +157,18 @@ export default function QuizStepRenderer({
             type="button"
           >
             <span className={styles.continueCount}>{input.dietPreferences.length} chosen</span>
+            <span className={styles.continueText}>Next →</span>
+          </button>
+        )}
+        
+        {/* Continue button in empty slot for format step */}
+        {step.type === 'format' && input.formatPreferences.length > 0 && (
+          <button 
+            className={styles.continueSlotButton}
+            onClick={onNext}
+            type="button"
+          >
+            <span className={styles.continueCount}>{input.formatPreferences.length} chosen</span>
             <span className={styles.continueText}>Next →</span>
           </button>
         )}
@@ -158,4 +189,3 @@ export default function QuizStepRenderer({
     </div>
   )
 }
-

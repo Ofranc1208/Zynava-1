@@ -160,7 +160,7 @@ export default function SupplementAdvisorCard(): JSX.Element {
           
           {step >= AnimationStep.SECOND_MESSAGE && (
             <div className={`${styles.messageBubble} ${styles.animated}`}>
-              <strong>Discover the benefits</strong>, <strong>compare prices</strong>, and <strong>decide if it's worth it</strong>.
+              <strong>Match</strong> products <strong>to your goals</strong>, <strong>compare prices</strong>, and <strong>see if it's worth it</strong>.
             </div>
           )}
           
@@ -182,7 +182,7 @@ export default function SupplementAdvisorCard(): JSX.Element {
               aria-label="Open Supplement Advisor chat"
               type="button"
             >
-              Try the Advisor
+              Start Matching
               <span className={styles.arrow} aria-hidden="true">→</span>
             </button>
           </div>

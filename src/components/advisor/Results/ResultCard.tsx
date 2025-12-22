@@ -1,6 +1,7 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
+import { createPortal } from 'react-dom'
 import styles from './ResultCard.module.css'
 import type { ScoredProduct } from './types'
 import { getStudiesForProduct, getStudiesForIngredient } from '@/src/lib/utils/studyHelpers'
@@ -72,6 +73,12 @@ function getMatchLevel(score: number): { level: string; description: string; col
  */
 export default function ResultCard({ product, isTopMatch = false }: ResultCardProps) {
   const [showZScorePopup, setShowZScorePopup] = useState(false)
+  const [mounted, setMounted] = useState(false)
+  
+  // Track mount state for portal (SSR compatibility)
+  useEffect(() => {
+    setMounted(true)
+  }, [])
   
   const {
     title,
@@ -155,8 +162,8 @@ export default function ResultCard({ product, isTopMatch = false }: ResultCardPr
         )}
       </div>
       
-      {/* Z-SCORE Popup Modal */}
-      {showZScorePopup && zScore !== undefined && matchInfo && (
+      {/* Z-SCORE Popup Modal - Rendered via Portal to avoid transform containment issues */}
+      {mounted && showZScorePopup && zScore !== undefined && matchInfo && createPortal(
         <div className={styles.zScoreOverlay} onClick={() => setShowZScorePopup(false)}>
           <div className={styles.zScorePopup} onClick={(e) => e.stopPropagation()}>
             <button 
@@ -209,7 +216,8 @@ export default function ResultCard({ product, isTopMatch = false }: ResultCardPr
               Got it!
             </button>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
 
       {/* Product Info */}

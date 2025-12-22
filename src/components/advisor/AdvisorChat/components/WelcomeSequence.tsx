@@ -69,7 +69,7 @@ export default function WelcomeSequence({ onGetStarted, hideButton = false }: We
         <ChatBubble
           message={
             <>
-              Hi, I'm <span className={styles.zLetter}>Z</span>.
+              Hi, I'm <span className={styles.zLetter}>Z</span>, your <span className={styles.matchmakerText}>Supplement Matchmaker</span>.
             </>
           }
           sender="advisor"
@@ -87,7 +87,7 @@ export default function WelcomeSequence({ onGetStarted, hideButton = false }: We
         <ChatBubble
           message={
             <>
-              Let's match supplements that align with your <strong>health goal</strong> and <strong>budget</strong>.
+              I compare <strong>30,000+</strong> supplements from big brands and hidden gems to find the best fit so you <strong>save time</strong> and <strong>avoid overpaying</strong>.
             </>
           }
           sender="advisor"
@@ -125,7 +125,7 @@ export default function WelcomeSequence({ onGetStarted, hideButton = false }: We
             className={styles.getStartedButton}
             onClick={onGetStarted}
           >
-            Get Started →
+            Try now →
           </button>
         </div>
       )}

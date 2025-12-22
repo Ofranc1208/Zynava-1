@@ -75,6 +75,12 @@ export default function AdvisorChat({ onClose }: AdvisorChatProps) {
     if (input.demographic) {
       params.set('demographic', input.demographic)
     }
+    if (input.sex) {
+      params.set('sex', input.sex)
+    }
+    if (input.ageRange) {
+      params.set('ageRange', input.ageRange)
+    }
     if (input.activityLevel) {
       params.set('activity', input.activityLevel)
     }
@@ -83,6 +89,9 @@ export default function AdvisorChat({ onClose }: AdvisorChatProps) {
     }
     if (input.concerns.length > 0) {
       params.set('concerns', input.concerns.join(','))
+    }
+    if (input.formatPreferences.length > 0) {
+      params.set('format', input.formatPreferences.join(','))
     }
     if (input.shoppingPreferences.length > 0) {
       params.set('preferences', input.shoppingPreferences.join(','))
@@ -100,6 +109,7 @@ export default function AdvisorChat({ onClose }: AdvisorChatProps) {
     handleLifestyleSelect,
     handleDietSelect,
     handleConcernSelect,
+    handleFormatSelect,
     handleBudgetSelect,
     handleNext,
     handlePrevious,
@@ -143,7 +153,7 @@ export default function AdvisorChat({ onClose }: AdvisorChatProps) {
 
   // Track navigation direction to prevent auto-advance when going back
   useEffect(() => {
-    const stepOrder = ['welcome', 'goals', 'demographics', 'lifestyle', 'diet', 'concerns', 'budget']
+    const stepOrder = ['welcome', 'goals', 'demographics', 'lifestyle', 'diet', 'concerns', 'format', 'budget']
     const currentIndex = stepOrder.indexOf(currentStep)
     const previousIndex = stepOrder.indexOf(previousStepRef.current)
     
@@ -262,8 +272,7 @@ export default function AdvisorChat({ onClose }: AdvisorChatProps) {
     <div className={`${styles.chatContainer} ${isDarkMode ? 'dark-mode' : ''}`}>
       <div className={styles.chatHeader}>
         <div className={styles.headerContent}>
-          <h2 className={styles.headerTitle}>Supplement Advisor</h2>
-          <p className={styles.headerSubtitle}>Your personal supplement decision guide.</p>
+          <h2 className={styles.headerTitle}>Chat with Z</h2>
         </div>
         <div className={styles.headerButtons}>
           {/* Dark mode toggle */}
@@ -320,6 +329,7 @@ export default function AdvisorChat({ onClose }: AdvisorChatProps) {
               onLifestyleSelect={handleLifestyleSelect}
               onDietSelect={handleDietSelect}
               onConcernSelect={handleConcernSelect}
+              onFormatSelect={handleFormatSelect}
               onBudgetSelect={handleBudgetSelect}
               canProceed={canProceed()}
               onNext={handleNext}

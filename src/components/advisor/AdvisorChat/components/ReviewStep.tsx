@@ -18,8 +18,21 @@ export default function ReviewStep({ input, onNext, onPrevious, onEdit }: Review
   // Get selected goal label
   const goalLabel = steps.goals.options?.find(o => o.value === input.goals[0])?.label || ''
 
-  // Get demographic label
-  const demographicLabel = steps.demographics.options?.find(o => o.value === input.demographic)?.label || ''
+  // Get demographic label (new: sex + age range format)
+  const getDemographicLabel = () => {
+    // Handle skip case
+    if (input.ageRange === 'skip') {
+      return 'Skipped'
+    }
+    if (input.sex && input.ageRange) {
+      const sexLabel = steps.demographics.options?.find(o => o.value === input.sex)?.label || ''
+      const ageLabel = steps.demographics.options?.find(o => o.value === input.ageRange)?.label || ''
+      return `${sexLabel}, ${ageLabel}`
+    }
+    // Legacy format
+    return steps.demographics.options?.find(o => o.value === input.demographic)?.label || ''
+  }
+  const demographicLabel = getDemographicLabel()
 
   // Get activity level label
   const activityLabel = steps.lifestyle.options?.find(o => o.value === input.activityLevel)?.label || ''
@@ -38,6 +51,21 @@ export default function ReviewStep({ input, onNext, onPrevious, onEdit }: Review
         .map(c => getConcernLabel(c, input.goals[0]))
         .filter(Boolean)
     : ['None']
+
+  // Get format labels (multi-select, ordered)
+  const formatLabels = input.formatPreferences.length > 0
+    ? input.formatPreferences
+        .map((f, idx) => {
+          const label = steps.format?.options?.find(o => o.value === f)?.label
+          // Add ranking prefix for non-"no-preference" selections
+          if (label && f !== 'no-preference' && input.formatPreferences.length > 1) {
+            const ordinal = idx === 0 ? '1st' : idx === 1 ? '2nd' : '3rd'
+            return `${ordinal}: ${label}`
+          }
+          return label
+        })
+        .filter(Boolean)
+    : ['No Preference']
 
   // Get shopping preferences labels
   const preferenceLabels = input.shoppingPreferences
@@ -136,6 +164,21 @@ export default function ReviewStep({ input, onNext, onPrevious, onEdit }: Review
 
         <div className={styles.reviewItem}>
           <div className={styles.reviewItemHeader}>
+            <span className={styles.reviewLabel}>Preferred Format:</span>
+            <button
+              className={styles.editButton}
+              onClick={() => onEdit('format')}
+              type="button"
+              aria-label="Edit preferred format"
+            >
+              Edit
+            </button>
+          </div>
+          <span className={styles.reviewValue}>{formatLabels.join(', ')}</span>
+        </div>
+
+        <div className={styles.reviewItem}>
+          <div className={styles.reviewItemHeader}>
             <span className={styles.reviewLabel}>Buying Preferences:</span>
             <button
               className={styles.editButton}
@@ -160,4 +203,3 @@ export default function ReviewStep({ input, onNext, onPrevious, onEdit }: Review
     </div>
   )
 }
-

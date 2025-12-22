@@ -14,6 +14,7 @@
 /**
  * Primary wellness goal selected by the user.
  * Determines which supplements are most relevant.
+ * Expanded to 10 goals including Muscle & Performance and Weight Management.
  */
 export type GoalId = 
   | 'overall-health'
@@ -24,11 +25,19 @@ export type GoalId =
   | 'gut-health'
   | 'sleep-stress'
   | 'brain-health'
+  | 'muscle-performance'   // NEW - The Builder
+  | 'weight-management'    // NEW - The Slimmer
 
 /**
  * Age range brackets for demographic grouping.
+ * Simplified to 6 decade-based options for cleaner UX.
  */
-export type AgeRange = '18-35' | '36-50' | '51-65' | '65+'
+export type AgeRange = '18-29' | '30-39' | '40-49' | '50-59' | '60-69' | '70+' | 'skip'
+
+/**
+ * Sex/Gender selection for Step 2 Profile.
+ */
+export type Sex = 'male' | 'female'
 
 /**
  * Combined gender and age bracket identifier.
@@ -46,7 +55,7 @@ export type DemographicId =
 
 /**
  * User's physical activity level.
- * Affects supplement recommendations (e.g., athletes need more protein).
+ * 8 options for clear categorization + skip.
  */
 export type ActivityLevel = 
   | 'power-lifter' 
@@ -57,19 +66,37 @@ export type ActivityLevel =
   | 'desk-worker' 
   | 'low-activity' 
   | 'recovery-injury'
+  | 'skip'
 
 /**
  * Dietary restrictions and preferences.
- * Used to filter supplements that match user's diet.
+ * Expanded to 10 options (removed Kosher, added Vegetarian, Dairy-Free, Keto).
  */
 export type DietType = 
   | 'no-preference' 
   | 'vegan' 
+  | 'vegetarian'        // NEW
   | 'gluten-free' 
+  | 'dairy-free'        // NEW
   | 'sugar-free' 
-  | 'kosher' 
+  | 'keto-low-carb'     // NEW
   | 'halal' 
   | 'non-gmo-organic'
+
+/**
+ * Preferred supplement format.
+ * NEW Step 6 - Important for accessibility and user preference.
+ */
+export type SupplementFormat =
+  | 'capsules'
+  | 'tablets'
+  | 'gummies'
+  | 'powder'
+  | 'liquid'
+  | 'softgels'
+  | 'chewables'
+  | 'single-serve-packs'
+  | 'no-preference'
 
 /**
  * Health concern/focus area identifiers.
@@ -84,6 +111,8 @@ export type DietType =
  * - Heart specific
  * - Sleep/stress specific
  * - Brain specific
+ * - Muscle/Performance specific (NEW)
+ * - Weight Management specific (NEW)
  */
 export type ConcernId =
   // Generic concerns (fallback)
@@ -103,6 +132,8 @@ export type ConcernId =
   | 'gut-constipation'
   | 'gut-leaky-gut'
   | 'gut-food-sensitivity'
+  | 'gut-greens'
+  | 'gut-colostrum'
   // Overall health specific (supplement types)
   | 'overall-multivitamin'
   | 'overall-vitamin-d'
@@ -111,6 +142,8 @@ export type ConcernId =
   | 'overall-magnesium'
   | 'overall-vitamin-c'
   | 'overall-b-complex'
+  | 'overall-greens'
+  | 'overall-collagen'
   // Immunity specific
   | 'immune-cold-flu'
   | 'immune-antioxidants'
@@ -119,6 +152,8 @@ export type ConcernId =
   | 'immune-elderberry'
   | 'immune-probiotics'
   | 'immune-seasonal'
+  | 'immune-mushroom'
+  | 'immune-nac'
   // Energy specific
   | 'energy-fatigue'
   | 'energy-afternoon'
@@ -127,6 +162,8 @@ export type ConcernId =
   | 'energy-iron'
   | 'energy-coq10'
   | 'energy-adrenal'
+  | 'energy-beetroot'
+  | 'energy-electrolytes'
   // Joint specific
   | 'joint-mobility'
   | 'joint-pain'
@@ -135,6 +172,8 @@ export type ConcernId =
   | 'joint-glucosamine'
   | 'joint-arthritis'
   | 'joint-inflammation'
+  | 'joint-msm'
+  | 'joint-fishoil'
   // Heart specific
   | 'heart-cholesterol'
   | 'heart-blood-pressure'
@@ -143,12 +182,16 @@ export type ConcernId =
   | 'heart-circulation'
   | 'heart-antioxidants'
   | 'heart-magnesium'
+  | 'heart-garlic'
+  | 'heart-k2'
   // Sleep/stress specific
   | 'sleep-insomnia'
   | 'sleep-melatonin'
   | 'sleep-magnesium'
   | 'stress-cortisol'
   | 'stress-adaptogens'
+  | 'sleep-gaba'
+  | 'sleep-tart-cherry'
   // Brain specific
   | 'brain-memory'
   | 'brain-focus'
@@ -157,10 +200,35 @@ export type ConcernId =
   | 'brain-ginkgo'
   | 'brain-lion-mane'
   | 'brain-cognitive'
+  | 'brain-choline'
+  | 'brain-magnesium'
+  // Muscle/Performance specific (NEW)
+  | 'muscle-whey'
+  | 'muscle-creatine'
+  | 'muscle-preworkout'
+  | 'muscle-bcaa'
+  | 'muscle-plant'
+  | 'muscle-casein'
+  | 'muscle-mass'
+  | 'muscle-test'
+  | 'muscle-glutamine'
+  | 'muscle-pump'
+  // Weight Management specific (NEW)
+  | 'weight-fatburner'
+  | 'weight-protein'
+  | 'weight-fiber'
+  | 'weight-cla'
+  | 'weight-carnitine'
+  | 'weight-appetite'
+  | 'weight-metabolism'
+  | 'weight-acv'
+  | 'weight-tea'
+  | 'weight-keto'
 
 /**
  * Shopping/buying preferences.
  * User can select up to 3 to influence product ranking.
+ * Expanded to 9 options with trust signals.
  */
 export type ShoppingPreference = 
   | 'budget-friendly'
@@ -170,6 +238,8 @@ export type ShoppingPreference =
   | 'on-sale'
   | 'bundle-deals'
   | 'subscribe-save'
+  | 'usa-manufactured'     // NEW - Trust signal
+  | 'third-party-tested'   // NEW - Safety signal
 
 // =============================================================================
 // QUIZ STATE INTERFACES
@@ -184,14 +254,18 @@ export interface AdvisorInput {
   goals: GoalId[]
   /** Gender + age bracket */
   demographic?: DemographicId
-  /** Age range (alternative to demographic) */
+  /** Sex selection */
+  sex?: Sex
+  /** Age range */
   ageRange?: AgeRange
   /** Physical activity level */
   activityLevel?: ActivityLevel
-  /** Dietary preferences - multi-select (e.g., vegan + sugar-free + kosher) */
+  /** Dietary preferences - multi-select (e.g., vegan + sugar-free) */
   dietPreferences: DietType[]
-  /** Health concerns to address */
+  /** Health concerns / supplement focus to address */
   concerns: ConcernId[]
+  /** Preferred supplement formats - multi-select (up to 3, ordered) */
+  formatPreferences: SupplementFormat[]
   /** Buying preferences (max 3) */
   shoppingPreferences: ShoppingPreference[]
 }
@@ -203,7 +277,7 @@ export interface AdvisorStep {
   /** Unique step identifier */
   id: string
   /** Step type for rendering and logic */
-  type: 'welcome' | 'goals' | 'demographics' | 'lifestyle' | 'diet' | 'concerns' | 'budget' | 'processing' | 'results'
+  type: 'welcome' | 'goals' | 'demographics' | 'lifestyle' | 'diet' | 'concerns' | 'format' | 'budget' | 'processing' | 'results'
   /** Question text or React component */
   message: string | React.ReactNode
   /** Available options for selection */
@@ -224,6 +298,8 @@ export interface QuizOption {
   value: string
   /** Optional description text */
   description?: string
+  /** Optional image URL for the option */
+  image?: string
 }
 
 /**

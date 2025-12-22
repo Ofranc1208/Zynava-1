@@ -9,7 +9,10 @@ import type {
   ActivityLevel,
   DietType,
   ConcernId,
-  ShoppingPreference
+  ShoppingPreference,
+  SupplementFormat,
+  Sex,
+  AgeRange
 } from '../../types'
 
 /**
@@ -32,6 +35,8 @@ export interface UseAdvisorQuizReturn {
   handleDietSelect: (value: string) => void
   /** Handler for selecting health concerns (multi-select) */
   handleConcernSelect: (concernId: ConcernId) => void
+  /** Handler for selecting preferred format */
+  handleFormatSelect: (value: string) => void
   /** Handler for selecting shopping preferences (max 3) */
   handleBudgetSelect: (value: string) => void
   /** Navigate to next step or complete quiz */
@@ -77,6 +82,7 @@ export function useAdvisorQuiz(onComplete: (input: AdvisorInput) => void): UseAd
     goals: [],
     dietPreferences: [],
     concerns: [],
+    formatPreferences: [],
     shoppingPreferences: [],
   })
 
@@ -90,9 +96,31 @@ export function useAdvisorQuiz(onComplete: (input: AdvisorInput) => void): UseAd
   }, [])
 
   /**
-   * Select demographic profile (gender + age bracket)
+   * Select demographic profile (sex and age range separately)
+   * This handles both sex and age selections from the same step
    */
   const handleDemographicSelect = useCallback((value: string) => {
+    // Check if it's a skip value
+    if (value === 'skip') {
+      setInput(prev => ({ ...prev, sex: undefined, ageRange: 'skip' as AgeRange }))
+      return
+    }
+    
+    // Check if it's a sex value
+    const validSex: Sex[] = ['male', 'female']
+    if (validSex.includes(value as Sex)) {
+      setInput(prev => ({ ...prev, sex: value as Sex }))
+      return
+    }
+    
+    // Check if it's an age range value
+    const validAgeRanges: AgeRange[] = ['18-29', '30-39', '40-49', '50-59', '60-69', '70+', 'skip']
+    if (validAgeRanges.includes(value as AgeRange)) {
+      setInput(prev => ({ ...prev, ageRange: value as AgeRange }))
+      return
+    }
+
+    // Legacy support for combined demographic values
     const validDemographics: DemographicId[] = [
       'male-18-35', 'male-36-50', 'male-51-65', 'male-65-plus',
       'female-18-35', 'female-36-50', 'female-51-65', 'female-65-plus'
@@ -106,6 +134,12 @@ export function useAdvisorQuiz(onComplete: (input: AdvisorInput) => void): UseAd
    * Select activity level (single selection)
    */
   const handleLifestyleSelect = useCallback((value: string) => {
+    // Handle skip value
+    if (value === 'skip') {
+      setInput(prev => ({ ...prev, activityLevel: 'skip' as ActivityLevel }))
+      return
+    }
+    
     const validActivityLevels: ActivityLevel[] = [
       'power-lifter', 'endurance-athlete', 'regular-gym-goer', 'active-lifestyle',
       'light-exercise', 'desk-worker', 'low-activity', 'recovery-injury'
@@ -121,8 +155,8 @@ export function useAdvisorQuiz(onComplete: (input: AdvisorInput) => void): UseAd
    */
   const handleDietSelect = useCallback((value: string) => {
     const validDietTypes: DietType[] = [
-      'no-preference', 'vegan', 'gluten-free',
-      'sugar-free', 'kosher', 'halal', 'non-gmo-organic'
+      'no-preference', 'vegan', 'vegetarian', 'gluten-free',
+      'dairy-free', 'sugar-free', 'keto-low-carb', 'halal', 'non-gmo-organic'
     ]
     if (validDietTypes.includes(value as DietType)) {
       setInput(prev => {
@@ -163,12 +197,51 @@ export function useAdvisorQuiz(onComplete: (input: AdvisorInput) => void): UseAd
   }, [])
 
   /**
+   * Select preferred supplement format (single selection)
+   */
+  /**
+   * Toggle a format preference (multi-select, max 3).
+   * Selecting 'no-preference' clears all other selections.
+   */
+  const handleFormatSelect = useCallback((value: string) => {
+    const validFormats: SupplementFormat[] = [
+      'capsules', 'tablets', 'gummies', 'powder', 'liquid',
+      'softgels', 'chewables', 'single-serve-packs', 'no-preference'
+    ]
+    if (validFormats.includes(value as SupplementFormat)) {
+      setInput(prev => {
+        const currentFormats = prev.formatPreferences
+        const formatValue = value as SupplementFormat
+        
+        // If selecting "no-preference", clear all and set only that
+        if (formatValue === 'no-preference') {
+          return { ...prev, formatPreferences: ['no-preference'] }
+        }
+        
+        // If already selected, remove it
+        if (currentFormats.includes(formatValue)) {
+          return { ...prev, formatPreferences: currentFormats.filter(f => f !== formatValue && f !== 'no-preference') }
+        }
+        
+        // If already have 3 selections, don't add more
+        if (currentFormats.filter(f => f !== 'no-preference').length >= 3) {
+          return prev
+        }
+        
+        // Add the new selection (remove 'no-preference' if present)
+        return { ...prev, formatPreferences: [...currentFormats.filter(f => f !== 'no-preference'), formatValue] }
+      })
+    }
+  }, [])
+
+  /**
    * Toggle a shopping preference (max 3 selections allowed)
    */
   const handleBudgetSelect = useCallback((value: string) => {
     const validPreferences: ShoppingPreference[] = [
       'budget-friendly', 'premium-quality', 'free-shipping',
-      'new-arrivals', 'on-sale', 'bundle-deals', 'subscribe-save'
+      'new-arrivals', 'on-sale', 'bundle-deals', 'subscribe-save',
+      'usa-manufactured', 'third-party-tested' // NEW trust signals
     ]
     if (validPreferences.includes(value as ShoppingPreference)) {
       setInput(prev => {
@@ -219,20 +292,23 @@ export function useAdvisorQuiz(onComplete: (input: AdvisorInput) => void): UseAd
 
   /**
    * Check if the current step has a valid selection to allow proceeding.
-   * Diet and Budget steps return false (requires manual "Continue" button click).
+   * Diet, Format, and Budget steps return false (requires manual "Continue" button click).
    */
   const canProceed = useCallback(() => {
     switch (currentStep) {
       case 'goals':
         return input.goals.length === 1
       case 'demographics':
-        return !!input.demographic
+        // Check for: (sex + age) OR skip OR legacy demographic
+        return (!!input.sex && !!input.ageRange) || input.ageRange === 'skip' || !!input.demographic
       case 'lifestyle':
         return !!input.activityLevel
       case 'diet':
         return false // Manual proceed required (like budget)
       case 'concerns':
         return input.concerns.length > 0
+      case 'format':
+        return false // Manual proceed required (multi-select step)
       case 'budget':
         return false // Manual proceed required
       default:
@@ -262,6 +338,7 @@ export function useAdvisorQuiz(onComplete: (input: AdvisorInput) => void): UseAd
     handleLifestyleSelect,
     handleDietSelect,
     handleConcernSelect,
+    handleFormatSelect,
     handleBudgetSelect,
     handleNext,
     handlePrevious,

@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import type { AdvisorInput, AdvisorStep, GoalId, ConcernId, ShoppingPreference, DietType } from '../../types'
+import type { AdvisorInput, AdvisorStep, GoalId, ConcernId, ShoppingPreference, DietType, Sex, AgeRange, SupplementFormat } from '../../types'
 
 interface UseQuizSelectionProps {
   step: AdvisorStep
@@ -14,13 +14,19 @@ export function useQuizSelection({ step, input }: UseQuizSelectionProps) {
           return input.goals.includes(optionValue as GoalId)
         
         case 'demographics':
-          return optionValue === input.demographic
+          // Check if it matches sex, age range, or legacy demographic
+          return optionValue === input.sex || 
+                 optionValue === input.ageRange || 
+                 optionValue === input.demographic
         
         case 'diet':
           return input.dietPreferences.includes(optionValue as DietType)
         
         case 'concerns':
           return input.concerns.includes(optionValue as ConcernId)
+        
+        case 'format':
+          return input.formatPreferences.includes(optionValue as SupplementFormat)
         
         case 'budget':
           return input.shoppingPreferences.includes(optionValue as ShoppingPreference)

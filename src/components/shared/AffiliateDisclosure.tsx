@@ -1,38 +1,59 @@
 import Link from 'next/link'
 
 /**
- * AffiliateDisclosure - Reusable affiliate disclosure component
+ * AffiliateDisclosure - Compact affiliate disclosure component
  * 
- * FTC-compliant disclosure for pages with affiliate links.
- * Use on results pages, product pages, and anywhere affiliate links appear.
+ * Minimal FTC-compliant disclosure that links to full details.
+ * Use on results pages to save space while maintaining transparency.
  */
 export function AffiliateDisclosure() {
   return (
     <div style={{
-      backgroundColor: '#f9fafb',
-      border: '1px solid #e5e7eb',
-      borderRadius: '8px',
-      padding: '0.75rem 1rem',
-      margin: '1rem 0',
+      padding: '0.8rem 0',
+      margin: '0.8rem 0',
       textAlign: 'center',
     }}>
-      <p style={{
-        fontSize: '0.8rem',
-        color: '#6b7280',
-        lineHeight: '1.5',
-        margin: 0,
+      <div style={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        gap: '0.4rem',
       }}>
-        <strong>Affiliate Disclosure:</strong> Some of the links below are affiliate links. If you buy through them, ZYNAVA may earn a commission at no extra cost to you. Our recommendations are never influenced by affiliate relationships.{' '}
+        <p style={{
+          fontSize: '0.75rem',
+          color: '#6b7280',
+          margin: 0,
+          lineHeight: '1.4',
+          maxWidth: '300px',
+        }}>
+          <strong>Affiliate Disclosure:</strong> Some links on this page are affiliate links.
+          If you buy through them, Zynava may earn a commission at no extra cost to you.
+        </p>
         <Link 
           href="/affiliate-disclosure" 
           style={{ 
-            color: '#ff6b35', 
-            textDecoration: 'underline',
+            color: '#ffffff', 
+            backgroundColor: '#ff6b35',
+            textDecoration: 'none',
+            fontWeight: '600',
+            padding: '0.3rem 0.7rem',
+            borderRadius: '4px',
+            fontSize: '0.7rem',
+            transition: 'all 0.2s ease',
+            border: 'none',
+            cursor: 'pointer',
+            display: 'inline-block',
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.backgroundColor = '#e55a2b'
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.backgroundColor = '#ff6b35'
           }}
         >
           Learn more
         </Link>
-      </p>
+      </div>
     </div>
   )
 }

@@ -6,9 +6,9 @@
 
 .chatCard.chatCard {
   /* Card dimensions */
-  --card-height-desktop: 24.75rem; /* 396px */
-  --card-height-tablet: 22.5rem; /* 360px */
-  --card-height-mobile: 20rem; /* 320px */
+  --card-height-desktop: 25.99rem; /* 415.8px (24.75 * 1.05) */
+  --card-height-tablet: 23.63rem; /* 378px (22.5 * 1.05) */
+  --card-height-mobile: 21rem; /* 336px (20 * 1.05) */
   
   /* Colors */
   --color-white: #ffffff;
