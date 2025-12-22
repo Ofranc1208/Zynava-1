@@ -188,12 +188,12 @@
 /* Responsive - Mobile Phones (iPhone 16 Pro, iPhone 14/15, etc.) */
 @media (max-width: 480px) {
   .quizStepContainer {
-    gap: 10px; /* Increased by 20% */
-    padding: 14px; /* Increased by 20% */
+    gap: 8px; /* Reduced for tighter fit */
+    padding: 12px; /* Reduced for better fit */
     border-radius: 14px;
-    /* Adjusted fixed height for mobile - 5 rows */
-    min-height: 620px;
-    height: 620px;
+    /* Adjusted fixed height for mobile - fits iPhone 16 Pro without cutting top */
+    min-height: 560px;
+    height: 560px;
   }
   
   .backLink {
@@ -214,9 +214,9 @@
   }
   
   .quizOptions {
-    gap: 8px; /* Increased by 20% */
+    gap: 6px; /* Reduced for tighter fit */
     grid-template-columns: repeat(2, 1fr);
-    min-height: 420px; /* Updated for 5 rows */
+    min-height: 380px; /* Reduced for iPhone 16 Pro fit */
   }
   
   .nextButton {
@@ -363,16 +363,16 @@
 
 @media (max-width: 480px) {
   .continueSlotButton {
-    min-height: 78px;
-    padding: 10px 12px;
+    min-height: 68px; /* Reduced to match button height */
+    padding: 8px 10px;
   }
   
   .continueCount {
-    font-size: 0.85rem; /* Increased by 20% */
+    font-size: 0.8rem;
   }
   
   .continueText {
-    font-size: 0.95rem; /* Increased by 20% */
+    font-size: 0.9rem;
   }
 }
 
