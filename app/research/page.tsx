@@ -1,15 +1,15 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import ResearchSearch from './components/ResearchSearch'
 import StudyResults from './components/StudyResults'
 import StudyFilters from './components/StudyFilters'
 import Link from 'next/link'
-import { StudyFilters as StudyFiltersType } from '@/src/lib/utils/studyHelpers'
+import type { StudyFilters as StudyFiltersType } from '@/src/lib/utils/studyHelpers'
 import styles from './research.module.css'
 
-export default function ResearchPage() {
+function ResearchPageContent() {
   const searchParams = useSearchParams()
   const initialQuery = searchParams.get('q') || ''
 
@@ -71,5 +71,20 @@ export default function ResearchPage() {
         />
       </div>
     </main>
+  )
+}
+
+export default function ResearchPage() {
+  return (
+    <Suspense fallback={
+      <main className={styles.researchPage}>
+        <div className={styles.headerRow}>
+          <h1 className={styles.pageTitle}>Research Library</h1>
+        </div>
+        <div style={{ padding: '2rem', textAlign: 'center' }}>Loading...</div>
+      </main>
+    }>
+      <ResearchPageContent />
+    </Suspense>
   )
 }
