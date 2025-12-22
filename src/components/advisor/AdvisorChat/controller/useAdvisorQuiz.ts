@@ -325,6 +325,7 @@ export function useAdvisorQuiz(onComplete: (input: AdvisorInput) => void): UseAd
       goals: [],
       dietPreferences: [],
       concerns: [],
+      formatPreferences: [],
       shoppingPreferences: [],
     })
   }, [])
