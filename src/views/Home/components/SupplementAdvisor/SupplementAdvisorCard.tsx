@@ -160,7 +160,7 @@ export default function SupplementAdvisorCard(): JSX.Element {
           
           {step >= AnimationStep.SECOND_MESSAGE && (
             <div className={`${styles.messageBubble} ${styles.animated}`}>
-              <strong>Match</strong> products <strong>to your goals</strong>, <strong>compare prices</strong>, and <strong>see if it's worth it</strong>.
+              <strong>Match</strong> products <strong>to your goals</strong> and <strong>Budget</strong>.
             </div>
           )}
           

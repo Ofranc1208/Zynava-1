@@ -5,10 +5,10 @@
 /* Using scoped variables on the card instead of :root for CSS Modules compatibility */
 
 .chatCard.chatCard {
-  /* Card dimensions */
-  --card-height-desktop: 25.99rem; /* 415.8px (24.75 * 1.05) */
-  --card-height-tablet: 23.63rem; /* 378px (22.5 * 1.05) */
-  --card-height-mobile: 21rem; /* 336px (20 * 1.05) */
+  /* Card dimensions - Increased by 9% total (6% + 3% more) to eliminate scroll */
+  --card-height-desktop: 21.84rem; /* 349.44px - 9% increase from 20rem */
+  --card-height-tablet: 20.19rem; /* 323.04px - 9% increase from 18.5rem */
+  --card-height-mobile: 18.03rem; /* 288.48px - 9% increase from 16.5rem */
   
   /* Colors */
   --color-white: #ffffff;
@@ -20,12 +20,12 @@
   --color-text: #475569;
   --color-text-dark: #1a202c;
   
-  /* Spacing - balanced for comfortable reading */
+  /* Spacing - balanced for comfortable reading, slightly reduced */
   --spacing-xs: 0.25rem; /* 4px */
   --spacing-sm: 0.5rem; /* 8px */
-  --spacing-md: 0.85rem; /* 14px - increased ~20% for better message separation */
-  --spacing-lg: 1.1rem; /* 18px */
-  --spacing-xl: 1.4rem; /* 22px */
+  --spacing-md: 0.7rem; /* 11px - reduced for more compact layout */
+  --spacing-lg: 1rem; /* 16px - slightly reduced */
+  --spacing-xl: 1.2rem; /* 19px - slightly reduced */
   
   /* Border radius */
   --radius-sm: 0.75rem; /* 12px */
@@ -51,8 +51,8 @@
   max-width: 100%;
   /* Ensure minimum width to prevent shrinking with small content */
   min-width: 280px;
-  padding-block-start: 1rem;
-  padding-block-end: 0.75rem; /* Reduced bottom padding to bring button up */
+  padding-block-start: 0.9rem; /* Reduced from 1rem */
+  padding-block-end: 0.65rem; /* Reduced bottom padding */
   padding-inline: 1rem;
   box-shadow: var(--shadow-card);
   font-family: var(--font-family);
@@ -78,9 +78,9 @@
     height: var(--card-height-desktop);
     min-height: var(--card-height-desktop);
     max-height: var(--card-height-desktop);
-    padding-block-start: 1.5rem; /* 24px - reduced from 28px */
-    padding-block-end: 1rem; /* Reduced bottom padding to bring button up */
-    padding-inline: 1.65rem; /* 26px - reduced from 32px */
+    padding-block-start: 1.2rem; /* 19px - reduced for more compact design */
+    padding-block-end: 0.75rem; /* Reduced bottom padding */
+    padding-inline: 1.5rem; /* 24px - slightly reduced */
     border-radius: var(--radius-lg);
     box-sizing: border-box;
     overflow: hidden;
@@ -113,12 +113,12 @@
 .chatMessages {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-md); /* ~14px gap between messages */
+  gap: var(--spacing-md); /* ~11px gap between messages - reduced */
   /* Removed flex: 1 - let messages take only the space they need */
   overflow-y: auto;
   overflow-x: hidden;
   padding-inline-end: var(--spacing-xs);
-  margin-block-end: 1rem; /* Space between messages and button */
+  margin-block-end: 0.75rem; /* Reduced space between messages and button */
   /* Force full width from the start to prevent horizontal expansion */
   width: 100%;
   min-width: 100%;
@@ -417,9 +417,9 @@
     max-width: calc(100% - 2rem);
     /* Maintain minimum width on tablet */
     min-width: 280px;
-    padding-block-start: 1.25rem; /* 20px */
-    padding-block-end: 0.875rem; /* Reduced bottom padding to bring button up */
-    padding-inline: 1.25rem; /* 20px */
+    padding-block-start: 1rem; /* 16px - reduced */
+    padding-block-end: 0.7rem; /* Reduced bottom padding */
+    padding-inline: 1.15rem; /* 18px - slightly reduced */
     height: var(--card-height-tablet);
     min-height: var(--card-height-tablet);
     max-height: var(--card-height-tablet);
@@ -429,7 +429,7 @@
   }
   
   .chatMessages {
-    gap: 0.9rem; /* ~14px - 20% increase */
+    gap: 0.75rem; /* ~12px - reduced for more compact layout */
   }
   
   .messageBubble {
@@ -459,9 +459,9 @@
     max-width: calc(100% - 1rem);
     /* Maintain minimum width on mobile */
     min-width: 260px;
-    padding-block-start: 1.125rem; /* 18px */
-    padding-block-end: 0.875rem; /* Reduced bottom padding to bring button up */
-    padding-inline: 1.125rem; /* 18px */
+    padding-block-start: 0.9rem; /* 14px - reduced */
+    padding-block-end: 0.7rem; /* Reduced bottom padding */
+    padding-inline: 1rem; /* 16px - slightly reduced */
     border-radius: var(--radius-sm);
     height: var(--card-height-mobile);
     min-height: var(--card-height-mobile);
@@ -472,7 +472,7 @@
   }
   
   .chatMessages {
-    gap: 0.75rem; /* 12px - 20% increase */
+    gap: 0.65rem; /* 10px - reduced for more compact layout */
   }
   
   .messageBubble {
