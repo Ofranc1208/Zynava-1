@@ -115,11 +115,11 @@ a {
   }
 }
 
-/* Hero section responsive height: 20% reduced on mobile, full height on desktop */
+/* Hero section responsive height: Reduced by 10% */
 @media (min-width: 768px) {
   .hero-section-responsive {
-    height: 32vh !important;
-    max-height: 32vh !important;
+    height: 28.8vh !important;
+    max-height: 28.8vh !important;
   }
 }
 
